@@ -524,45 +524,78 @@ def api_reset_password():
 
 
 # ────────────────────────────────────────────────────────────────
-# MİQRASİYA: köhnə data.json-u admin-ə köçür (bir dəfəlik)
+# ────────────────────────────────────────────────────────────────
+# MİQRASİYA: köhnə data.json-u hər userin öz faylına köçür
 # ────────────────────────────────────────────────────────────────
 def migrate_legacy():
     """
     Köhnə tək fayllı data.json varsa:
-      - users.json-u yarat (users bölməsindən)
-      - admin.json-u yarat (qalan bölmədən)
-    Sonra data.json-u saxlayırıq amma artıq oxunmur.
+      - users.json yarat
+      - hər user üçün user_data/<user>.json yarat
+      - data.json-u data.json.migrated-ə adlandır (bir daha oxunmasın)
     """
-    legacy = os.path.join(BASE_DIR, 'data.json')
-    if not os.path.exists(legacy):
+    legacy   = os.path.join(BASE_DIR, 'data.json')
+    migrated = os.path.join(BASE_DIR, 'data.json.migrated')
+
+    # Əgər köhnə fayl yoxdursa ya miqrasiya edilibsə — keç
+    if not os.path.exists(legacy) or os.path.exists(migrated):
         return
-    if os.path.exists(USERS_FILE):
-        return   # artıq miqrasiya edilib
 
-    with open(legacy, 'r', encoding='utf-8') as f:
-        old = json.load(f)
+    print("[migrate] Köhnə data.json tapıldı, miqrasiya başlayır...")
+    try:
+        with open(legacy, 'r', encoding='utf-8') as f:
+            old = json.load(f)
+    except Exception as e:
+        print(f"[migrate] oxunmadı: {e}")
+        return
 
-    # users.json yarat
-    raw_users = old.pop('users', {})
-    new_users = {}
-    for uname, uinfo in raw_users.items():
-        new_users[uname] = {
-            'password': uinfo.get('password', generate_password_hash('admin123')),
-            'role':     uinfo.get('role', 'manager'),
-            'email':    uinfo.get('email', '')
-        }
-    if not new_users:
-        new_users = DEFAULT_USERS.copy()
-    save_users(new_users)
+    # users.json yarat (yoxdursa)
+    if not os.path.exists(USERS_FILE):
+        raw_users = old.pop('users', {})
+        new_users = {}
+        for uname, uinfo in raw_users.items():
+            new_users[uname] = {
+                'password': uinfo.get('password', generate_password_hash('admin123')),
+                'role':     uinfo.get('role', 'manager'),
+                'email':    uinfo.get('email', '')
+            }
+        if not new_users:
+            import copy as _copy
+            new_users = _copy.deepcopy(DEFAULT_USERS)
+        save_users(new_users)
+        print(f"[migrate] users.json yaradıldı: {list(new_users.keys())}")
+    else:
+        old.pop('users', None)
+        new_users = load_users()
 
-    # köhnə data-nı admin kullanıcısına ver
+    # Superadmin üçün mövcud datanı köçür
     admin_name = next(
         (u for u, i in new_users.items() if i.get('role') == 'superadmin'),
         list(new_users.keys())[0]
     )
-    old.pop('reset_tokens', None)
-    save_user_data(admin_name, old)
-    print(f"[migrate] Köhnə data.json → {admin_name}.json olaraq köçürüldü.")
+    admin_path = user_data_file(admin_name)
+    if not os.path.exists(admin_path):
+        import copy as _copy
+        base = _copy.deepcopy(DEFAULT_MENU_DATA)
+        for k in ('cafe', 'categories', 'items', 'theme', 'stats'):
+            if k in old:
+                base[k] = old[k]
+        old.pop('reset_tokens', None)
+        save_user_data(admin_name, base)
+        print(f"[migrate] user_data/{admin_name}.json yaradıldı (köhnə məlumatlarla)")
+
+    # Digər mövcud userlər üçün boş fayl yarat
+    for uname in new_users:
+        if uname != admin_name:
+            upath = user_data_file(uname)
+            if not os.path.exists(upath):
+                import copy as _copy
+                save_user_data(uname, _copy.deepcopy(DEFAULT_MENU_DATA))
+                print(f"[migrate] user_data/{uname}.json yaradıldı (boş)")
+
+    # data.json-u arxivlə — bir daha oxunmasın
+    os.rename(legacy, migrated)
+    print("[migrate] Tamamlandı — data.json.migrated olaraq arxivləndi")
 
 migrate_legacy()
 
