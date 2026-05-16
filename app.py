@@ -91,6 +91,27 @@ def superadmin_required(f):
         return f(*args, **kwargs)
     return decorated
 
+# ── SLUG HELPERS ──
+import re as _re
+
+def _slugify(text):
+    """Convert username to URL-safe slug."""
+    text = text.lower().strip()
+    text = _re.sub(r'[^a-z0-9]+', '-', text)
+    return text.strip('-') or 'menu'
+
+def _ensure_slugs():
+    """Make sure every user has a menu_slug in data.json."""
+    db = load_data()
+    changed = False
+    for username, info in db.get('users', {}).items():
+        if not info.get('menu_slug'):
+            info['menu_slug'] = _slugify(username)
+            changed = True
+    if changed:
+        save_data(db)
+    return db
+
 # ── SƏHIFƏLƏR ──
 @app.route('/')
 def index():
@@ -100,9 +121,82 @@ def index():
 def menu():
     return render_template('menu.html')
 
+@app.route('/menu/<slug>')
+def menu_by_slug(slug):
+    """Per-user menu page — passes slug to template."""
+    return render_template('menu.html', menu_slug=slug)
+
 @app.route('/admin')
 def admin():
     return render_template('admin.html')
+
+
+# ── USER SLUG API ──
+@app.route('/api/users/<username>/slug', methods=['GET'])
+@login_required
+def api_get_user_slug(username):
+    """Return the menu_slug for a user."""
+    if username != session.get('user') and session.get('role') not in ('superadmin', 'admin'):
+        return jsonify({'error': 'İcazə yoxdur'}), 403
+    db = _ensure_slugs()
+    user = db.get('users', {}).get(username)
+    if not user:
+        return jsonify({'error': 'Tapılmadı'}), 404
+    return jsonify({'slug': user.get('menu_slug', _slugify(username))})
+
+@app.route('/api/users/<username>/slug', methods=['PUT'])
+@login_required
+def api_set_user_slug(username):
+    """Update the menu_slug for a user (superadmin or self)."""
+    if username != session.get('user') and session.get('role') != 'superadmin':
+        return jsonify({'error': 'İcazə yoxdur'}), 403
+    data = request.json or {}
+    new_slug = _slugify(data.get('slug', username))
+    if not new_slug:
+        return jsonify({'error': 'Keçərsiz slug'}), 400
+    db = load_data()
+    # check uniqueness
+    for uname, info in db.get('users', {}).items():
+        if uname != username and info.get('menu_slug') == new_slug:
+            return jsonify({'error': 'Bu slug artıq istifadə olunur'}), 400
+    if username not in db.get('users', {}):
+        return jsonify({'error': 'Tapılmadı'}), 404
+    db['users'][username]['menu_slug'] = new_slug
+    save_data(db)
+    return jsonify({'ok': True, 'slug': new_slug})
+
+@app.route('/api/users/all-slugs', methods=['GET'])
+@login_required
+def api_all_slugs():
+    """Return username → slug + menu URL for all visible users (superadmin)."""
+    db = _ensure_slugs()
+    base = APP_BASE_URL.rstrip('/')
+    result = {}
+    current_role = session.get('role', 'manager')
+    for uname, info in db.get('users', {}).items():
+        if info.get('role') == 'superadmin' and current_role != 'superadmin':
+            continue
+        slug = info.get('menu_slug', _slugify(uname))
+        result[uname] = {
+            'slug': slug,
+            'url': f'{base}/menu/{slug}',
+            'role': info.get('role', 'manager')
+        }
+    return jsonify(result)
+
+@app.route('/api/data/<slug>')
+def api_get_data_by_slug(slug):
+    """Public endpoint: return menu data for a given slug."""
+    db = load_data()
+    # find user with this slug
+    for uname, info in db.get('users', {}).items():
+        if info.get('menu_slug') == slug:
+            break
+    else:
+        # slug not found — return default shared data
+        pass
+    safe = {k: v for k, v in db.items() if k != 'users'}
+    return jsonify(safe)
 
 # ── AUTH API ──
 @app.route('/api/login', methods=['POST'])
@@ -191,11 +285,19 @@ def api_get_users():
     db = load_data()
     current_role = session.get('role', 'manager')
     users = {}
+    _ensure_slugs()
+    db = load_data()
+    base = APP_BASE_URL.rstrip('/')
     for k, v in db.get('users', {}).items():
         # Superadmin hesabları yalnız superadmin-ə görünsün
         if v.get('role') == 'superadmin' and current_role != 'superadmin':
             continue
-        users[k] = {'role': v.get('role', 'manager')}
+        slug = v.get('menu_slug', _slugify(k))
+        users[k] = {
+            'role': v.get('role', 'manager'),
+            'slug': slug,
+            'menu_url': f'{base}/menu/{slug}'
+        }
     return jsonify(users)
 
 @app.route('/api/users', methods=['POST'])
