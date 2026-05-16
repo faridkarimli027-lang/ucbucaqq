@@ -549,35 +549,61 @@ input[type=file] { display:none; }
   <!-- QR -->
   <div class="page" id="page-qr">
     <div class="page-header"><h2 class="page-title" data-i18n="nav_qr">QR Kod</h2></div>
-    <div class="card" style="max-width:520px;margin:0 auto;">
-      <div style="margin-bottom:1.25rem">
-        <div data-i18n="menuLink" style="font-size:0.72rem;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:0.5rem">Menyu linki</div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <input type="text" id="qr-url-input" placeholder="https://sizin-sayt.com/menu.html" style="flex:1;font-size:0.85rem">
-          <button class="btn btn-primary" data-i18n="qrGenerate" onclick="generateQRCode()">Yarat</button>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;max-width:860px;align-items:start">
+
+      <!-- Sol: QR görüntüsü -->
+      <div class="card" style="display:flex;flex-direction:column;align-items:center;padding:2rem;gap:1.25rem">
+        <div style="font-size:0.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;align-self:flex-start">📷 Menyu QR Kodu</div>
+
+        <!-- QR wrapper — ağ fon, kənar padding, logo -->
+        <div id="qr-frame" style="background:#fff;border-radius:18px;padding:18px;box-shadow:0 4px 24px rgba(0,0,0,0.10);display:flex;flex-direction:column;align-items:center;gap:10px">
+          <canvas id="qr-canvas" style="border-radius:8px;display:block"></canvas>
+          <div style="font-size:0.68rem;font-weight:700;color:#1C1917;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px">Menyu üçün skan edin</div>
         </div>
-        <p data-i18n="qrNote" style="font-size:0.72rem;color:var(--muted);margin-top:0.5rem">GitHub Pages, Netlify və ya Vercel ilə pulsuz yerləşdirə bilərsiniz.</p>
+
+        <!-- Düymələr -->
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;width:100%">
+          <button class="btn btn-primary" onclick="downloadQRCode()" style="flex:1;min-width:120px">⬇️ PNG yüklə</button>
+          <button class="btn btn-ghost" onclick="copyQrLink()" style="flex:1;min-width:120px">🔗 Linki kopyala</button>
+        </div>
+
+        <div id="qr-url-display" style="font-size:0.72rem;color:var(--muted);word-break:break-all;text-align:center;max-width:260px;line-height:1.5"></div>
       </div>
-      <div style="display:flex;flex-direction:column;align-items:center;gap:1rem;padding:1rem 0">
-        <div id="qr-placeholder" style="width:200px;height:200px;border-radius:16px;border:2px dashed var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);font-size:0.8rem;gap:8px">
-          <span style="font-size:2.5rem">&#128247;</span><span data-i18n="qrEnterLink">Link daxil edin</span>
+
+      <!-- Sağ: Link redaktəsi + məlumat -->
+      <div style="display:flex;flex-direction:column;gap:1rem">
+
+        <div class="card">
+          <div style="font-size:0.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:0.75rem">🔗 Menyu linki</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="text" id="qr-url-input" placeholder="https://sizin-sayt.com/menu" style="flex:1;font-size:0.83rem">
+            <button class="btn btn-primary" onclick="generateQRCode()">Yarat</button>
+          </div>
+          <p style="font-size:0.72rem;color:var(--muted);margin-top:0.6rem;line-height:1.5">
+            QR skan ediləndə bu link avtomatik açılır.<br>
+            Render, Heroku və ya öz serverinizin URL-ini daxil edin.
+          </p>
         </div>
-        <canvas id="qr-canvas" style="display:none;border-radius:16px;border:1px solid var(--border)"></canvas>
-        <div id="qr-actions" style="display:none;flex-direction:column;align-items:center;gap:10px;width:100%">
-          <div id="qr-url-display" style="font-size:0.75rem;color:var(--muted);word-break:break-all;text-align:center;max-width:300px"></div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
-            <button class="btn btn-primary" data-i18n="qrDownload" onclick="downloadQRCode()">&#11015; PNG yüklə</button>
-            <button class="btn btn-ghost" data-i18n="qrCopyLink" onclick="copyQrLink()">&#128279; Linki kopyala</button>
+
+        <div class="card" style="background:rgba(201,168,76,0.06);border-color:rgba(201,168,76,0.25)">
+          <div style="font-size:0.72rem;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:0.75rem">💡 Necə istifadə etmək olar?</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;gap:10px;align-items:flex-start;font-size:0.82rem">
+              <span style="width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:700;flex-shrink:0">1</span>
+              <span style="color:var(--muted);line-height:1.5">Serverin URL-ini yuxarıdakı xanaya daxil edin (məs: <b style="color:var(--text)">https://ucbucaq.onrender.com/menu</b>)</span>
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start;font-size:0.82rem">
+              <span style="width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:700;flex-shrink:0">2</span>
+              <span style="color:var(--muted);line-height:1.5"><b style="color:var(--text)">PNG yüklə</b> düyməsi ilə QR şəklini endirin</span>
+            </div>
+            <div style="display:flex;gap:10px;align-items:flex-start;font-size:0.82rem">
+              <span style="width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:700;flex-shrink:0">3</span>
+              <span style="color:var(--muted);line-height:1.5">QR kodu çap edib masaya qoyun — müştəri skan edəndə <b style="color:var(--text)">birbaşa menyuya</b> keçir</span>
+            </div>
           </div>
         </div>
-      </div>
-      <div style="border-top:1px solid var(--border);padding-top:1rem;margin-top:0.5rem">
-        <div data-i18n="qrHow" style="font-size:0.72rem;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:0.75rem">Necə istifadə etmək olar?</div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <div style="display:flex;gap:10px;align-items:flex-start;font-size:0.82rem"><span style="width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:600;flex-shrink:0">1</span><span data-i18n="qrStep1" style="color:var(--muted)"><b style="color:var(--text)">menu.html</b> faylını serverə yükləyin</span></div>
-          <div style="display:flex;gap:10px;align-items:flex-start;font-size:0.82rem"><span style="width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:600;flex-shrink:0">2</span><span data-i18n="qrStep2" style="color:var(--muted)">Linki daxil edib <b style="color:var(--text)">Yarat</b> düyməsinə basın</span></div>
-          <div style="display:flex;gap:10px;align-items:flex-start;font-size:0.82rem"><span style="width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:600;flex-shrink:0">3</span><span data-i18n="qrStep3" style="color:var(--muted)">QR kodu <b style="color:var(--text)">PNG</b> kimi yükləyib çap edin</span></div>
-        </div>
+
       </div>
     </div>
   </div>
@@ -1877,26 +1903,26 @@ renderThemePage = function() {
 };
 
 // ── QR ──
-function generateQRCode() {
-  var url = document.getElementById('qr-url-input').value.trim();
-  if (!url) { showToast('Link daxil edin'); return; }
+function generateQRCode(autoUrl) {
+  var url = autoUrl || document.getElementById('qr-url-input').value.trim();
+  if (!url) {
+    // URL yoxdursa, serverin öz /menu URL-ini avtomatik yığ
+    url = window.location.origin + '/menu';
+    document.getElementById('qr-url-input').value = url;
+  }
   try {
     var canvas = document.getElementById('qr-canvas');
-    new QRious({ element:canvas, value:url, size:220, foreground:'#1C1917', background:'#FFFFFF', level:'H', padding:18 });
-    document.getElementById('qr-placeholder').style.display = 'none';
+    new QRious({ element: canvas, value: url, size: 220, foreground: '#1C1917', background: '#FFFFFF', level: 'H', padding: 16 });
     canvas.style.display = 'block';
-    var actions = document.getElementById('qr-actions');
-    actions.style.display = 'flex';
     document.getElementById('qr-url-display').textContent = url;
-    showToast('QR kod yaradıldı');
   } catch(e) { showToast('QR yaratmaq alınmadı'); }
 }
 function downloadQRCode() {
   var canvas = document.getElementById('qr-canvas');
-  if (canvas.style.display==='none') { showToast('Əvvəlcə QR yaradın'); return; }
+  if (!canvas.width) { showToast('Əvvəlcə QR yaradın'); return; }
   var a = document.createElement('a');
   a.href = canvas.toDataURL('image/png');
-  a.download = 'aroma-menu-qr.png';
+  a.download = 'ucbucaq-menu-qr.png';
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -2340,8 +2366,6 @@ function applyI18n(lang) {
   // 21. QR hissəsi
   var qrGenBtn = document.querySelector('button[onclick="generateQRCode()"]');
   if (qrGenBtn) qrGenBtn.textContent = az ? 'Yarat' : 'Generate';
-  var qrPlaceholderSpan = document.querySelector('#qr-placeholder span:last-child');
-  if (qrPlaceholderSpan) qrPlaceholderSpan.textContent = az ? 'Link daxil edin' : 'Enter link';
 
   // 22. Drawer ətraflı məlumat label-ləri
   document.querySelectorAll('label:not([id])').forEach(function(lbl) {
@@ -2677,6 +2701,7 @@ function showPage(id, el) {
   if (id === 'analytics')  renderAnalytics();
   if (id === 'print')      renderPrintPage();
   if (id === 'settings')   { renderSettingsPage(); setTimeout(updateAdminThemeBtns, 50); }
+  if (id === 'qr')         { setTimeout(function(){ generateQRCode(); }, 100); }
 }
 
 // ══════════════════════════════════════════
