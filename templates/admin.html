@@ -547,62 +547,34 @@ input[type=file] { display:none; }
 
   <!-- QR -->
   <div class="page" id="page-qr">
-    <div class="page-header"><h2 class="page-title" data-i18n="nav_qr">QR Kod</h2></div>
+    <div class="page-header"><h2 class="page-title" data-i18n="nav_qr">QR Kodlar</h2></div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;max-width:860px;align-items:start">
-
-      <!-- Sol: QR görüntüsü -->
-      <div class="card" style="display:flex;flex-direction:column;align-items:center;padding:2rem;gap:1.25rem">
-        <div style="font-size:0.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;align-self:flex-start">📷 Menyu QR Kodu</div>
-
-        <!-- QR wrapper — ağ fon, kənar padding, logo -->
-        <div id="qr-frame" style="background:#fff;border-radius:18px;padding:18px;box-shadow:0 4px 24px rgba(0,0,0,0.10);display:flex;flex-direction:column;align-items:center;gap:10px">
-          <canvas id="qr-canvas" style="border-radius:8px;display:block"></canvas>
-          <div style="font-size:0.68rem;font-weight:700;color:#1C1917;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px">Menyu üçün skan edin</div>
-        </div>
-
-        <!-- Düymələr -->
-        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;width:100%">
-          <button class="btn btn-primary" onclick="downloadQRCode()" style="flex:1;min-width:120px">⬇️ PNG yüklə</button>
-          <button class="btn btn-ghost" onclick="copyQrLink()" style="flex:1;min-width:120px">🔗 Linki kopyala</button>
-        </div>
-
-        <div id="qr-url-display" style="font-size:0.72rem;color:var(--muted);word-break:break-all;text-align:center;max-width:260px;line-height:1.5"></div>
+    <!-- Base URL input (superadmin üçün) -->
+    <div class="card" style="max-width:680px;margin-bottom:1.25rem;padding:1rem 1.25rem">
+      <div style="font-size:0.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:0.65rem">🌐 Server URL</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="text" id="qr-base-url" placeholder="https://sizin-sayt.com" style="flex:1;font-size:0.83rem">
+        <button class="btn btn-primary btn-sm" onclick="reloadQRCards()">Yenilə</button>
       </div>
+      <p style="font-size:0.72rem;color:var(--muted);margin-top:0.5rem">
+        Hər istifadəçi üçün ayrı menyu URL-i: <b>/menu/&lt;slug&gt;</b>
+      </p>
+    </div>
 
-      <!-- Sağ: Link redaktəsi + məlumat -->
-      <div style="display:flex;flex-direction:column;gap:1rem">
+    <!-- İstifadəçi QR kartları -->
+    <div id="qr-users-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.25rem;max-width:960px"></div>
 
-        <div class="card">
-          <div style="font-size:0.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:0.75rem">🔗 Menyu linki</div>
-          <div style="display:flex;gap:8px;align-items:center">
-            <input type="text" id="qr-url-input" placeholder="https://sizin-sayt.com/menu" style="flex:1;font-size:0.83rem">
-            <button class="btn btn-primary" onclick="generateQRCode()">Yarat</button>
-          </div>
-          <p style="font-size:0.72rem;color:var(--muted);margin-top:0.6rem;line-height:1.5">
-            QR skan ediləndə bu link avtomatik açılır.<br>
-            Render, Heroku və ya öz serverinizin URL-ini daxil edin.
-          </p>
+    <!-- Slug redaktə modal -->
+    <div id="slug-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:200;align-items:center;justify-content:center">
+      <div style="background:var(--card);border-radius:20px;padding:1.75rem;width:340px;max-width:92vw;box-shadow:0 16px 48px rgba(0,0,0,0.25)">
+        <h3 style="margin-bottom:1rem;font-size:1rem">🔗 Slug redaktə et</h3>
+        <p style="font-size:0.8rem;color:var(--muted);margin-bottom:0.75rem">İstifadəçi: <b id="slug-edit-username"></b></p>
+        <input type="text" id="slug-edit-input" placeholder="menu-slug" style="width:100%;margin-bottom:1rem;font-size:0.88rem">
+        <p style="font-size:0.72rem;color:var(--muted);margin-bottom:1rem">Yalnız latın hərfləri, rəqəmlər, tire (-) istifadə edin.</p>
+        <div style="display:flex;gap:8px;justify-content:flex-end">
+          <button class="btn btn-ghost btn-sm" onclick="closeSlugModal()">Ləğv et</button>
+          <button class="btn btn-primary btn-sm" onclick="saveSlug()">Yadda saxla</button>
         </div>
-
-        <div class="card" style="background:rgba(201,168,76,0.06);border-color:rgba(201,168,76,0.25)">
-          <div style="font-size:0.72rem;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:0.75rem">💡 Necə istifadə etmək olar?</div>
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <div style="display:flex;gap:10px;align-items:flex-start;font-size:0.82rem">
-              <span style="width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:700;flex-shrink:0">1</span>
-              <span style="color:var(--muted);line-height:1.5">Serverin URL-ini yuxarıdakı xanaya daxil edin (məs: <b style="color:var(--text)">https://ucbucaq.onrender.com/menu</b>)</span>
-            </div>
-            <div style="display:flex;gap:10px;align-items:flex-start;font-size:0.82rem">
-              <span style="width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:700;flex-shrink:0">2</span>
-              <span style="color:var(--muted);line-height:1.5"><b style="color:var(--text)">PNG yüklə</b> düyməsi ilə QR şəklini endirin</span>
-            </div>
-            <div style="display:flex;gap:10px;align-items:flex-start;font-size:0.82rem">
-              <span style="width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:700;flex-shrink:0">3</span>
-              <span style="color:var(--muted);line-height:1.5">QR kodu çap edib masaya qoyun — müştəri skan edəndə <b style="color:var(--text)">birbaşa menyuya</b> keçir</span>
-            </div>
-          </div>
-        </div>
-
       </div>
     </div>
   </div>
@@ -1891,37 +1863,143 @@ renderThemePage = function() {
   loadCustomCssInput();
 };
 
-// ── QR ──
-function generateQRCode(autoUrl) {
-  var url = autoUrl || document.getElementById('qr-url-input').value.trim();
-  if (!url) {
-    // URL yoxdursa, serverin öz /menu URL-ini avtomatik yığ
-    url = window.location.origin + '/menu';
-    document.getElementById('qr-url-input').value = url;
-  }
-  try {
-    var canvas = document.getElementById('qr-canvas');
-    new QRious({ element: canvas, value: url, size: 220, foreground: '#1C1917', background: '#FFFFFF', level: 'H', padding: 16 });
-    canvas.style.display = 'block';
-    document.getElementById('qr-url-display').textContent = url;
-  } catch(e) { showToast('QR yaratmaq alınmadı'); }
+// ── QR — İSTİFADƏÇİ ƏSASLI ──
+
+var _qrUsers = {};   // { username: { slug, url, role } }
+var _editingSlugUser = null;
+
+function _getBaseUrl() {
+  var inp = document.getElementById('qr-base-url');
+  var val = inp ? inp.value.trim() : '';
+  if (!val) val = window.location.origin;
+  return val.replace(/\/$/, '');
 }
-function downloadQRCode() {
-  var canvas = document.getElementById('qr-canvas');
-  if (!canvas.width) { showToast('Əvvəlcə QR yaradın'); return; }
+
+function reloadQRCards() {
+  var grid = document.getElementById('qr-users-grid');
+  if (!grid) return;
+  grid.innerHTML = '<p style="color:var(--muted);font-size:0.85rem">Yüklənir...</p>';
+  fetch('/api/users').then(function(r){ return r.json(); }).then(function(users){
+    _qrUsers = users;
+    renderQRCards();
+  }).catch(function(){
+    grid.innerHTML = '<p style="color:var(--muted);font-size:0.85rem">Yüklənmə xətası</p>';
+  });
+}
+
+function renderQRCards() {
+  var grid = document.getElementById('qr-users-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  var base = _getBaseUrl();
+  var keys = Object.keys(_qrUsers);
+  if (!keys.length) {
+    grid.innerHTML = '<p style="color:var(--muted);font-size:0.85rem">İstifadəçi yoxdur</p>';
+    return;
+  }
+  var sess = JSON.parse(sessionStorage.getItem('cafe_admin_session') || '{}');
+  var currentRole = sess.role || 'manager';
+
+  keys.forEach(function(uname) {
+    var u = _qrUsers[uname];
+    var slug = u.slug || uname;
+    var menuUrl = base + '/menu/' + slug;
+    var roleLabel = u.role === 'superadmin' ? '👑 Superadmin' : u.role === 'admin' ? '🔧 Admin' : '👤 Manager';
+
+    var card = document.createElement('div');
+    card.className = 'card';
+    card.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:1rem;padding:1.5rem;';
+    card.id = 'qr-card-' + uname;
+
+    // Canvas ID must be unique per user
+    var canvasId = 'qr-canvas-' + uname;
+
+    card.innerHTML =
+      '<div style="width:100%;display:flex;justify-content:space-between;align-items:center">' +
+        '<div>' +
+          '<div style="font-weight:600;font-size:0.9rem">' + uname + '</div>' +
+          '<div style="font-size:0.72rem;color:var(--muted);margin-top:2px">' + roleLabel + '</div>' +
+        '</div>' +
+        (currentRole === 'superadmin' ?
+          '<button class="btn btn-ghost btn-sm" onclick="openSlugModal(\'' + uname + '\',\'' + slug + '\')">✏️ Slug</button>'
+          : '') +
+      '</div>' +
+      // QR frame
+      '<div style="background:#fff;border-radius:14px;padding:14px;box-shadow:0 4px 20px rgba(0,0,0,0.10);display:flex;flex-direction:column;align-items:center;gap:8px">' +
+        '<canvas id="' + canvasId + '" style="border-radius:6px;display:block"></canvas>' +
+        '<div style="font-size:0.62rem;font-weight:700;color:#1C1917;letter-spacing:1.2px;text-transform:uppercase">Menyu üçün skan edin</div>' +
+      '</div>' +
+      // URL display
+      '<div style="font-size:0.7rem;color:var(--muted);word-break:break-all;text-align:center;line-height:1.5;max-width:240px">' + menuUrl + '</div>' +
+      // Buttons
+      '<div style="display:flex;gap:8px;width:100%">' +
+        '<button class="btn btn-primary btn-sm" style="flex:1" onclick="downloadQRForUser(\'' + uname + '\',\'' + slug + '\')">⬇️ PNG</button>' +
+        '<button class="btn btn-ghost btn-sm" style="flex:1" onclick="copyLinkForUser(\'' + menuUrl + '\')">🔗 Kopyala</button>' +
+      '</div>';
+
+    grid.appendChild(card);
+
+    // Draw QR
+    try {
+      var canvas = document.getElementById(canvasId);
+      new QRious({ element: canvas, value: menuUrl, size: 200, foreground: '#1C1917', background: '#FFFFFF', level: 'H', padding: 14 });
+    } catch(e) {}
+  });
+}
+
+function downloadQRForUser(uname, slug) {
+  var canvas = document.getElementById('qr-canvas-' + uname);
+  if (!canvas || !canvas.width) { showToast('QR tapılmadı'); return; }
   var a = document.createElement('a');
   a.href = canvas.toDataURL('image/png');
-  a.download = 'ucbucaq-menu-qr.png';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  a.download = 'menu-qr-' + slug + '.png';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
   showToast('PNG yükləndi');
 }
-function copyQrLink() {
-  var url = document.getElementById('qr-url-input').value.trim();
-  if (!url) { showToast('Link yoxdur'); return; }
-  navigator.clipboard.writeText(url).then(function(){ showToast('Link kopyalandı'); }).catch(function(){ showToast('Kopyalamaq alınmadı'); });
+
+function copyLinkForUser(url) {
+  navigator.clipboard.writeText(url)
+    .then(function(){ showToast('✅ Link kopyalandı'); })
+    .catch(function(){ showToast('Kopyalamaq alınmadı'); });
 }
+
+function openSlugModal(uname, currentSlug) {
+  _editingSlugUser = uname;
+  document.getElementById('slug-edit-username').textContent = uname;
+  document.getElementById('slug-edit-input').value = currentSlug;
+  document.getElementById('slug-modal').style.display = 'flex';
+}
+
+function closeSlugModal() {
+  document.getElementById('slug-modal').style.display = 'none';
+  _editingSlugUser = null;
+}
+
+function saveSlug() {
+  if (!_editingSlugUser) return;
+  var newSlug = document.getElementById('slug-edit-input').value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  if (!newSlug) { showToast('Keçərsiz slug'); return; }
+  fetch('/api/users/' + _editingSlugUser + '/slug', {
+    method: 'PUT',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({slug: newSlug})
+  }).then(function(r){ return r.json(); }).then(function(d){
+    if (d.ok) {
+      showToast('✅ Slug yeniləndi');
+      closeSlugModal();
+      reloadQRCards();
+    } else {
+      showToast('❌ ' + (d.error || 'Xəta'));
+    }
+  }).catch(function(){ showToast('Bağlantı xətası'); });
+}
+
+// Köhnə funksiyalar (geriyə uyğunluq üçün saxlanılır)
+function generateQRCode() { reloadQRCards(); }
+function downloadQRCode() { showToast('İstifadəçi kartından yükləyin'); }
+function copyQrLink() { showToast('İstifadəçi kartından kopyalayın'); }
+
+
 
 // ── SETTINGS ──
 
@@ -2459,6 +2537,8 @@ function renderUsersList() {
       var u = users[key];
       var isMe = key === currentUser;
       var roleLabel = u.role === 'superadmin' ? 'Superadmin' : u.role === 'admin' ? 'Administrator' : 'Manager';
+      var menuUrl = u.menu_url || '';
+      var slug = u.slug || key;
       var row = document.createElement('div');
       row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:0.65rem 0;border-bottom:1px solid var(--border);';
       row.innerHTML =
@@ -2467,6 +2547,7 @@ function renderUsersList() {
           '<div>' +
             '<div style="font-weight:500;font-size:0.88rem">' + key + (isMe ? ' <span style="font-size:0.65rem;padding:1px 6px;background:#eaf3de;color:#3B6D11;border-radius:5px">Siz</span>' : '') + '</div>' +
             '<div style="font-size:0.73rem;color:var(--muted)">' + roleLabel + '</div>' +
+            (menuUrl ? '<a href="' + menuUrl + '" target="_blank" style="font-size:0.68rem;color:var(--accent);text-decoration:none;">/menu/' + slug + ' ↗</a>' : '') +
           '</div>' +
         '</div>' +
         '<div style="display:flex;gap:6px">' +
@@ -2690,7 +2771,12 @@ function showPage(id, el) {
   if (id === 'analytics')  renderAnalytics();
   if (id === 'print')      renderPrintPage();
   if (id === 'settings')   { renderSettingsPage(); setTimeout(updateAdminThemeBtns, 50); }
-  if (id === 'qr')         { setTimeout(function(){ generateQRCode(); }, 100); }
+  if (id === 'qr')         {
+    // Base URL-i avtomatik doldur
+    var baseInp = document.getElementById('qr-base-url');
+    if (baseInp && !baseInp.value) baseInp.value = window.location.origin;
+    setTimeout(reloadQRCards, 100);
+  }
 }
 
 // ══════════════════════════════════════════
