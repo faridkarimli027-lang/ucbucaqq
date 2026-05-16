@@ -920,29 +920,34 @@ function loadLogo() {
   }
 }
 
-// Flask API-dən data yüklə — server yoxdursa localStorage ilə davam et
-fetch('/api/data')
-  .then(r => { if (!r.ok) throw new Error('no server'); return r.json(); })
-  .then(data => {
-    if (data && (data.items !== undefined || data.categories)) {
-      // Server datası həmişə üstündür — localStorage-ı yenilə
-      STATE = normalizeItems(data);
-      try { localStorage.setItem('cafe_data', JSON.stringify(STATE)); } catch(e) {}
-    }
-    if (STATE.theme && STATE.theme.vars) applyThemeVars();
-    if (STATE.font) applyFontVars();
-    if (STATE.layout) applyLayoutVars();
-    if (STATE.customCss) applyCustomCss();
-    render();
-    loadLogo();
-    trackMenuOpen();
-  })
-  .catch(() => {
-    // Server yoxdur — localStorage-dakı data ilə işlə, xəta göstərmə
-    render();
-    loadLogo();
-    trackMenuOpen();
-  });
+// Flask API-dən data yüklə — slug varsa /api/data/<slug>, yoxdursa /api/data
+(function() {
+  // URL-dən slug oxu: /menu/<slug>
+  var pathParts = window.location.pathname.split('/').filter(Boolean);
+  var slug = (pathParts[0] === 'menu' && pathParts[1]) ? pathParts[1] : null;
+  var apiUrl = slug ? '/api/data/' + slug : '/api/data';
+
+  fetch(apiUrl)
+    .then(r => { if (!r.ok) throw new Error('no server'); return r.json(); })
+    .then(data => {
+      if (data && (data.items !== undefined || data.categories)) {
+        STATE = normalizeItems(data);
+        try { localStorage.setItem('cafe_data', JSON.stringify(STATE)); } catch(e) {}
+      }
+      if (STATE.theme && STATE.theme.vars) applyThemeVars();
+      if (STATE.font) applyFontVars();
+      if (STATE.layout) applyLayoutVars();
+      if (STATE.customCss) applyCustomCss();
+      render();
+      loadLogo();
+      trackMenuOpen();
+    })
+    .catch(() => {
+      render();
+      loadLogo();
+      trackMenuOpen();
+    });
+})();
 
 // Kateqoriya barı — mouse drag scroll
 (function() {
