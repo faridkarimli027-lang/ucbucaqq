@@ -579,16 +579,7 @@ input[type=file] { display:none; }
           <p style="font-size:0.72rem;color:var(--muted);line-height:1.5">Bu link yalnız <strong>sizin</strong> menyunuzu açır. QR kodu bu linkdən yaranır.</p>
         </div>
 
-        <div class="card">
-          <div style="font-size:0.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:0.75rem">🔗 Xüsusi link (istəyə görə)</div>
-          <div style="display:flex;gap:8px;align-items:center">
-            <input type="text" id="qr-url-input" placeholder="https://sizin-sayt.com/menu?user=..." style="flex:1;font-size:0.83rem">
-            <button class="btn btn-primary" onclick="generateQRCode()">Yarat</button>
-          </div>
-          <p style="font-size:0.72rem;color:var(--muted);margin-top:0.6rem;line-height:1.5">
-            Boş buraxsanız, avtomatik öz linkiniz istifadə olunur.
-          </p>
-        </div>
+
 
         <div class="card" style="background:rgba(201,168,76,0.04);border-color:rgba(201,168,76,0.2)">
           <div style="font-size:0.72rem;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:0.75rem">💡 Necə istifadə etmək olar?</div>
@@ -1910,8 +1901,7 @@ function getMyMenuUrl() {
 }
 
 function generateQRCode(autoUrl) {
-  var customInput = document.getElementById('qr-url-input').value.trim();
-  var url = autoUrl || customInput || getMyMenuUrl();
+  var url = autoUrl || getMyMenuUrl();
 
   // User link kutucuğunu doldur
   var userLinkEl = document.getElementById('qr-user-link');
