@@ -505,7 +505,10 @@
         <div class="modal-name" id="modal-name"></div>
         <div class="modal-price" id="modal-price"></div>
       </div>
-      <div class="modal-desc" id="modal-desc"></div>
+      <div id="modal-ingredients-wrap" style="margin-bottom:1.2rem;display:none">
+        <div style="font-size:0.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px" id="modal-ingredients-label">Tərkib</div>
+        <div class="modal-desc" id="modal-desc" style="margin-bottom:0"></div>
+      </div>
       <div class="modal-tags" id="modal-tags"></div>
     </div>
   </div>
@@ -660,8 +663,17 @@ function openModal(item) {
   }
   document.getElementById('modal-name').textContent = lang === 'az' ? item.nameAz : (item.nameEn || item.nameAz);
   document.getElementById('modal-price').textContent = item.price + ' ₼';
-  document.getElementById('modal-desc').textContent =
-    lang === 'az' ? (item.detailsAz || item.descAz) : (item.detailsEn || item.descEn || item.detailsAz);
+  // Tərkib
+  const ingredWrap = document.getElementById('modal-ingredients-wrap');
+  const ingredEl = document.getElementById('modal-desc');
+  const ingredLabel = document.getElementById('modal-ingredients-label');
+  if (item.ingredients && item.ingredients.trim()) {
+    ingredEl.textContent = item.ingredients;
+    ingredLabel.textContent = lang === 'az' ? 'Tərkib' : 'Ingredients';
+    ingredWrap.style.display = '';
+  } else {
+    ingredWrap.style.display = 'none';
+  }
   const tagsEl = document.getElementById('modal-tags');
   tagsEl.innerHTML = '';
   if (item.badge && item.badge !== 'null') {
@@ -674,16 +686,6 @@ function openModal(item) {
     span.style.color = item.badge === 'new' ? '#3B6D11' : '#993C1D';
     span.textContent = label;
     tagsEl.appendChild(span);
-  }
-  if (item.tags) {
-    item.tags.split(',').forEach(t => {
-      const s = t.trim();
-      if (!s) return;
-      const span = document.createElement('span');
-      span.className = 'modal-tag';
-      span.textContent = s;
-      tagsEl.appendChild(span);
-    });
   }
   overlay.classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -706,6 +708,8 @@ function setLang(l) {
   if (inp) inp.placeholder = l === 'az' ? 'Axtar...' : 'Search...';
   const emptyEl = document.getElementById('search-empty');
   if (emptyEl) emptyEl.innerHTML = '<span>🍽️</span>' + (l === 'az' ? 'Heç nə tapılmadı' : 'Nothing found');
+  const ingredLabel = document.getElementById('modal-ingredients-label');
+  if (ingredLabel) ingredLabel.textContent = l === 'az' ? 'Tərkib' : 'Ingredients';
   if (searchQuery) renderSearch(); else render();
 }
 
@@ -782,7 +786,7 @@ function render() {
         ? `<span class="badge badge-hot">${lang==='az'?'Məşhur':'Popular'}</span>`
         : '';
       const name = lang === 'az' ? item.nameAz : (item.nameEn || item.nameAz);
-      const desc = lang === 'az' ? item.descAz : (item.descEn || item.descAz);
+      const desc = item.ingredients || '';
       const _itemImg1 = item.image || item.img || '';
       const iconHtml = _itemImg1
         ? `<img src="${_itemImg1}" style="width:50px;height:50px;border-radius:12px;object-fit:cover;flex-shrink:0">`
@@ -839,9 +843,8 @@ function renderSearch() {
   const allItems = getItems('all');
   const matched = allItems.filter(item => {
     const name = ((item.nameAz || '') + ' ' + (item.nameEn || '')).toLowerCase();
-    const desc = ((item.descAz || '') + ' ' + (item.descEn || '')).toLowerCase();
-    const tags = (item.tags || '').toLowerCase();
-    return name.includes(searchQuery) || desc.includes(searchQuery) || tags.includes(searchQuery);
+    const ingredients = (item.ingredients || '').toLowerCase();
+    return name.includes(searchQuery) || ingredients.includes(searchQuery);
   });
 
   sec.innerHTML = '';
@@ -866,7 +869,7 @@ function renderSearch() {
         ? `<span class="badge badge-hot">${lang==='az'?'Məşhur':'Popular'}</span>`
         : '';
       const name = lang === 'az' ? item.nameAz : (item.nameEn || item.nameAz);
-      const desc = lang === 'az' ? item.descAz : (item.descEn || item.descAz);
+      const desc = item.ingredients || '';
 
       // Highlight matched text
       const hlName = highlight(name, searchQuery);
