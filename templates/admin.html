@@ -956,6 +956,18 @@ async function loadFromServer() {
     var data = await r.json();
     if (!data || !data.categories) throw new Error('empty response');
     STATE = data;
+    // Serverdən gələn tema/font/layout-u localStorage-ə yaz və tətbiq et
+    if (STATE.theme && STATE.theme.id) {
+      localStorage.setItem(themeKey(), STATE.theme.id);
+      if (STATE.theme.vars) localStorage.setItem(themeVKey(), JSON.stringify(STATE.theme.vars));
+    }
+    if (STATE.font && STATE.font.id) {
+      localStorage.setItem(fontKey(), STATE.font.id);
+      localStorage.setItem(fontVKey(), JSON.stringify({body: STATE.font.body, heading: STATE.font.heading}));
+    }
+    if (STATE.layout) {
+      localStorage.setItem(layoutKey(), STATE.layout);
+    }
     try { localStorage.setItem('cafe_data', JSON.stringify(STATE)); } catch(e) {}
     if (STATE.cafe && !STATE.cafe.logo) {
       var localLogo = localStorage.getItem('cafe_logo');
@@ -1556,7 +1568,7 @@ function buildPrintHTML(autoPrint) {
 
   // accent color from theme
   var themeVars = {};
-  try { themeVars = JSON.parse(localStorage.getItem('cafe_theme_vars')||'{}'); } catch(e){}
+  try { themeVars = JSON.parse(localStorage.getItem(themeVKey())||'{}'); } catch(e){}
   var accent = themeVars.accent || 'var(--accent)';
 
   var itemsHTML = '';
@@ -1726,7 +1738,16 @@ var THEMES = [
   }
 ];
 
-function getActiveThemeId() { return localStorage.getItem('cafe_theme') || 'classic'; }
+function getCurrentUsername() {
+  try { return JSON.parse(sessionStorage.getItem('cafe_admin_session') || '{}').username || 'guest'; } catch(e) { return 'guest'; }
+}
+function themeKey()  { return 'cafe_theme_'      + getCurrentUsername(); }
+function themeVKey() { return 'cafe_theme_vars_'  + getCurrentUsername(); }
+function fontKey()   { return 'cafe_font_'        + getCurrentUsername(); }
+function fontVKey()  { return 'cafe_font_vars_'   + getCurrentUsername(); }
+function layoutKey() { return 'cafe_layout_'      + getCurrentUsername(); }
+
+function getActiveThemeId() { return localStorage.getItem(themeKey()) || 'classic'; }
 
 function renderThemePage() {
   var activeId = getActiveThemeId();
@@ -1773,8 +1794,8 @@ function applyTheme(themeId) {
   var theme = null;
   for (var i=0; i<THEMES.length; i++) { if (THEMES[i].id === themeId) { theme = THEMES[i]; break; } }
   if (!theme) return;
-  localStorage.setItem('cafe_theme', themeId);
-  localStorage.setItem('cafe_theme_vars', JSON.stringify(theme.vars));
+  localStorage.setItem(themeKey(), themeId);
+  localStorage.setItem(themeVKey(), JSON.stringify(theme.vars));
   // STATE-ə əlavə et ki JSONBin-ə yazılsın
   STATE.theme = { id: themeId, vars: theme.vars };
   saveData();
@@ -1794,7 +1815,7 @@ var FONTS = [
 ];
 
 function renderFontGrid() {
-  var activeId = localStorage.getItem('cafe_font') || 'dmsans';
+  var activeId = localStorage.getItem(fontKey()) || 'dmsans';
   var grid = document.getElementById('font-grid');
   grid.innerHTML = '';
   FONTS.forEach(function(font) {
@@ -1818,8 +1839,8 @@ function renderFontGrid() {
 function applyFont(fontId) {
   var font = FONTS.find(function(f){ return f.id===fontId; });
   if (!font) return;
-  localStorage.setItem('cafe_font', fontId);
-  localStorage.setItem('cafe_font_vars', JSON.stringify({body: font.body, heading: font.heading}));
+  localStorage.setItem(fontKey(), fontId);
+  localStorage.setItem(fontVKey(), JSON.stringify({body: font.body, heading: font.heading}));
   STATE.font = { id: fontId, body: font.body, heading: font.heading };
   saveData();
   renderFontGrid();
@@ -1834,7 +1855,7 @@ var LAYOUTS = [
 ];
 
 function renderLayoutGrid() {
-  var activeId = localStorage.getItem('cafe_layout') || 'list';
+  var activeId = localStorage.getItem(layoutKey()) || 'list';
   var grid = document.getElementById('layout-grid');
   grid.innerHTML = '';
   LAYOUTS.forEach(function(layout) {
@@ -1853,7 +1874,7 @@ function renderLayoutGrid() {
 }
 
 function applyLayout(layoutId) {
-  localStorage.setItem('cafe_layout', layoutId);
+  localStorage.setItem(layoutKey(), layoutId);
   STATE.layout = layoutId;
   saveData();
   renderLayoutGrid();
