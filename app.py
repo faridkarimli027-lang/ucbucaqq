@@ -10,10 +10,6 @@ app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'ucbucaq-restoran-secret-2025')
 
 # ── EMAIL KONFİQURASİYASI ──
-# Railway dashboard-da bu dəyişənləri əlavə edin:
-#   MAIL_USERNAME = sizin@gmail.com
-#   MAIL_PASSWORD = Gmail App Password (boşluqsuz 16 simvol)
-#   APP_BASE_URL  = https://sizin-app-adı.up.railway.app
 _mail_user = os.environ.get('MAIL_USERNAME', 'ferid94kerinli@gmail.com')
 _mail_pass = os.environ.get('MAIL_PASSWORD', 'pojfqbiblhupjmig')
 app.config['MAIL_SERVER']         = 'smtp.gmail.com'
@@ -28,51 +24,97 @@ APP_BASE_URL = os.environ.get('APP_BASE_URL', 'https://ucbucaqq-production.up.ra
 mail = Mail(app)
 
 # ── QOVLUQLAR ──
-BASE_DIR    = os.path.dirname(os.path.abspath(__file__))
-DATA_FILE   = os.path.join(BASE_DIR, 'data.json')
-UPLOAD_DIR  = os.path.join(BASE_DIR, 'static', 'uploads')
-ALLOWED_EXT = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
-os.makedirs(UPLOAD_DIR, exist_ok=True)
+BASE_DIR        = os.path.dirname(os.path.abspath(__file__))
+USERS_FILE      = os.path.join(BASE_DIR, 'users.json')        # İstifadəçi hesabları
+USER_DATA_DIR   = os.path.join(BASE_DIR, 'user_data')         # Hər userin öz data qovluğu
+UPLOAD_DIR      = os.path.join(BASE_DIR, 'static', 'uploads')
+ALLOWED_EXT     = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 
-# ── DATA ──
-DEFAULT_DATA = {
-    "cafe": {
-        "nameAz": "Üçbucaq Restoran", "nameEn": "Üçbucaq Restaurant",
-        "addrAz": "Bakı, Nizami küçəsi 42", "addrEn": "42 Nizami Street, Baku",
-        "phone": "+994 50 000 00 00", "icon": "☕",
-        "whatsapp": "", "instagram": "", "tiktok": "", "maps": ""
-    },
-    "categories": [
-        {"id":"coffee","labelAz":"Qəhvə","labelEn":"Coffee","bg":"#FFF3E0"},
-        {"id":"tea",   "labelAz":"Çay",   "labelEn":"Tea",   "bg":"#E8F5E9"},
-        {"id":"food",  "labelAz":"Yemək", "labelEn":"Food",  "bg":"#FFF8E1"},
-        {"id":"dessert","labelAz":"Desert","labelEn":"Desserts","bg":"#FCE4EC"}
-    ],
-    "items": [],
-    "theme": {"id":"classic","vars":{"accent":"#E8622A","bg":"#FDF8F3","card":"#FFFFFF","text":"#1A1210","muted":"#8B7355","border":"rgba(180,140,100,0.18)","header":"#E8622A","headerText":"#ffffff"}},
-    "users": {
-        "admin": {"password": generate_password_hash("admin123"), "role": "superadmin"}
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+os.makedirs(USER_DATA_DIR, exist_ok=True)
+
+# ────────────────────────────────────────────────────────────────
+# İSTİFADƏÇİ HESABLARI  (users.json — yalnız login məlumatları)
+# ────────────────────────────────────────────────────────────────
+DEFAULT_USERS = {
+    "admin": {
+        "password": generate_password_hash("admin123"),
+        "role": "superadmin",
+        "email": ""
     }
 }
 
-def load_data():
-    if os.path.exists(DATA_FILE):
-        with open(DATA_FILE, 'r', encoding='utf-8') as f:
+def load_users():
+    if os.path.exists(USERS_FILE):
+        with open(USERS_FILE, 'r', encoding='utf-8') as f:
             return json.load(f)
-    save_data(DEFAULT_DATA)
-    return DEFAULT_DATA.copy()
+    save_users(DEFAULT_USERS)
+    return DEFAULT_USERS.copy()
 
-def save_data(data):
-    with open(DATA_FILE, 'w', encoding='utf-8') as f:
+def save_users(users):
+    with open(USERS_FILE, 'w', encoding='utf-8') as f:
+        json.dump(users, f, ensure_ascii=False, indent=2)
+
+# ────────────────────────────────────────────────────────────────
+# HƏR USERİN ÖZ DATA FAYLI  (user_data/<username>.json)
+# ────────────────────────────────────────────────────────────────
+DEFAULT_MENU_DATA = {
+    "cafe": {
+        "nameAz": "Restoran", "nameEn": "Restaurant",
+        "addrAz": "Bakı", "addrEn": "Baku",
+        "phone": "", "icon": "☕",
+        "whatsapp": "", "instagram": "", "tiktok": "", "maps": ""
+    },
+    "categories": [
+        {"id": "coffee",  "labelAz": "Qəhvə",  "labelEn": "Coffee",   "bg": "#FFF3E0"},
+        {"id": "tea",     "labelAz": "Çay",     "labelEn": "Tea",      "bg": "#E8F5E9"},
+        {"id": "food",    "labelAz": "Yemək",   "labelEn": "Food",     "bg": "#FFF8E1"},
+        {"id": "dessert", "labelAz": "Desert",  "labelEn": "Desserts", "bg": "#FCE4EC"}
+    ],
+    "items": [],
+    "theme": {
+        "id": "classic",
+        "vars": {
+            "accent": "#E8622A", "bg": "#FDF8F3", "card": "#FFFFFF",
+            "text": "#1A1210", "muted": "#8B7355",
+            "border": "rgba(180,140,100,0.18)",
+            "header": "#E8622A", "headerText": "#ffffff"
+        }
+    },
+    "stats": {"clicks": {}, "opens": {"total": 0, "dates": {}}, "cats": {}}
+}
+
+def user_data_file(username):
+    """Hər userin öz data faylının yolu."""
+    safe = secure_filename(username)          # qovluq traversal-dan qoruma
+    return os.path.join(USER_DATA_DIR, f"{safe}.json")
+
+def load_user_data(username):
+    path = user_data_file(username)
+    if os.path.exists(path):
+        with open(path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    # İlk giriş — default data ilə başla
+    import copy
+    data = copy.deepcopy(DEFAULT_MENU_DATA)
+    save_user_data(username, data)
+    return data
+
+def save_user_data(username, data):
+    path = user_data_file(username)
+    with open(path, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
+# ── KÖMƏKÇİ ──
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXT
 
-# ── ABUNƏLİK SİSTEMİ ──
+def current_user():
+    return session.get('user')
 
-
-# ── AUTH ──
+# ────────────────────────────────────────────────────────────────
+# AUTH DEKORATORları
+# ────────────────────────────────────────────────────────────────
 def login_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -91,28 +133,9 @@ def superadmin_required(f):
         return f(*args, **kwargs)
     return decorated
 
-# ── SLUG HELPERS ──
-import re as _re
-
-def _slugify(text):
-    """Convert username to URL-safe slug."""
-    text = text.lower().strip()
-    text = _re.sub(r'[^a-z0-9]+', '-', text)
-    return text.strip('-') or 'menu'
-
-def _ensure_slugs():
-    """Make sure every user has a menu_slug in data.json."""
-    db = load_data()
-    changed = False
-    for username, info in db.get('users', {}).items():
-        if not info.get('menu_slug'):
-            info['menu_slug'] = _slugify(username)
-            changed = True
-    if changed:
-        save_data(db)
-    return db
-
-# ── SƏHIFƏLƏR ──
+# ────────────────────────────────────────────────────────────────
+# SƏHIFƏLƏR
+# ────────────────────────────────────────────────────────────────
 @app.route('/')
 def index():
     return redirect(url_for('menu'))
@@ -121,91 +144,19 @@ def index():
 def menu():
     return render_template('menu.html')
 
-@app.route('/menu/<slug>')
-def menu_by_slug(slug):
-    """Per-user menu page — passes slug to template."""
-    return render_template('menu.html', menu_slug=slug)
-
 @app.route('/admin')
 def admin():
     return render_template('admin.html')
 
-
-# ── USER SLUG API ──
-@app.route('/api/users/<username>/slug', methods=['GET'])
-@login_required
-def api_get_user_slug(username):
-    """Return the menu_slug for a user."""
-    if username != session.get('user') and session.get('role') not in ('superadmin', 'admin'):
-        return jsonify({'error': 'İcazə yoxdur'}), 403
-    db = _ensure_slugs()
-    user = db.get('users', {}).get(username)
-    if not user:
-        return jsonify({'error': 'Tapılmadı'}), 404
-    return jsonify({'slug': user.get('menu_slug', _slugify(username))})
-
-@app.route('/api/users/<username>/slug', methods=['PUT'])
-@login_required
-def api_set_user_slug(username):
-    """Update the menu_slug for a user (superadmin or self)."""
-    if username != session.get('user') and session.get('role') != 'superadmin':
-        return jsonify({'error': 'İcazə yoxdur'}), 403
-    data = request.json or {}
-    new_slug = _slugify(data.get('slug', username))
-    if not new_slug:
-        return jsonify({'error': 'Keçərsiz slug'}), 400
-    db = load_data()
-    # check uniqueness
-    for uname, info in db.get('users', {}).items():
-        if uname != username and info.get('menu_slug') == new_slug:
-            return jsonify({'error': 'Bu slug artıq istifadə olunur'}), 400
-    if username not in db.get('users', {}):
-        return jsonify({'error': 'Tapılmadı'}), 404
-    db['users'][username]['menu_slug'] = new_slug
-    save_data(db)
-    return jsonify({'ok': True, 'slug': new_slug})
-
-@app.route('/api/users/all-slugs', methods=['GET'])
-@login_required
-def api_all_slugs():
-    """Return username → slug + menu URL for all visible users (superadmin)."""
-    db = _ensure_slugs()
-    base = APP_BASE_URL.rstrip('/')
-    result = {}
-    current_role = session.get('role', 'manager')
-    for uname, info in db.get('users', {}).items():
-        if info.get('role') == 'superadmin' and current_role != 'superadmin':
-            continue
-        slug = info.get('menu_slug', _slugify(uname))
-        result[uname] = {
-            'slug': slug,
-            'url': f'{base}/menu/{slug}',
-            'role': info.get('role', 'manager')
-        }
-    return jsonify(result)
-
-@app.route('/api/data/<slug>')
-def api_get_data_by_slug(slug):
-    """Public endpoint: return menu data for a given slug."""
-    db = load_data()
-    # find user with this slug
-    for uname, info in db.get('users', {}).items():
-        if info.get('menu_slug') == slug:
-            break
-    else:
-        # slug not found — return default shared data
-        pass
-    safe = {k: v for k, v in db.items() if k != 'users'}
-    return jsonify(safe)
-
-# ── AUTH API ──
+# ────────────────────────────────────────────────────────────────
+# AUTH API
+# ────────────────────────────────────────────────────────────────
 @app.route('/api/login', methods=['POST'])
 def api_login():
     data = request.json
     username = data.get('username', '').strip()
     password = data.get('password', '')
-    db = load_data()
-    users = db.get('users', {})
+    users = load_users()
     if username in users and check_password_hash(users[username]['password'], password):
         role = users[username].get('role', 'manager')
         session['user'] = username
@@ -221,30 +172,44 @@ def api_logout():
 @app.route('/api/me')
 def api_me():
     if 'user' in session:
-        return jsonify({'ok': True, 'username': session['user'], 'role': session.get('role','manager')})
+        return jsonify({'ok': True, 'username': session['user'], 'role': session.get('role', 'manager')})
     return jsonify({'ok': False}), 401
 
-# ── DATA API ──
+# ────────────────────────────────────────────────────────────────
+# DATA API  — hər user yalnız öz datasını görür/dəyişir
+# ────────────────────────────────────────────────────────────────
 @app.route('/api/data')
 def api_get_data():
-    db = load_data()
-    # İstifadəçi şifrələrini göndərmə
-    safe = {k: v for k, v in db.items() if k != 'users'}
-    return jsonify(safe)
+    """
+    Menyu səhifəsi üçün ictimai endpoint.
+    URL-dən ?user=<username> keçilə bilər; keçilməzsə oturum istifadəçisi götürülür.
+    """
+    username = request.args.get('user') or current_user()
+    if not username:
+        return jsonify({'error': 'İstifadəçi müəyyən edilmədi'}), 400
+    users = load_users()
+    if username not in users:
+        return jsonify({'error': 'İstifadəçi tapılmadı'}), 404
+    db = load_user_data(username)
+    return jsonify(db)
 
 @app.route('/api/data', methods=['PUT'])
 @login_required
 def api_save_data():
+    """Yalnız giriş etmiş istifadəçi öz datasını dəyişə bilər."""
+    username = current_user()
     incoming = request.json
-    db = load_data()
-    # users-i saxla, qalan hər şeyi yenilə
+    db = load_user_data(username)
+    allowed_keys = {'cafe', 'categories', 'items', 'theme'}
     for key in incoming:
-        if key != 'users':
+        if key in allowed_keys:
             db[key] = incoming[key]
-    save_data(db)
+    save_user_data(username, db)
     return jsonify({'ok': True})
 
-# ── ŞƏKIL YÜKLƏMƏ ──
+# ────────────────────────────────────────────────────────────────
+# ŞƏKIL YÜKLƏMƏ
+# ────────────────────────────────────────────────────────────────
 @app.route('/api/upload', methods=['POST'])
 @login_required
 def api_upload():
@@ -270,113 +235,131 @@ def api_upload_logo():
     if not allowed_file(file.filename):
         return jsonify({'error': 'Yalnız şəkil faylları'}), 400
     ext = file.filename.rsplit('.', 1)[1].lower()
-    filename = 'logo.' + ext
+    # Hər userin loqosu ayrı saxlanır
+    username = current_user()
+    filename = f'logo_{secure_filename(username)}.{ext}'
     file.save(os.path.join(UPLOAD_DIR, filename))
     url = '/static/uploads/' + filename + '?v=' + str(int(datetime.now().timestamp()))
-    db = load_data()
+    db = load_user_data(username)
     db['cafe']['logo'] = url
-    save_data(db)
+    save_user_data(username, db)
     return jsonify({'ok': True, 'url': url})
 
-# ── İSTİFADƏÇİ API ──
+# ────────────────────────────────────────────────────────────────
+# İSTİFADƏÇİ İDARƏETMƏSİ  (yalnız superadmin)
+# ────────────────────────────────────────────────────────────────
 @app.route('/api/users', methods=['GET'])
 @login_required
 def api_get_users():
-    db = load_data()
+    users = load_users()
     current_role = session.get('role', 'manager')
-    users = {}
-    _ensure_slugs()
-    db = load_data()
-    base = APP_BASE_URL.rstrip('/')
-    for k, v in db.get('users', {}).items():
-        # Superadmin hesabları yalnız superadmin-ə görünsün
+    result = {}
+    for k, v in users.items():
         if v.get('role') == 'superadmin' and current_role != 'superadmin':
             continue
-        slug = v.get('menu_slug', _slugify(k))
-        users[k] = {
-            'role': v.get('role', 'manager'),
-            'slug': slug,
-            'menu_url': f'{base}/menu/{slug}'
-        }
-    return jsonify(users)
+        result[k] = {'role': v.get('role', 'manager'), 'email': v.get('email', '')}
+    return jsonify(result)
 
 @app.route('/api/users', methods=['POST'])
-@login_required
+@superadmin_required
 def api_add_user():
     data = request.json
-    username = data.get('username','').strip().lower()
-    password = data.get('password','')
-    role = data.get('role','manager')
+    username = data.get('username', '').strip().lower()
+    password = data.get('password', '')
+    role     = data.get('role', 'manager')
     if not username or not password:
         return jsonify({'error': 'Ad və şifrə tələb olunur'}), 400
     if role == 'superadmin':
         return jsonify({'error': 'Superadmin rolu əlavə edilə bilməz'}), 403
-    db = load_data()
-    if username in db.get('users', {}):
+    users = load_users()
+    if username in users:
         return jsonify({'error': 'Bu istifadəçi artıq mövcuddur'}), 400
-    db.setdefault('users', {})[username] = {
-        'password': generate_password_hash(password), 'role': role
-    }
-    save_data(db)
+    users[username] = {'password': generate_password_hash(password), 'role': role, 'email': ''}
+    save_users(users)
+    # Yeni userin boş data faylını yarad
+    import copy
+    save_user_data(username, copy.deepcopy(DEFAULT_MENU_DATA))
     return jsonify({'ok': True})
 
 @app.route('/api/users/<username>', methods=['DELETE'])
-@login_required
+@superadmin_required
 def api_delete_user(username):
-    if username == session.get('user'):
+    if username == current_user():
         return jsonify({'error': 'Özünüzü silə bilməzsiniz'}), 400
-    db = load_data()
-    db.get('users', {}).pop(username, None)
-    save_data(db)
+    users = load_users()
+    users.pop(username, None)
+    save_users(users)
+    # İstəsəniz data faylını da silin:
+    path = user_data_file(username)
+    if os.path.exists(path):
+        os.remove(path)
     return jsonify({'ok': True})
 
 @app.route('/api/users/<username>/role', methods=['PUT'])
-@login_required
+@superadmin_required
 def api_update_user_role(username):
-    if session.get('role') != 'superadmin':
-        return jsonify({'error': 'Yalnız superadmin rol dəyişə bilər'}), 403
     data = request.json or {}
-    role = data.get('role', 'admin')
-    db = load_data()
-    if username not in db.get('users', {}):
+    role = data.get('role', 'manager')
+    users = load_users()
+    if username not in users:
         return jsonify({'error': 'İstifadəçi tapılmadı'}), 404
-    db['users'][username]['role'] = role
-    save_data(db)
+    users[username]['role'] = role
+    save_users(users)
     return jsonify({'ok': True})
 
 @app.route('/api/users/<username>/set-password', methods=['PUT'])
 @login_required
 def api_set_user_password(username):
-    if session.get('role') != 'superadmin' and session.get('user') != username:
+    # Superadmin hər kəsin şifrəsini dəyişə bilər; özü isə yalnız özününkü
+    if session.get('role') != 'superadmin' and current_user() != username:
         return jsonify({'error': 'İcazə yoxdur'}), 403
     data = request.json or {}
     password = data.get('password', '')
     if not password or len(password) < 6:
         return jsonify({'error': 'Şifrə ən az 6 simvol olmalıdır'}), 400
-    db = load_data()
-    if username not in db.get('users', {}):
+    users = load_users()
+    if username not in users:
         return jsonify({'error': 'İstifadəçi tapılmadı'}), 404
-    db['users'][username]['password'] = generate_password_hash(password)
-    save_data(db)
-    return jsonify({'ok': True})
-@login_required
-def api_change_password(username):
-    if username != session.get('user'):
-        return jsonify({'error': 'İcazə yoxdur'}), 403
-    data = request.json
-    db = load_data()
-    user = db.get('users', {}).get(username)
-    if not user or not check_password_hash(user['password'], data.get('current','')):
-        return jsonify({'error': 'Cari şifrə yanlışdır'}), 400
-    db['users'][username]['password'] = generate_password_hash(data.get('new',''))
-    save_data(db)
+    users[username]['password'] = generate_password_hash(password)
+    save_users(users)
     return jsonify({'ok': True})
 
-# ── STATİSTİKA ──
+@app.route('/api/users/<username>/email', methods=['PUT'])
+@login_required
+def api_update_user_email(username):
+    if username != current_user() and session.get('role') != 'superadmin':
+        return jsonify({'error': 'İcazə yoxdur'}), 403
+    data = request.json or {}
+    email = data.get('email', '').strip().lower()
+    users = load_users()
+    if username not in users:
+        return jsonify({'error': 'İstifadəçi tapılmadı'}), 404
+    users[username]['email'] = email
+    save_users(users)
+    return jsonify({'ok': True})
+
+@app.route('/api/users/<username>/info', methods=['GET'])
+@login_required
+def api_get_user_info(username):
+    if username != current_user() and session.get('role') != 'superadmin':
+        return jsonify({'error': 'İcazə yoxdur'}), 403
+    users = load_users()
+    user = users.get(username)
+    if not user:
+        return jsonify({'error': 'Tapılmadı'}), 404
+    return jsonify({'username': username, 'email': user.get('email', ''), 'role': user.get('role', 'manager')})
+
+# ────────────────────────────────────────────────────────────────
+# STATİSTİKA  — hər userin öz statistikası
+# ────────────────────────────────────────────────────────────────
 @app.route('/api/stats', methods=['POST'])
 def api_track_stats():
-    data = request.json
-    db = load_data()
+    data = request.json or {}
+    # Menyu səhifəsindən ?user= ilə kim göndərdi bilirik
+    username = data.get('user') or request.args.get('user') or current_user()
+    if not username:
+        return jsonify({'ok': False, 'error': 'user tələb olunur'}), 400
+    db = load_user_data(username)
     stats = db.setdefault('stats', {'clicks': {}, 'opens': {'total': 0, 'dates': {}}, 'cats': {}})
     if data.get('type') == 'click':
         key = data.get('item', '')
@@ -388,90 +371,90 @@ def api_track_stats():
     elif data.get('type') == 'cat':
         key = data.get('cat', '')
         stats['cats'][key] = stats['cats'].get(key, 0) + 1
-    save_data(db)
+    save_user_data(username, db)
     return jsonify({'ok': True})
 
 @app.route('/api/stats')
 @login_required
 def api_get_stats():
-    db = load_data()
+    db = load_user_data(current_user())
     return jsonify(db.get('stats', {'clicks': {}, 'opens': {'total': 0, 'dates': {}}, 'cats': {}}))
 
 @app.route('/api/stats', methods=['DELETE'])
 @login_required
 def api_clear_stats():
-    db = load_data()
+    username = current_user()
+    db = load_user_data(username)
     db['stats'] = {'clicks': {}, 'opens': {'total': 0, 'dates': {}}, 'cats': {}}
-    save_data(db)
+    save_user_data(username, db)
     return jsonify({'ok': True})
 
-# ── ŞİFRƏ SIFIRLAMA ──
-
+# ────────────────────────────────────────────────────────────────
+# ŞİFRƏ SIFIRLAMA
+# ────────────────────────────────────────────────────────────────
 @app.route('/api/forgot-password', methods=['POST'])
 def api_forgot_password():
     data = request.json or {}
-    email = data.get('email', '').strip().lower()
-    if not email:
-        return jsonify({'error': 'Email tələb olunur'}), 400
+    username_or_email = data.get('email', '').strip().lower()
+    if not username_or_email:
+        return jsonify({'error': 'Email və ya istifadəçi adı tələb olunur'}), 400
 
-    db = load_data()
-    users = db.get('users', {})
+    users = load_users()
 
-    # Admin istifadəçisini götür (ilk admin və ya ilk user)
+    # email və ya username ilə axtar
     matched_user = None
-    for username, info in users.items():
-        if info.get('role') == 'admin':
-            matched_user = username
+    for uname, info in users.items():
+        if uname == username_or_email or info.get('email', '').lower() == username_or_email:
+            matched_user = uname
             break
-    if not matched_user and users:
-        matched_user = list(users.keys())[0]
 
     if not matched_user:
         return jsonify({'error': 'İstifadəçi tapılmadı'}), 400
 
-    # Token yarat (1 saatlıq)
-    token = secrets.token_urlsafe(32)
-    expires = (datetime.now() + timedelta(hours=1)).isoformat()
-    reset_tokens = db.setdefault('reset_tokens', {})
-    reset_tokens[token] = {'username': matched_user, 'expires': expires, 'used': False}
-    save_data(db)
+    recipient_email = users[matched_user].get('email') or username_or_email
+    if '@' not in recipient_email:
+        return jsonify({'error': 'Bu istifadəçinin email-i qeydiyyatda yoxdur'}), 400
 
-    # Email göndər
+    # Reset token
+    token   = secrets.token_urlsafe(32)
+    expires = (datetime.now() + timedelta(hours=1)).isoformat()
+
+    # Tokenləri reset_tokens.json-da saxla (users.json-dan ayrı)
+    reset_file = os.path.join(BASE_DIR, 'reset_tokens.json')
+    try:
+        with open(reset_file, 'r', encoding='utf-8') as f:
+            reset_tokens = json.load(f)
+    except Exception:
+        reset_tokens = {}
+
+    reset_tokens[token] = {'username': matched_user, 'expires': expires, 'used': False}
+    with open(reset_file, 'w', encoding='utf-8') as f:
+        json.dump(reset_tokens, f, ensure_ascii=False, indent=2)
+
     reset_link = f"{APP_BASE_URL}/reset-password?token={token}"
     try:
         msg = Message(
             subject='QR Menu — Şifrə sıfırlama',
-            recipients=[email],
+            recipients=[recipient_email],
             html=f"""
-            <div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;padding:32px;background:#FDF8F3;border-radius:16px">
-              <div style="text-align:center;margin-bottom:24px">
-                <div style="font-size:2.5rem">☕</div>
-                <h2 style="color:#C9A84C;margin:8px 0">Üçbucaq Restoran</h2>
-                <p style="color:#8B7355;font-size:0.9rem">Admin Panel</p>
-              </div>
-              <div style="background:#fff;border-radius:12px;padding:24px;border:1px solid rgba(180,140,100,0.2)">
-                <h3 style="margin-top:0;color:#1A1210">Şifrə sıfırlama sorğusu</h3>
-                <p style="color:#555;line-height:1.6">
-                  Salam <strong>{matched_user}</strong>, admin paneliniz üçün şifrə sıfırlama sorğusu alındı.
-                  Aşağıdakı düyməyə basaraq yeni şifrə təyin edə bilərsiniz.
-                </p>
-                <p style="text-align:center;margin:28px 0">
-                  <a href="{reset_link}"
-                     style="background:#C9A84C;color:#fff;text-decoration:none;padding:14px 32px;border-radius:10px;font-weight:600;display:inline-block;font-size:1rem">
-                    Şifrəni sıfırla
-                  </a>
-                </p>
-                <p style="color:#999;font-size:0.78rem;text-align:center">
-                  Bu link <strong>1 saat</strong> ərzində istifadə edilə bilər.<br>
-                  Bu sorğu siz tərəfindən edilməyibsə, bu emaili nəzərə almayın.
-                </p>
-              </div>
-              <p style="color:#ccc;font-size:0.7rem;text-align:center;margin-top:16px">
-                Üçbucaq Restoran Admin Panel &copy; {datetime.now().year}
+            <div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;padding:32px;
+                        background:#FDF8F3;border-radius:16px">
+              <h2 style="color:#C9A84C">QR Menu Admin</h2>
+              <p>Salam <strong>{matched_user}</strong>,</p>
+              <p>Şifrə sıfırlama sorğusu alındı. Aşağıdakı düyməyə basın:</p>
+              <p style="text-align:center;margin:28px 0">
+                <a href="{reset_link}"
+                   style="background:#C9A84C;color:#fff;text-decoration:none;
+                          padding:14px 32px;border-radius:10px;font-weight:600">
+                  Şifrəni sıfırla
+                </a>
+              </p>
+              <p style="color:#999;font-size:0.8rem">
+                Bu link <strong>1 saat</strong> ərzində etibarlıdır.
               </p>
             </div>
             """,
-            body=f"Şifrə sıfırlama linki: {reset_link}\n\nBu link 1 saat ərzində etibarlıdır."
+            body=f"Şifrə sıfırlama linki: {reset_link}"
         )
         mail.send(msg)
     except Exception as e:
@@ -483,22 +466,26 @@ def api_forgot_password():
 @app.route('/reset-password')
 def reset_password_page():
     token = request.args.get('token', '')
-    db = load_data()
-    token_data = db.get('reset_tokens', {}).get(token)
+    reset_file = os.path.join(BASE_DIR, 'reset_tokens.json')
+    try:
+        with open(reset_file, 'r', encoding='utf-8') as f:
+            reset_tokens = json.load(f)
+    except Exception:
+        reset_tokens = {}
+    token_data = reset_tokens.get(token)
     if not token_data:
-        return "<h2>❌ Keçərsiz link</h2><p>Bu link mövcud deyil və ya artıq istifadə olunub.</p><a href='/admin'>Admin Panelə qayıt</a>"
+        return "<h2>❌ Keçərsiz link</h2><a href='/admin'>Admin Panelə qayıt</a>"
     if token_data.get('used'):
-        return "<h2>❌ Artıq istifadə edilib</h2><p>Bu link artıq istifadə olunub.</p><a href='/admin'>Admin Panelə qayıt</a>"
+        return "<h2>❌ Artıq istifadə edilib</h2><a href='/admin'>Admin Panelə qayıt</a>"
     if datetime.fromisoformat(token_data['expires']) < datetime.now():
-        return "<h2>⏰ Linkın vaxtı bitib</h2><p>Bu link 1 saatlıq etibarlıdır. Yenidən sorğu edin.</p><a href='/admin'>Admin Panelə qayıt</a>"
-    # Token etibarlıdır — reset forması göstər (admin.html-ə yönləndir)
+        return "<h2>⏰ Linkın vaxtı bitib</h2><a href='/admin'>Admin Panelə qayıt</a>"
     return redirect(f"/admin?reset_token={token}")
 
 
 @app.route('/api/reset-password', methods=['POST'])
 def api_reset_password():
-    data = request.json or {}
-    token = data.get('token', '').strip()
+    data         = request.json or {}
+    token        = data.get('token', '').strip()
     new_password = data.get('password', '')
 
     if not token or not new_password:
@@ -506,55 +493,78 @@ def api_reset_password():
     if len(new_password) < 6:
         return jsonify({'error': 'Şifrə ən az 6 simvol olmalıdır'}), 400
 
-    db = load_data()
-    token_data = db.get('reset_tokens', {}).get(token)
+    reset_file = os.path.join(BASE_DIR, 'reset_tokens.json')
+    try:
+        with open(reset_file, 'r', encoding='utf-8') as f:
+            reset_tokens = json.load(f)
+    except Exception:
+        reset_tokens = {}
 
+    token_data = reset_tokens.get(token)
     if not token_data:
         return jsonify({'error': 'Keçərsiz link'}), 400
     if token_data.get('used'):
         return jsonify({'error': 'Bu link artıq istifadə olunub'}), 400
     if datetime.fromisoformat(token_data['expires']) < datetime.now():
-        return jsonify({'error': 'Linkın vaxtı bitib. Yenidən sorğu edin'}), 400
+        return jsonify({'error': 'Linkın vaxtı bitib'}), 400
 
     username = token_data['username']
-    if username not in db.get('users', {}):
+    users = load_users()
+    if username not in users:
         return jsonify({'error': 'İstifadəçi tapılmadı'}), 400
 
-    db['users'][username]['password'] = generate_password_hash(new_password)
-    db['reset_tokens'][token]['used'] = True
-    save_data(db)
+    users[username]['password'] = generate_password_hash(new_password)
+    save_users(users)
+
+    reset_tokens[token]['used'] = True
+    with open(reset_file, 'w', encoding='utf-8') as f:
+        json.dump(reset_tokens, f, ensure_ascii=False, indent=2)
 
     return jsonify({'ok': True, 'message': 'Şifrə uğurla yeniləndi'})
 
 
-# ── İSTİFADƏÇİ EMAIL YENİLƏ ──
-@app.route('/api/users/<username>/email', methods=['PUT'])
-@login_required
-def api_update_user_email(username):
-    if username != session.get('user') and session.get('role') != 'admin':
-        return jsonify({'error': 'İcazə yoxdur'}), 403
-    data = request.json or {}
-    email = data.get('email', '').strip().lower()
-    db = load_data()
-    if username not in db.get('users', {}):
-        return jsonify({'error': 'İstifadəçi tapılmadı'}), 404
-    db['users'][username]['email'] = email
-    save_data(db)
-    return jsonify({'ok': True})
+# ────────────────────────────────────────────────────────────────
+# MİQRASİYA: köhnə data.json-u admin-ə köçür (bir dəfəlik)
+# ────────────────────────────────────────────────────────────────
+def migrate_legacy():
+    """
+    Köhnə tək fayllı data.json varsa:
+      - users.json-u yarat (users bölməsindən)
+      - admin.json-u yarat (qalan bölmədən)
+    Sonra data.json-u saxlayırıq amma artıq oxunmur.
+    """
+    legacy = os.path.join(BASE_DIR, 'data.json')
+    if not os.path.exists(legacy):
+        return
+    if os.path.exists(USERS_FILE):
+        return   # artıq miqrasiya edilib
 
+    with open(legacy, 'r', encoding='utf-8') as f:
+        old = json.load(f)
 
-@app.route('/api/users/<username>/info', methods=['GET'])
-@login_required
-def api_get_user_info(username):
-    if username != session.get('user') and session.get('role') != 'admin':
-        return jsonify({'error': 'İcazə yoxdur'}), 403
-    db = load_data()
-    user = db.get('users', {}).get(username)
-    if not user:
-        return jsonify({'error': 'Tapılmadı'}), 404
-    return jsonify({'username': username, 'email': user.get('email', ''), 'role': user.get('role', 'manager')})
+    # users.json yarat
+    raw_users = old.pop('users', {})
+    new_users = {}
+    for uname, uinfo in raw_users.items():
+        new_users[uname] = {
+            'password': uinfo.get('password', generate_password_hash('admin123')),
+            'role':     uinfo.get('role', 'manager'),
+            'email':    uinfo.get('email', '')
+        }
+    if not new_users:
+        new_users = DEFAULT_USERS.copy()
+    save_users(new_users)
 
+    # köhnə data-nı admin kullanıcısına ver
+    admin_name = next(
+        (u for u, i in new_users.items() if i.get('role') == 'superadmin'),
+        list(new_users.keys())[0]
+    )
+    old.pop('reset_tokens', None)
+    save_user_data(admin_name, old)
+    print(f"[migrate] Köhnə data.json → {admin_name}.json olaraq köçürüldü.")
 
+migrate_legacy()
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
