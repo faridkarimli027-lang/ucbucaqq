@@ -71,7 +71,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .login-btn:hover { background:var(--accent-dark); }
 .login-btn:active { transform:scale(0.98); }
 .login-btn:disabled { opacity:0.6;cursor:not-allowed; }
-
+.login-hint { text-align:center;font-size:0.72rem;color:rgba(255,255,255,0.2);margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.06); }
 
 /* SIDEBAR */
 .sidebar { width:220px;background:var(--sidebar);display:flex;flex-direction:column;padding:1.5rem 0;position:fixed;top:0;left:0;bottom:0;z-index:10; }
@@ -211,7 +211,7 @@ input[type=file] { display:none; }
       <button class="login-btn" id="login-btn" onclick="doLogin()">Daxil ol</button>
       <button type="button" onclick="openForgotModal()" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:0.75rem;font-family:'DM Sans',sans-serif;cursor:pointer;margin-top:4px;text-align:center;width:100%;padding:4px;transition:color 0.15s" onmouseover="this.style.color='rgba(255,255,255,0.75)'" onmouseout="this.style.color='rgba(255,255,255,0.4)'">🔑 Şifrəmi unutdum</button>
     </div>
-
+    <div class="login-hint">Varsayılan: admin / admin123</div>
   </div>
 </div>
 
@@ -783,16 +783,17 @@ function doForgotPassword() {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({email: email})
-  }).then(function(r){ return r.json(); }).then(function(d){
+  }).then(function(r){ return r.json().then(function(d){ return {status: r.status, data: d}; }); }).then(function(res){
+    var d = res.data;
     if (d.ok) {
       document.getElementById('forgot-step1').style.display = 'none';
       document.getElementById('forgot-step2').style.display = '';
     } else {
-      msgEl.textContent = d.error || 'Xəta baş verdi';
+      msgEl.textContent = d.error || ('Xəta: ' + res.status);
       btn.disabled = false; btn.textContent = 'Link göndər';
     }
-  }).catch(function(){
-    msgEl.textContent = 'Server bağlantı xətası';
+  }).catch(function(err){
+    msgEl.textContent = 'Bağlantı xətası: ' + (err.message || err);
     btn.disabled = false; btn.textContent = 'Link göndər';
   });
 }
