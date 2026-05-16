@@ -52,9 +52,6 @@ DEFAULT_DATA = {
     }
 }
 
-SUBSCRIPTION_PRICE = 9.99
-TRIAL_DAYS = 14
-
 def load_data():
     if os.path.exists(DATA_FILE):
         with open(DATA_FILE, 'r', encoding='utf-8') as f:
@@ -70,57 +67,7 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXT
 
 # ── ABUNƏLİK SİSTEMİ ──
-SUBSCRIPTION_PRICE = 9.99
-TRIAL_DAYS = 14
 
-def get_subscription(db):
-    sub = db.get('subscription')
-    if not sub:
-        now = datetime.now()
-        sub = {
-            'status': 'trial',
-            'trial_start': now.isoformat(),
-            'trial_end': (now + timedelta(days=TRIAL_DAYS)).isoformat(),
-            'paid_until': None,
-            'payment_history': []
-        }
-        db['subscription'] = sub
-        save_data(db)
-    return sub
-
-def check_subscription_status(db):
-    sub = get_subscription(db)
-    now = datetime.now()
-    if sub['status'] == 'trial':
-        trial_end = datetime.fromisoformat(sub['trial_end'])
-        if now > trial_end:
-            sub['status'] = 'expired'
-            db['subscription'] = sub
-            save_data(db)
-    elif sub['status'] == 'active':
-        if sub.get('paid_until'):
-            paid_until = datetime.fromisoformat(sub['paid_until'])
-            if now > paid_until:
-                sub['status'] = 'expired'
-                db['subscription'] = sub
-                save_data(db)
-    return sub
-
-def subscription_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        if 'user' not in session:
-            return jsonify({'error': 'Giriş tələb olunur'}), 401
-        db = load_data()
-        sub = check_subscription_status(db)
-        if sub['status'] == 'expired':
-            return jsonify({
-                'error': 'subscription_expired',
-                'message': 'Abunəliyinizin müddəti bitib. Xidmətdən istifadə etmək üçün ödəniş edin.',
-                'price': SUBSCRIPTION_PRICE
-            }), 402
-        return f(*args, **kwargs)
-    return decorated
 
 # ── AUTH ──
 def login_required(f):
@@ -189,7 +136,7 @@ def api_get_data():
     return jsonify(safe)
 
 @app.route('/api/data', methods=['PUT'])
-@subscription_required
+@login_required
 def api_save_data():
     incoming = request.json
     db = load_data()
@@ -202,7 +149,7 @@ def api_save_data():
 
 # ── ŞƏKIL YÜKLƏMƏ ──
 @app.route('/api/upload', methods=['POST'])
-@subscription_required
+@login_required
 def api_upload():
     if 'file' not in request.files:
         return jsonify({'error': 'Fayl tapılmadı'}), 400
@@ -218,7 +165,7 @@ def api_upload():
     return jsonify({'ok': True, 'url': url})
 
 @app.route('/api/upload/logo', methods=['POST'])
-@subscription_required
+@login_required
 def api_upload_logo():
     if 'file' not in request.files:
         return jsonify({'error': 'Fayl tapılmadı'}), 400
@@ -502,94 +449,6 @@ def api_get_user_info(username):
         return jsonify({'error': 'Tapılmadı'}), 404
     return jsonify({'username': username, 'email': user.get('email', ''), 'role': user.get('role', 'manager')})
 
-
-
-# ── ABUNƏLİK API ──
-@app.route('/api/subscription')
-@login_required
-def api_get_subscription():
-    db = load_data()
-    sub = check_subscription_status(db)
-    now = datetime.now()
-    days_left = None
-    if sub['status'] == 'trial':
-        trial_end = datetime.fromisoformat(sub['trial_end'])
-        days_left = max(0, (trial_end - now).days)
-    elif sub['status'] == 'active' and sub.get('paid_until'):
-        paid_until = datetime.fromisoformat(sub['paid_until'])
-        days_left = max(0, (paid_until - now).days)
-    return jsonify({
-        'status': sub['status'],
-        'trial_start': sub.get('trial_start'),
-        'trial_end': sub.get('trial_end'),
-        'paid_until': sub.get('paid_until'),
-        'days_left': days_left,
-        'price': SUBSCRIPTION_PRICE,
-        'trial_days': TRIAL_DAYS,
-        'payment_history': sub.get('payment_history', [])
-    })
-
-@app.route('/api/subscription/activate', methods=['POST'])
-@superadmin_required
-def api_activate_subscription():
-    """
-    Manual ödəniş aktivasiyası (superadmin üçün).
-    Body: { "months": 1, "note": "Stripe payment #xxx" }
-    """
-    data = request.json or {}
-    months = int(data.get('months', 1))
-    note = data.get('note', 'Manual aktivasiya')
-    db = load_data()
-    sub = check_subscription_status(db)
-    now = datetime.now()
-
-    if sub['status'] in ('active',) and sub.get('paid_until'):
-        base = datetime.fromisoformat(sub['paid_until'])
-        if base > now:
-            new_until = base + timedelta(days=30 * months)
-        else:
-            new_until = now + timedelta(days=30 * months)
-    else:
-        new_until = now + timedelta(days=30 * months)
-
-    sub['status'] = 'active'
-    sub['paid_until'] = new_until.isoformat()
-    sub.setdefault('payment_history', []).append({
-        'date': now.isoformat(),
-        'amount': round(SUBSCRIPTION_PRICE * months, 2),
-        'months': months,
-        'until': new_until.isoformat(),
-        'note': note
-    })
-    db['subscription'] = sub
-    save_data(db)
-    return jsonify({'ok': True, 'paid_until': new_until.isoformat(), 'status': 'active'})
-
-@app.route('/api/subscription/cancel', methods=['POST'])
-@superadmin_required
-def api_cancel_subscription():
-    db = load_data()
-    sub = db.get('subscription', {})
-    sub['status'] = 'expired'
-    db['subscription'] = sub
-    save_data(db)
-    return jsonify({'ok': True})
-
-@app.route('/api/subscription/reset-trial', methods=['POST'])
-@superadmin_required
-def api_reset_trial():
-    """Yalnız test üçün — trial-ı yenidən başladır."""
-    db = load_data()
-    now = datetime.now()
-    db['subscription'] = {
-        'status': 'trial',
-        'trial_start': now.isoformat(),
-        'trial_end': (now + timedelta(days=TRIAL_DAYS)).isoformat(),
-        'paid_until': None,
-        'payment_history': db.get('subscription', {}).get('payment_history', [])
-    }
-    save_data(db)
-    return jsonify({'ok': True})
 
 
 if __name__ == '__main__':
