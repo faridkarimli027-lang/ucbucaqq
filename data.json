@@ -1,0 +1,1622 @@
+{
+  "cafe": {
+    "addrAz": "Cəlil Məmmədquluzadə, 84",
+    "addrEn": "Calil Mammadguluzada, 84",
+    "icon": "🔥",
+    "instagram": "uchbucaq_restoran",
+    "logo": "data:image/jpeg;base64,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m3MC/qoG+t1Z5XxRcSspu5idCHMje1zQXPD8uZ3e+cO8WmUgCw03v2sKwiJnFVRTOayRjGOczOASDZpbd3pf2T1YpZ+mTqwiOZxU51K2Oqgp6oM0Y6USB4HTvIntJHvddDEcZfPkbkijjYbtiiaWsvzJFy5xPVxJ9VOvomM4XkkrGQ5pLfQnwtGrgXB93xDuyBbUO13X5wDgMdXUSRzNd9ax8VO8AlscwaHBziNtQ0DrmKktqzx0RyvmIuo4jfJh5hdDTZPhsxwLCebDm0K72CccT0VEY6eGkbmDRI/I/M/Lexce8tfU7AblReFkQYo5s8TXhmbvI3gbxg3GbkbgqzV2BxxUzqykayeimjky52gup5msJyPO4sRodiCL30Ji4wS244Oyx5KhW15kqhIGsjcNfqgW63JvubH26KX/AMWOe1n0mnpqhzPI94ka4W1F3RPbcX5FV5xu6/8Af4L8VmxEmky+V/adNUYeWT08Dng3jeLgNI8vgdmuR1uFRZHl0hcTck3J6k7r5RcjXGOdqCSXQREUzoREQBERAEREAREQBERAEREBJyYy52ECnMcWRrszT48wdrcg5/U73C58S4llqayKaZkT5Yw0ZyHAvyeUvs6zj6qFRR2o5hE8/imQ1r5jFB3jyHOdaXzNBaCGmTKDYkXtzPVdB2J5mtEsUUmVoa24cCGtaALljmk7c787WXQRdUUhtRJRYw8YuKlzY3vDmuaHZrAstl0a4aCw0N9kxzGXVeJOneyNkjzmeY84u6w1s55ttyso1EwhhZyTMfELxVsmMULpmWyyuDr3b5XFocGOcNLEjkL3XHhuOyQVr5gGPkfcOdJmNw7zCwcBqopFzasYwMIl4cfkbhMlLljMD3h/duzkRvHON2bML6XuTe3uuBmKFtTDI2OIGEgst3guQ7ML2fe4cb3FvwUei7hDaiXrcedNiklRJDAXyXz2EgHiFjYB+hI5rhosZmhpp44zaOdpbIzUttyIBN7jkf5qORNq6GEERF06EREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREB//Z",
+    "maps": "https://maps.app.goo.gl/21EaEk6wMdwLdZ7j9",
+    "nameAz": "Üçbucaq Restoran",
+    "nameEn": "Üçbucaq Restaurant",
+    "phone": "+994 10 321 46 85",
+    "tiktok": "ucbucaqrestoran",
+    "whatsapp": "+994103214685"
+  },
+  "categories": [
+    {
+      "bg": "#FFF8E1",
+      "id": "seheryemegi",
+      "labelAz": "Səhər Yeməyi",
+      "labelEn": "Breakfast"
+    },
+    {
+      "bg": "#F3E5F5",
+      "id": "soyuqqelyanaltı",
+      "labelAz": "Soyuq Qəlyanaltılar",
+      "labelEn": "Cold Appetizers"
+    },
+    {
+      "bg": "#E8F5E9",
+      "id": "salatlar",
+      "image": null,
+      "labelAz": "Salatlar",
+      "labelEn": "Salads"
+    },
+    {
+      "bg": "#FFF3E0",
+      "id": "sorbalar",
+      "labelAz": "Şorbalar",
+      "labelEn": "Soups"
+    },
+    {
+      "bg": "#F1F8E9",
+      "id": "qarnir",
+      "labelAz": "Qarnir",
+      "labelEn": "Side Dishes"
+    },
+    {
+      "bg": "#FBE9E7",
+      "id": "xemiryemekleri",
+      "labelAz": "Xəmir Yeməkləri",
+      "labelEn": "Dough Dishes"
+    },
+    {
+      "bg": "#FFF9C4",
+      "id": "qazanyemekleri",
+      "labelAz": "Qazan Yeməkləri",
+      "labelEn": "Pot Dishes"
+    },
+    {
+      "bg": "#FCE4EC",
+      "id": "sacyemekleri",
+      "labelAz": "Sac Yeməkləri",
+      "labelEn": "Saj Dishes"
+    },
+    {
+      "bg": "#FBE9E7",
+      "id": "istiyemekler",
+      "labelAz": "İsti Yeməklər",
+      "labelEn": "Hot Dishes"
+    },
+    {
+      "bg": "#FFF8E1",
+      "id": "plovlar",
+      "labelAz": "Plovlar",
+      "labelEn": "Pilafs"
+    },
+    {
+      "bg": "#FFEBEE",
+      "id": "kabablar",
+      "labelAz": "Kabablar",
+      "labelEn": "Kebabs"
+    },
+    {
+      "bg": "#E3F2FD",
+      "id": "baliqyemekleri",
+      "labelAz": "Balıq Yeməkləri",
+      "labelEn": "Fish Dishes"
+    },
+    {
+      "bg": "#F3E5F5",
+      "id": "souslar",
+      "labelAz": "Souslar",
+      "labelEn": "Sauces"
+    },
+    {
+      "bg": "#E8F5E9",
+      "id": "meyvesireleri",
+      "labelAz": "Meyvə Şirələri",
+      "labelEn": "Fruit Juices"
+    },
+    {
+      "bg": "#E1F5FE",
+      "id": "serinickiler",
+      "labelAz": "Soyuq İçkilər",
+      "labelEn": "Cold Drinks"
+    },
+    {
+      "bg": "#F9FBE7",
+      "id": "caydesertler",
+      "labelAz": "Çay / Desertlər",
+      "labelEn": "Tea & Desserts"
+    },
+    {
+      "bg": "#ECEFF1",
+      "id": "vodka",
+      "labelAz": "Vodka",
+      "labelEn": "Vodka"
+    },
+    {
+      "bg": "#FCE4EC",
+      "id": "serab",
+      "labelAz": "Şərab",
+      "labelEn": "Wine"
+    },
+    {
+      "bg": "#FFF8E1",
+      "id": "pive",
+      "labelAz": "Pivə",
+      "labelEn": "Beer"
+    },
+    {
+      "bg": "#EFEBE9",
+      "id": "viski",
+      "labelAz": "Viski",
+      "labelEn": "Whiskey"
+    }
+  ],
+  "items": [
+    {
+      "catId": "seheryemegi",
+      "nameAz": "1 nəfərlik səhər seti",
+      "nameEn": "Breakfast set for 1",
+      "descAz": "undefined",
+      "descEn": "undefined",
+      "detailsAz": "undefined",
+      "detailsEn": "undefined",
+      "price": "17",
+      "badge": "",
+      "icon": "undefined",
+      "image": "data:image/jpeg;base64,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m3MC/qoG+t1Z5XxRcSspu5idCHMje1zQXPD8uZ3e+cO8WmUgCw03v2sKwiJnFVRTOayRjGOczOASDZpbd3pf2T1YpZ+mTqwiOZxU51K2Oqgp6oM0Y6USB4HTvIntJHvddDEcZfPkbkijjYbtiiaWsvzJFy5xPVxJ9VOvomM4XkkrGQ5pLfQnwtGrgXB93xDuyBbUO13X5wDgMdXUSRzNd9ax8VO8AlscwaHBziNtQ0DrmKktqzx0RyvmIuo4jfJh5hdDTZPhsxwLCebDm0K72CccT0VEY6eGkbmDRI/I/M/Lexce8tfU7AblReFkQYo5s8TXhmbvI3gbxg3GbkbgqzV2BxxUzqykayeimjky52gup5msJyPO4sRodiCL30Ji4wS244Oyx5KhW15kqhIGsjcNfqgW63JvubH26KX/AMWOe1n0mnpqhzPI94ka4W1F3RPbcX5FV5xu6/8Af4L8VmxEmky+V/adNUYeWT08Dng3jeLgNI8vgdmuR1uFRZHl0hcTck3J6k7r5RcjXGOdqCSXQREUzoREQBERAEREAREQBERAEREBJyYy52ECnMcWRrszT48wdrcg5/U73C58S4llqayKaZkT5Yw0ZyHAvyeUvs6zj6qFRR2o5hE8/imQ1r5jFB3jyHOdaXzNBaCGmTKDYkXtzPVdB2J5mtEsUUmVoa24cCGtaALljmk7c787WXQRdUUhtRJRYw8YuKlzY3vDmuaHZrAstl0a4aCw0N9kxzGXVeJOneyNkjzmeY84u6w1s55ttyso1EwhhZyTMfELxVsmMULpmWyyuDr3b5XFocGOcNLEjkL3XHhuOyQVr5gGPkfcOdJmNw7zCwcBqopFzasYwMIl4cfkbhMlLljMD3h/duzkRvHON2bML6XuTe3uuBmKFtTDI2OIGEgst3guQ7ML2fe4cb3FvwUei7hDaiXrcedNiklRJDAXyXz2EgHiFjYB+hI5rhosZmhpp44zaOdpbIzUttyIBN7jkf5qORNq6GEERF06EREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREB//Z",
+      "tags": ""
+    },
+    {
+      "catId": "seheryemegi",
+      "id": "i002",
+      "img": "",
+      "nameAz": "2 nəfərlik səhər seti",
+      "nameEn": "Breakfast set for 2",
+      "price": 34
+    },
+    {
+      "catId": "seheryemegi",
+      "id": "i003",
+      "img": "",
+      "nameAz": "4 nəfərlik səhər seti",
+      "nameEn": "Breakfast set for 4",
+      "price": 65
+    },
+    {
+      "badge": "",
+      "catId": "soyuqqelyanaltı",
+      "descAz": "undefined",
+      "descEn": "undefined",
+      "detailsAz": "undefined",
+      "detailsEn": "undefined",
+      "icon": "undefined",
+      "image": null,
+      "nameAz": "Tərəvəz buketi (mövsümə uyğun)",
+      "nameEn": "Vegetable bouquet (seasonal)",
+      "price": "10",
+      "tags": ""
+    },
+    {
+      "catId": "soyuqqelyanaltı",
+      "id": "i010",
+      "img": "",
+      "nameAz": "Pendir assorti",
+      "nameEn": "Cheese assortment",
+      "price": 10
+    },
+    {
+      "catId": "soyuqqelyanaltı",
+      "id": "i012",
+      "img": "",
+      "nameAz": "Turşu assorti",
+      "nameEn": "Pickle assortment",
+      "price": 10
+    },
+    {
+      "catId": "soyuqqelyanaltı",
+      "id": "i013",
+      "img": "",
+      "nameAz": "Zeytun assorti",
+      "nameEn": "Olive assortment",
+      "price": 9
+    },
+    {
+      "catId": "soyuqqelyanaltı",
+      "id": "i014",
+      "img": "",
+      "nameAz": "Ağ pendir",
+      "nameEn": "White cheese",
+      "price": 4
+    },
+    {
+      "catId": "soyuqqelyanaltı",
+      "id": "i015",
+      "img": "",
+      "nameAz": "Süzmə",
+      "nameEn": "Strained yogurt",
+      "price": 4
+    },
+    {
+      "catId": "soyuqqelyanaltı",
+      "id": "i016",
+      "img": "",
+      "nameAz": "Şor",
+      "nameEn": "Shor cheese",
+      "price": 4
+    },
+    {
+      "catId": "soyuqqelyanaltı",
+      "id": "i017",
+      "img": "",
+      "nameAz": "Qatıq",
+      "nameEn": "Yogurt",
+      "price": 3
+    },
+    {
+      "catId": "soyuqqelyanaltı",
+      "id": "i018",
+      "img": "",
+      "nameAz": "Motal pendiri",
+      "nameEn": "Motal cheese",
+      "price": 8
+    },
+    {
+      "catId": "soyuqqelyanaltı",
+      "id": "i019",
+      "img": "",
+      "nameAz": "Tərəvəz sadə",
+      "nameEn": "Simple vegetables",
+      "price": 4
+    },
+    {
+      "catId": "soyuqqelyanaltı",
+      "id": "i020",
+      "img": "",
+      "nameAz": "Turşu sadə",
+      "nameEn": "Simple pickles",
+      "price": 4
+    },
+    {
+      "catId": "soyuqqelyanaltı",
+      "id": "i021",
+      "img": "",
+      "nameAz": "Blinçik ət",
+      "nameEn": "Meat blini",
+      "price": 3
+    },
+    {
+      "catId": "soyuqqelyanaltı",
+      "id": "i022",
+      "img": "",
+      "nameAz": "Haydari",
+      "nameEn": "Haydari",
+      "price": 7
+    },
+    {
+      "catId": "salatlar",
+      "id": "i030",
+      "img": "",
+      "nameAz": "Üçbucaq salatı",
+      "nameEn": "Üçbucaq salad",
+      "price": 13
+    },
+    {
+      "catId": "salatlar",
+      "id": "i031",
+      "img": "",
+      "nameAz": "Çoban salatı",
+      "nameEn": "Shepherd salad",
+      "price": 8
+    },
+    {
+      "catId": "salatlar",
+      "id": "i032",
+      "img": "",
+      "nameAz": "Yunan salatı",
+      "nameEn": "Greek salad",
+      "price": 10
+    },
+    {
+      "catId": "salatlar",
+      "id": "i033",
+      "img": "",
+      "nameAz": "Gavurdağ salatı",
+      "nameEn": "Gavurdağ salad",
+      "price": 13
+    },
+    {
+      "catId": "salatlar",
+      "id": "i034",
+      "img": "",
+      "nameAz": "Sezar salatı (toyuq)",
+      "nameEn": "Caesar salad (chicken)",
+      "price": 16
+    },
+    {
+      "catId": "salatlar",
+      "id": "i035",
+      "img": "",
+      "nameAz": "Sezar salatı (krevetka)",
+      "nameEn": "Caesar salad (shrimp)",
+      "price": 18
+    },
+    {
+      "catId": "salatlar",
+      "id": "i036",
+      "img": "",
+      "nameAz": "Vişnəli pomidor salatı",
+      "nameEn": "Cherry tomato salad",
+      "price": 13
+    },
+    {
+      "catId": "salatlar",
+      "id": "i037",
+      "img": "",
+      "nameAz": "Paytaxt salatı",
+      "nameEn": "Capital salad",
+      "price": 13
+    },
+    {
+      "catId": "salatlar",
+      "id": "i038",
+      "img": "",
+      "nameAz": "Manqal salatı",
+      "nameEn": "BBQ salad",
+      "price": 10
+    },
+    {
+      "catId": "salatlar",
+      "id": "i039",
+      "img": "",
+      "nameAz": "Xırt-xırtlı badımcan salatı",
+      "nameEn": "Crispy eggplant salad",
+      "price": 12
+    },
+    {
+      "catId": "sorbalar",
+      "id": "i040",
+      "img": "",
+      "nameAz": "Çolpa şorbası",
+      "nameEn": "Cholpa soup",
+      "price": 8
+    },
+    {
+      "catId": "sorbalar",
+      "id": "i041",
+      "img": "",
+      "nameAz": "Mərci şorbası",
+      "nameEn": "Lentil soup",
+      "price": 8
+    },
+    {
+      "catId": "sorbalar",
+      "id": "i042",
+      "img": "",
+      "nameAz": "Kremli göbələk şorbası",
+      "nameEn": "Cream mushroom soup",
+      "price": 8
+    },
+    {
+      "catId": "sorbalar",
+      "id": "i043",
+      "img": "",
+      "nameAz": "Dovğa (mövsümə uyğun)",
+      "nameEn": "Dovga (seasonal)",
+      "price": 6
+    },
+    {
+      "catId": "sorbalar",
+      "id": "i044",
+      "img": "",
+      "nameAz": "Borş",
+      "nameEn": "Borscht",
+      "price": 8
+    },
+    {
+      "catId": "sorbalar",
+      "id": "i045",
+      "img": "",
+      "nameAz": "Düşbərə",
+      "nameEn": "Dushbara",
+      "price": 9
+    },
+    {
+      "catId": "sorbalar",
+      "id": "i046",
+      "img": "",
+      "nameAz": "Əriştə şorbası",
+      "nameEn": "Noodle soup",
+      "price": 8
+    },
+    {
+      "catId": "qarnir",
+      "id": "i050",
+      "img": "",
+      "nameAz": "Düyü",
+      "nameEn": "Rice",
+      "price": 7
+    },
+    {
+      "catId": "qarnir",
+      "id": "i051",
+      "img": "",
+      "nameAz": "Qarabaşaq",
+      "nameEn": "Buckwheat",
+      "price": 7
+    },
+    {
+      "catId": "qarnir",
+      "id": "i052",
+      "img": "",
+      "nameAz": "Ev sayağı kartof",
+      "nameEn": "Home-style potatoes",
+      "price": 7
+    },
+    {
+      "catId": "qarnir",
+      "id": "i053",
+      "img": "",
+      "nameAz": "Kartof free",
+      "nameEn": "French fries",
+      "price": 7
+    },
+    {
+      "catId": "qarnir",
+      "id": "i054",
+      "img": "",
+      "nameAz": "Spagetti",
+      "nameEn": "Spaghetti",
+      "price": 7
+    },
+    {
+      "catId": "xemiryemekleri",
+      "id": "i060",
+      "img": "",
+      "nameAz": "Yarpaq xəngəli",
+      "nameEn": "Yarpaq khingal",
+      "price": 13
+    },
+    {
+      "catId": "xemiryemekleri",
+      "id": "i061",
+      "img": "",
+      "nameAz": "Gürzə",
+      "nameEn": "Gurza",
+      "price": 18
+    },
+    {
+      "catId": "xemiryemekleri",
+      "id": "i062",
+      "img": "",
+      "nameAz": "Gürcü xəngəli (1 ədədi)",
+      "nameEn": "Georgian khinkali (1 pc)",
+      "price": 3
+    },
+    {
+      "catId": "qazanyemekleri",
+      "id": "i070",
+      "img": "",
+      "nameAz": "Küftə",
+      "nameEn": "Kufta",
+      "price": 10
+    },
+    {
+      "catId": "qazanyemekleri",
+      "id": "i071",
+      "img": "",
+      "nameAz": "Yarpaq dolması",
+      "nameEn": "Stuffed grape leaves",
+      "price": 16
+    },
+    {
+      "catId": "qazanyemekleri",
+      "id": "i072",
+      "img": "",
+      "nameAz": "Üç bacı dolması (mövsümə uyğun)",
+      "nameEn": "Three sisters dolma (seasonal)",
+      "price": 11
+    },
+    {
+      "catId": "qazanyemekleri",
+      "id": "i073",
+      "img": "",
+      "nameAz": "Quzu buğlama",
+      "nameEn": "Steamed lamb",
+      "price": 13
+    },
+    {
+      "catId": "qazanyemekleri",
+      "id": "i074",
+      "img": "",
+      "nameAz": "Xaş",
+      "nameEn": "Khash",
+      "price": 13
+    },
+    {
+      "catId": "qazanyemekleri",
+      "id": "i075",
+      "img": "",
+      "nameAz": "Şəki pitisi",
+      "nameEn": "Shaki piti",
+      "price": 17
+    },
+    {
+      "catId": "qazanyemekleri",
+      "id": "i076",
+      "img": "",
+      "nameAz": "Soyutma Çolpa",
+      "nameEn": "Cold Cholpa",
+      "price": 21
+    },
+    {
+      "catId": "sacyemekleri",
+      "id": "i080",
+      "img": "",
+      "nameAz": "Can ətili sac (4 nəfərlik)",
+      "nameEn": "Veal saj (4 persons)",
+      "price": 65
+    },
+    {
+      "catId": "sacyemekleri",
+      "id": "i081",
+      "img": "",
+      "nameAz": "Can ətili sac (6 nəfərlik)",
+      "nameEn": "Veal saj (6 persons)",
+      "price": 98
+    },
+    {
+      "catId": "sacyemekleri",
+      "id": "i082",
+      "img": "",
+      "nameAz": "Quzu sac (4 nəfərlik)",
+      "nameEn": "Lamb saj (4 persons)",
+      "price": 46
+    },
+    {
+      "catId": "sacyemekleri",
+      "id": "i083",
+      "img": "",
+      "nameAz": "Quzu sac (6 nəfərlik)",
+      "nameEn": "Lamb saj (6 persons)",
+      "price": 65
+    },
+    {
+      "catId": "sacyemekleri",
+      "id": "i084",
+      "img": "",
+      "nameAz": "Çolpa sac (bütöv)",
+      "nameEn": "Cholpa saj (whole)",
+      "price": 40
+    },
+    {
+      "catId": "sacyemekleri",
+      "id": "i085",
+      "img": "",
+      "nameAz": "Qarışıq sac",
+      "nameEn": "Mixed saj",
+      "price": 60
+    },
+    {
+      "catId": "istiyemekler",
+      "id": "i090",
+      "img": "",
+      "nameAz": "Quzu çoban qovurma",
+      "nameEn": "Lamb shepherd roast",
+      "price": 26
+    },
+    {
+      "catId": "istiyemekler",
+      "id": "i091",
+      "img": "",
+      "nameAz": "Cız-Bız",
+      "nameEn": "Jiz-Biz",
+      "price": 16
+    },
+    {
+      "catId": "istiyemekler",
+      "id": "i092",
+      "img": "",
+      "nameAz": "Qaymaqlı can əti",
+      "nameEn": "Veal with cream",
+      "price": 26
+    },
+    {
+      "catId": "istiyemekler",
+      "id": "i093",
+      "img": "",
+      "nameAz": "Vişnəli can əti",
+      "nameEn": "Veal with cherry",
+      "price": 30
+    },
+    {
+      "catId": "istiyemekler",
+      "id": "i094",
+      "img": "",
+      "nameAz": "Can əti nar qovurma",
+      "nameEn": "Veal pomegranate roast",
+      "price": 26
+    },
+    {
+      "catId": "istiyemekler",
+      "id": "i095",
+      "img": "",
+      "nameAz": "Ət langeti",
+      "nameEn": "Meat langette",
+      "price": 24
+    },
+    {
+      "catId": "istiyemekler",
+      "id": "i096",
+      "img": "",
+      "nameAz": "Ev sayağı tuşonka",
+      "nameEn": "Home-style tushonka",
+      "price": 15
+    },
+    {
+      "catId": "istiyemekler",
+      "id": "i097",
+      "img": "",
+      "nameAz": "Kefli beçə",
+      "nameEn": "Kefli becha",
+      "price": 26
+    },
+    {
+      "catId": "istiyemekler",
+      "id": "i098",
+      "img": "",
+      "nameAz": "Çolpa çığırtması",
+      "nameEn": "Cholpa chigirtma",
+      "price": 29
+    },
+    {
+      "catId": "istiyemekler",
+      "id": "i099",
+      "img": "",
+      "nameAz": "Çolpa Tabaka",
+      "nameEn": "Cholpa Tabaka",
+      "price": 26
+    },
+    {
+      "catId": "istiyemekler",
+      "id": "i100",
+      "img": "",
+      "nameAz": "Çolpa çölmə kabab",
+      "nameEn": "Cholpa clay pot kebab",
+      "price": 33
+    },
+    {
+      "catId": "istiyemekler",
+      "id": "i101",
+      "img": "",
+      "nameAz": "Nuggets",
+      "nameEn": "Nuggets",
+      "price": 9
+    },
+    {
+      "catId": "istiyemekler",
+      "id": "i102",
+      "img": "",
+      "nameAz": "Toyuq langeti",
+      "nameEn": "Chicken langette",
+      "price": 16
+    },
+    {
+      "catId": "istiyemekler",
+      "id": "i103",
+      "img": "",
+      "nameAz": "Ördək çölmə kabab (mövsümə uyğun)",
+      "nameEn": "Duck clay pot kebab (seasonal)",
+      "price": 0
+    },
+    {
+      "catId": "plovlar",
+      "id": "i110",
+      "img": "",
+      "nameAz": "Səbzi plov",
+      "nameEn": "Herb pilaf",
+      "price": 19
+    },
+    {
+      "catId": "plovlar",
+      "id": "i111",
+      "img": "",
+      "nameAz": "Turşu plov",
+      "nameEn": "Pickle pilaf",
+      "price": 22
+    },
+    {
+      "catId": "plovlar",
+      "id": "i112",
+      "img": "",
+      "nameAz": "Şüyütlü plov",
+      "nameEn": "Shuyt pilaf",
+      "price": 33
+    },
+    {
+      "catId": "plovlar",
+      "id": "i113",
+      "img": "",
+      "nameAz": "Şah plov (sifarişlə)",
+      "nameEn": "Shah pilaf (by order)",
+      "price": 65
+    },
+    {
+      "catId": "kabablar",
+      "id": "i120",
+      "img": "",
+      "nameAz": "Toyuq kababı",
+      "nameEn": "Chicken kebab",
+      "price": 9
+    },
+    {
+      "catId": "kabablar",
+      "id": "i121",
+      "img": "",
+      "nameAz": "Toyuq lüləsi",
+      "nameEn": "Chicken lule",
+      "price": 9
+    },
+    {
+      "catId": "kabablar",
+      "id": "i122",
+      "img": "",
+      "nameAz": "Lülə kabab",
+      "nameEn": "Lule kebab",
+      "price": 12
+    },
+    {
+      "catId": "kabablar",
+      "id": "i123",
+      "img": "",
+      "nameAz": "Quzu tikə kabab",
+      "nameEn": "Lamb chunk kebab",
+      "price": 13
+    },
+    {
+      "catId": "kabablar",
+      "id": "i124",
+      "img": "",
+      "nameAz": "Antrikot kababı",
+      "nameEn": "Entrecote kebab",
+      "price": 16
+    },
+    {
+      "catId": "kabablar",
+      "id": "i125",
+      "img": "",
+      "nameAz": "Quzu içalat kababı",
+      "nameEn": "Lamb offal kebab",
+      "price": 11
+    },
+    {
+      "catId": "kabablar",
+      "id": "i126",
+      "img": "",
+      "nameAz": "Quyruq kababı",
+      "nameEn": "Fat tail kebab",
+      "price": 13
+    },
+    {
+      "catId": "kabablar",
+      "id": "i127",
+      "img": "",
+      "nameAz": "Dana ciyəri quyruqla",
+      "nameEn": "Veal liver with tail fat",
+      "price": 16
+    },
+    {
+      "catId": "kabablar",
+      "id": "i128",
+      "img": "",
+      "nameAz": "Dana ciyəri",
+      "nameEn": "Veal liver",
+      "price": 11
+    },
+    {
+      "catId": "kabablar",
+      "id": "i129",
+      "img": "",
+      "nameAz": "Dana basdırma",
+      "nameEn": "Veal basturma",
+      "price": 16
+    },
+    {
+      "catId": "kabablar",
+      "id": "i130",
+      "img": "",
+      "nameAz": "Şapalaq kababı",
+      "nameEn": "Shapalaq kebab",
+      "price": 33
+    },
+    {
+      "catId": "kabablar",
+      "id": "i131",
+      "img": "",
+      "nameAz": "Xan kababı",
+      "nameEn": "Khan kebab",
+      "price": 13
+    },
+    {
+      "catId": "kabablar",
+      "id": "i132",
+      "img": "",
+      "nameAz": "Tərəvəz kababı",
+      "nameEn": "Vegetable kebab",
+      "price": 7
+    },
+    {
+      "catId": "kabablar",
+      "id": "i133",
+      "img": "",
+      "nameAz": "Kartof lüləsi",
+      "nameEn": "Potato lule",
+      "price": 4
+    },
+    {
+      "catId": "kabablar",
+      "id": "i134",
+      "img": "",
+      "nameAz": "Kartof külləmə",
+      "nameEn": "Ash-baked potato",
+      "price": 4
+    },
+    {
+      "catId": "kabablar",
+      "id": "i135",
+      "img": "",
+      "nameAz": "Kartof quyruq",
+      "nameEn": "Potato with tail fat",
+      "price": 7
+    },
+    {
+      "catId": "kabablar",
+      "id": "i136",
+      "img": "",
+      "nameAz": "Hinduşka kababı (mövsümə uyğun)",
+      "nameEn": "Turkey kebab (seasonal)",
+      "price": 0
+    },
+    {
+      "catId": "baliqyemekleri",
+      "id": "i140",
+      "img": "",
+      "nameAz": "Farel balığı",
+      "nameEn": "Trout",
+      "price": 26
+    },
+    {
+      "catId": "baliqyemekleri",
+      "id": "i141",
+      "img": "",
+      "nameAz": "Kefal balığı (bütöv)",
+      "nameEn": "Mullet (whole)",
+      "price": 33
+    },
+    {
+      "catId": "baliqyemekleri",
+      "id": "i142",
+      "img": "",
+      "nameAz": "Dorado balığı",
+      "nameEn": "Dorado fish",
+      "price": 33
+    },
+    {
+      "catId": "souslar",
+      "id": "i150",
+      "img": "",
+      "nameAz": "Acika",
+      "nameEn": "Adjika",
+      "price": 3
+    },
+    {
+      "catId": "souslar",
+      "id": "i151",
+      "img": "",
+      "nameAz": "Ketçup",
+      "nameEn": "Ketchup",
+      "price": 2
+    },
+    {
+      "catId": "souslar",
+      "id": "i152",
+      "img": "",
+      "nameAz": "Mayonez",
+      "nameEn": "Mayonnaise",
+      "price": 2
+    },
+    {
+      "badge": "",
+      "catId": "souslar",
+      "descAz": "undefined",
+      "descEn": "undefined",
+      "detailsAz": "undefined",
+      "detailsEn": "undefined",
+      "icon": "undefined",
+      "image": "data:image/jpeg;base64,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m3MC/qoG+t1Z5XxRcSspu5idCHMje1zQXPD8uZ3e+cO8WmUgCw03v2sKwiJnFVRTOayRjGOczOASDZpbd3pf2T1YpZ+mTqwiOZxU51K2Oqgp6oM0Y6USB4HTvIntJHvddDEcZfPkbkijjYbtiiaWsvzJFy5xPVxJ9VOvomM4XkkrGQ5pLfQnwtGrgXB93xDuyBbUO13X5wDgMdXUSRzNd9ax8VO8AlscwaHBziNtQ0DrmKktqzx0RyvmIuo4jfJh5hdDTZPhsxwLCebDm0K72CccT0VEY6eGkbmDRI/I/M/Lexce8tfU7AblReFkQYo5s8TXhmbvI3gbxg3GbkbgqzV2BxxUzqykayeimjky52gup5msJyPO4sRodiCL30Ji4wS244Oyx5KhW15kqhIGsjcNfqgW63JvubH26KX/AMWOe1n0mnpqhzPI94ka4W1F3RPbcX5FV5xu6/8Af4L8VmxEmky+V/adNUYeWT08Dng3jeLgNI8vgdmuR1uFRZHl0hcTck3J6k7r5RcjXGOdqCSXQREUzoREQBERAEREAREQBERAEREBJyYy52ECnMcWRrszT48wdrcg5/U73C58S4llqayKaZkT5Yw0ZyHAvyeUvs6zj6qFRR2o5hE8/imQ1r5jFB3jyHOdaXzNBaCGmTKDYkXtzPVdB2J5mtEsUUmVoa24cCGtaALljmk7c787WXQRdUUhtRJRYw8YuKlzY3vDmuaHZrAstl0a4aCw0N9kxzGXVeJOneyNkjzmeY84u6w1s55ttyso1EwhhZyTMfELxVsmMULpmWyyuDr3b5XFocGOcNLEjkL3XHhuOyQVr5gGPkfcOdJmNw7zCwcBqopFzasYwMIl4cfkbhMlLljMD3h/duzkRvHON2bML6XuTe3uuBmKFtTDI2OIGEgst3guQ7ML2fe4cb3FvwUei7hDaiXrcedNiklRJDAXyXz2EgHiFjYB+hI5rhosZmhpp44zaOdpbIzUttyIBN7jkf5qORNq6GEERF06EREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREAREQBERAEREB//Z",
+      "nameAz": "Nar şərab",
+      "nameEn": "Pomegranate wine sauce",
+      "price": "2",
+      "tags": ""
+    },
+    {
+      "catId": "souslar",
+      "id": "i154",
+      "img": "",
+      "nameAz": "Zoğal turşusu",
+      "nameEn": "Cornelian cherry sauce",
+      "price": 3
+    },
+    {
+      "catId": "souslar",
+      "id": "i155",
+      "img": "",
+      "nameAz": "Nar turşusu",
+      "nameEn": "Pomegranate sauce",
+      "price": 3
+    },
+    {
+      "catId": "souslar",
+      "id": "i156",
+      "img": "",
+      "nameAz": "Tar-Tar souzu",
+      "nameEn": "Tartar sauce",
+      "price": 3
+    },
+    {
+      "catId": "meyvesireleri",
+      "id": "i160",
+      "img": "",
+      "nameAz": "Nar şirəsi",
+      "nameEn": "Pomegranate juice",
+      "price": 10
+    },
+    {
+      "catId": "meyvesireleri",
+      "id": "i161",
+      "img": "",
+      "nameAz": "Nar şirəsi (qrafin)",
+      "nameEn": "Pomegranate juice (carafe)",
+      "price": 25
+    },
+    {
+      "catId": "meyvesireleri",
+      "id": "i162",
+      "img": "",
+      "nameAz": "Alma şirəsi",
+      "nameEn": "Apple juice",
+      "price": 9
+    },
+    {
+      "catId": "meyvesireleri",
+      "id": "i163",
+      "img": "",
+      "nameAz": "Ananas şirəsi",
+      "nameEn": "Pineapple juice",
+      "price": 25
+    },
+    {
+      "catId": "meyvesireleri",
+      "id": "i164",
+      "img": "",
+      "nameAz": "Portağal şirəsi",
+      "nameEn": "Orange juice",
+      "price": 15
+    },
+    {
+      "catId": "meyvesireleri",
+      "id": "i165",
+      "img": "",
+      "nameAz": "Qarışıq meyvə şirəsi",
+      "nameEn": "Mixed fruit juice",
+      "price": 15
+    },
+    {
+      "catId": "serinickiler",
+      "id": "i170",
+      "img": "",
+      "nameAz": "Ayran (bokal)",
+      "nameEn": "Ayran (glass)",
+      "price": 3
+    },
+    {
+      "catId": "serinickiler",
+      "id": "i171",
+      "img": "",
+      "nameAz": "Ayran (qrafin)",
+      "nameEn": "Ayran (carafe)",
+      "price": 8
+    },
+    {
+      "catId": "serinickiler",
+      "id": "i172",
+      "img": "",
+      "nameAz": "Sirab qazlı",
+      "nameEn": "Sparkling water",
+      "price": 4
+    },
+    {
+      "catId": "serinickiler",
+      "id": "i173",
+      "img": "",
+      "nameAz": "Sirab qazsız",
+      "nameEn": "Still water",
+      "price": 4
+    },
+    {
+      "catId": "serinickiler",
+      "id": "i174",
+      "img": "",
+      "nameAz": "Sirab qazlı (premium)",
+      "nameEn": "Sparkling water (premium)",
+      "price": 8
+    },
+    {
+      "catId": "serinickiler",
+      "id": "i175",
+      "img": "",
+      "nameAz": "Sirab qazsız (premium)",
+      "nameEn": "Still water (premium)",
+      "price": 8
+    },
+    {
+      "catId": "serinickiler",
+      "id": "i176",
+      "img": "",
+      "nameAz": "Borjomi",
+      "nameEn": "Borjomi",
+      "price": 5
+    },
+    {
+      "catId": "serinickiler",
+      "id": "i177",
+      "img": "",
+      "nameAz": "Cola classic",
+      "nameEn": "Cola classic",
+      "price": 5
+    },
+    {
+      "catId": "serinickiler",
+      "id": "i178",
+      "img": "",
+      "nameAz": "Cola zero",
+      "nameEn": "Cola zero",
+      "price": 5
+    },
+    {
+      "catId": "serinickiler",
+      "id": "i179",
+      "img": "",
+      "nameAz": "Fanta",
+      "nameEn": "Fanta",
+      "price": 5
+    },
+    {
+      "catId": "serinickiler",
+      "id": "i180",
+      "img": "",
+      "nameAz": "Sprite",
+      "nameEn": "Sprite",
+      "price": 5
+    },
+    {
+      "catId": "serinickiler",
+      "id": "i181",
+      "img": "",
+      "nameAz": "Soyuq çay",
+      "nameEn": "Iced tea",
+      "price": 4
+    },
+    {
+      "catId": "serinickiler",
+      "id": "i182",
+      "img": "",
+      "nameAz": "Ev sayağı kompot (qrafin)",
+      "nameEn": "Home-style compote (carafe)",
+      "price": 9
+    },
+    {
+      "catId": "serinickiler",
+      "id": "i183",
+      "img": "",
+      "nameAz": "Kompot (qrafin)",
+      "nameEn": "Compote (carafe)",
+      "price": 7
+    },
+    {
+      "catId": "serinickiler",
+      "id": "i184",
+      "img": "",
+      "nameAz": "Düşes",
+      "nameEn": "Duchess soda",
+      "price": 6
+    },
+    {
+      "catId": "serinickiler",
+      "id": "i185",
+      "img": "",
+      "nameAz": "Tərxun",
+      "nameEn": "Tarragon soda",
+      "price": 6
+    },
+    {
+      "catId": "serinickiler",
+      "id": "i186",
+      "img": "",
+      "nameAz": "Ovduq (bokal)",
+      "nameEn": "Ovduq (glass)",
+      "price": 5
+    },
+    {
+      "catId": "serinickiler",
+      "id": "i187",
+      "img": "",
+      "nameAz": "Ovduq (qrafin)",
+      "nameEn": "Ovduq (carafe)",
+      "price": 8
+    },
+    {
+      "catId": "serinickiler",
+      "id": "i188",
+      "img": "",
+      "nameAz": "Redbull",
+      "nameEn": "Redbull",
+      "price": 9
+    },
+    {
+      "catId": "caydesertler",
+      "id": "i190",
+      "img": "",
+      "nameAz": "Çay",
+      "nameEn": "Tea",
+      "price": 13
+    },
+    {
+      "catId": "caydesertler",
+      "id": "i191",
+      "img": "",
+      "nameAz": "Mürəbbə",
+      "nameEn": "Jam",
+      "price": 8
+    },
+    {
+      "catId": "caydesertler",
+      "id": "i192",
+      "img": "",
+      "nameAz": "Çərəz dəsti",
+      "nameEn": "Nut set",
+      "price": 20
+    },
+    {
+      "catId": "caydesertler",
+      "id": "i193",
+      "img": "",
+      "nameAz": "Paxlava (1 ədəd)",
+      "nameEn": "Baklava (1 pc)",
+      "price": 3
+    },
+    {
+      "catId": "caydesertler",
+      "id": "i194",
+      "img": "",
+      "nameAz": "Meyvə assorti",
+      "nameEn": "Fruit assortment",
+      "price": 13
+    },
+    {
+      "catId": "caydesertler",
+      "id": "i195",
+      "img": "",
+      "nameAz": "Meyvə full",
+      "nameEn": "Full fruit platter",
+      "price": 26
+    },
+    {
+      "catId": "vodka",
+      "id": "i200",
+      "img": "",
+      "nameAz": "Banketnaya 0.5 lt",
+      "nameEn": "Banketnaya 0.5 lt",
+      "price": 32
+    },
+    {
+      "catId": "vodka",
+      "id": "i201",
+      "img": "",
+      "nameAz": "Banketnaya 0.7 lt",
+      "nameEn": "Banketnaya 0.7 lt",
+      "price": 40
+    },
+    {
+      "catId": "vodka",
+      "id": "i202",
+      "img": "",
+      "nameAz": "Nemiroff 0.5 lt",
+      "nameEn": "Nemiroff 0.5 lt",
+      "price": 40
+    },
+    {
+      "catId": "vodka",
+      "id": "i203",
+      "img": "",
+      "nameAz": "Nemiroff 0.7 lt",
+      "nameEn": "Nemiroff 0.7 lt",
+      "price": 50
+    },
+    {
+      "catId": "vodka",
+      "id": "i204",
+      "img": "",
+      "nameAz": "Bulbash 0.5 lt",
+      "nameEn": "Bulbash 0.5 lt",
+      "price": 45
+    },
+    {
+      "catId": "vodka",
+      "id": "i205",
+      "img": "",
+      "nameAz": "Bulbash 0.7 lt",
+      "nameEn": "Bulbash 0.7 lt",
+      "price": 60
+    },
+    {
+      "catId": "vodka",
+      "id": "i206",
+      "img": "",
+      "nameAz": "Arxangelskaya 0.5 lt",
+      "nameEn": "Arxangelskaya 0.5 lt",
+      "price": 45
+    },
+    {
+      "catId": "vodka",
+      "id": "i207",
+      "img": "",
+      "nameAz": "Arxangelskaya 0.7 lt",
+      "nameEn": "Arxangelskaya 0.7 lt",
+      "price": 60
+    },
+    {
+      "catId": "vodka",
+      "id": "i208",
+      "img": "",
+      "nameAz": "Finlandia 0.5 lt",
+      "nameEn": "Finlandia 0.5 lt",
+      "price": 65
+    },
+    {
+      "catId": "vodka",
+      "id": "i209",
+      "img": "",
+      "nameAz": "Finlandia 0.7 lt",
+      "nameEn": "Finlandia 0.7 lt",
+      "price": 80
+    },
+    {
+      "catId": "vodka",
+      "id": "i210",
+      "img": "",
+      "nameAz": "Minsk 0.5 lt",
+      "nameEn": "Minsk 0.5 lt",
+      "price": 45
+    },
+    {
+      "catId": "vodka",
+      "id": "i211",
+      "img": "",
+      "nameAz": "Minsk 0.7 lt",
+      "nameEn": "Minsk 0.7 lt",
+      "price": 60
+    },
+    {
+      "catId": "serab",
+      "id": "i220",
+      "img": "",
+      "nameAz": "Savalan (kəmşirin)",
+      "nameEn": "Savalan (semi-sweet)",
+      "price": 40
+    },
+    {
+      "catId": "serab",
+      "id": "i221",
+      "img": "",
+      "nameAz": "Savalan (kəmturş)",
+      "nameEn": "Savalan (semi-dry)",
+      "price": 40
+    },
+    {
+      "catId": "serab",
+      "id": "i222",
+      "img": "",
+      "nameAz": "Savalan (ağ şərab)",
+      "nameEn": "Savalan (white wine)",
+      "price": 40
+    },
+    {
+      "catId": "serab",
+      "id": "i223",
+      "img": "",
+      "nameAz": "Savalan (qırmızı şərab)",
+      "nameEn": "Savalan (red wine)",
+      "price": 40
+    },
+    {
+      "catId": "serab",
+      "id": "i224",
+      "img": "",
+      "nameAz": "Meysəri (kəmturş)",
+      "nameEn": "Meysari (semi-dry)",
+      "price": 45
+    },
+    {
+      "catId": "serab",
+      "id": "i225",
+      "img": "",
+      "nameAz": "Meysəri (məxməri)",
+      "nameEn": "Meysari (velvety)",
+      "price": 60
+    },
+    {
+      "catId": "serab",
+      "id": "i226",
+      "img": "",
+      "nameAz": "Meysəri (mərcan)",
+      "nameEn": "Meysari (rose)",
+      "price": 45
+    },
+    {
+      "catId": "pive",
+      "id": "i230",
+      "img": "",
+      "nameAz": "Efes draft",
+      "nameEn": "Efes draft",
+      "price": 8
+    },
+    {
+      "catId": "pive",
+      "id": "i231",
+      "img": "",
+      "nameAz": "Efes zero",
+      "nameEn": "Efes zero",
+      "price": 8
+    },
+    {
+      "catId": "pive",
+      "id": "i232",
+      "img": "",
+      "nameAz": "Efes pilsener 0.5 ml",
+      "nameEn": "Efes pilsener 0.5 ml",
+      "price": 7
+    },
+    {
+      "catId": "pive",
+      "id": "i233",
+      "img": "",
+      "nameAz": "Xırdalan filtr 0.5 ml",
+      "nameEn": "Xirdalan filter 0.5 ml",
+      "price": 7
+    },
+    {
+      "catId": "pive",
+      "id": "i234",
+      "img": "",
+      "nameAz": "Xırdalan no filtr 0.5 ml",
+      "nameEn": "Xirdalan unfiltered 0.5 ml",
+      "price": 9
+    },
+    {
+      "catId": "pive",
+      "id": "i235",
+      "img": "",
+      "nameAz": "Xırdalan zero",
+      "nameEn": "Xirdalan zero",
+      "price": 7
+    },
+    {
+      "catId": "pive",
+      "id": "i236",
+      "img": "",
+      "nameAz": "Xırdalan draft",
+      "nameEn": "Xirdalan draft",
+      "price": 8
+    },
+    {
+      "catId": "pive",
+      "id": "i237",
+      "img": "",
+      "nameAz": "Heineken 0.330 ml",
+      "nameEn": "Heineken 0.330 ml",
+      "price": 9
+    },
+    {
+      "catId": "pive",
+      "id": "i238",
+      "img": "",
+      "nameAz": "Corona 0.330 ml",
+      "nameEn": "Corona 0.330 ml",
+      "price": 9
+    },
+    {
+      "catId": "pive",
+      "id": "i239",
+      "img": "",
+      "nameAz": "Carlsberg 0.440 ml",
+      "nameEn": "Carlsberg 0.440 ml",
+      "price": 9
+    },
+    {
+      "catId": "pive",
+      "id": "i240",
+      "img": "",
+      "nameAz": "Erdinger 0.500 ml",
+      "nameEn": "Erdinger 0.500 ml",
+      "price": 12
+    },
+    {
+      "catId": "viski",
+      "id": "i250",
+      "img": "",
+      "nameAz": "Jack Daniel's 0.200 ml",
+      "nameEn": "Jack Daniel's 0.200 ml",
+      "price": 40
+    },
+    {
+      "catId": "viski",
+      "id": "i251",
+      "img": "",
+      "nameAz": "Jack Daniel's 0.350 ml",
+      "nameEn": "Jack Daniel's 0.350 ml",
+      "price": 65
+    },
+    {
+      "catId": "viski",
+      "id": "i252",
+      "img": "",
+      "nameAz": "Jack Daniel's 0.500 ml",
+      "nameEn": "Jack Daniel's 0.500 ml",
+      "price": 90
+    },
+    {
+      "catId": "viski",
+      "id": "i253",
+      "img": "",
+      "nameAz": "Jack Daniel's 0.700 ml",
+      "nameEn": "Jack Daniel's 0.700 ml",
+      "price": 124
+    },
+    {
+      "catId": "viski",
+      "id": "i254",
+      "img": "",
+      "nameAz": "Chivas Regal (12 il) 0.200 ml",
+      "nameEn": "Chivas Regal (12yr) 0.200 ml",
+      "price": 46
+    },
+    {
+      "catId": "viski",
+      "id": "i255",
+      "img": "",
+      "nameAz": "Chivas Regal (12 il) 0.375 ml",
+      "nameEn": "Chivas Regal (12yr) 0.375 ml",
+      "price": 78
+    },
+    {
+      "catId": "viski",
+      "id": "i256",
+      "img": "",
+      "nameAz": "Chivas Regal (12 il) 0.500 ml",
+      "nameEn": "Chivas Regal (12yr) 0.500 ml",
+      "price": 111
+    },
+    {
+      "catId": "viski",
+      "id": "i257",
+      "img": "",
+      "nameAz": "Chivas Regal (12 il) 0.700 ml",
+      "nameEn": "Chivas Regal (12yr) 0.700 ml",
+      "price": 143
+    }
+  ],
+  "theme": {
+    "id": "classic",
+    "vars": {
+      "accent": "#C9A84C",
+      "bg": "#1A1210",
+      "border": "rgba(201,168,76,0.25)",
+      "card": "#2A2018",
+      "header": "#1A1210",
+      "headerText": "#C9A84C",
+      "muted": "#A08050",
+      "text": "#F5E6C8"
+    }
+  },
+  "users": {
+    "admin": {
+      "password": "scrypt:32768:8:1$l5XFjwaLpNiJKUgj$7b01b457cac7050020022f1249506e0bfd42b45d16f9cb4171a962e07b0c987377e823dedaf7d8f1e8915442c043d4014097732c2f752dc9b7b3893c7bdbb3c0",
+      "role": "superadmin"
+    },
+    "filankes": {
+      "password": "scrypt:32768:8:1$SNEHmLfI6V1cT4w0$5b2a12a48f849d28466e5ac38df5dbfe14aa1c82cda5da0605e4d7bd8ae80070ed0a679c6055a6fdbf7fe20602f243c50ff89f097301f6fa133c5eb0cd30efaa",
+      "role": "admin"
+    },
+    "manager": {
+      "password": "scrypt:32768:8:1$scz5MVUdpXrshhkt$4b532b28713713b30641fc3d6895cfc1916ebb0013d54ad90836b38a0ca5f2a617f9879c1d0d7a2a112e04a6974b7a3ac8bd7ebf63bcb51f890c092d1153a433",
+      "role": "admin"
+    }
+  },
+  "stats": {
+    "cats": {
+      "baliqyemekleri": 2,
+      "istiyemekler": 1,
+      "kabablar": 2,
+      "qazanyemekleri": 2,
+      "sacyemekleri": 2,
+      "salatlar": 1,
+      "seheryemegi": 1,
+      "serinickiler": 1,
+      "sorbalar": 1,
+      "souslar": 1,
+      "soyuqqelyanaltı": 3
+    },
+    "clicks": {
+      "Tərəvəz buketi (mövsümə uyğun)": 1
+    },
+    "opens": {
+      "dates": {
+        "2026-05-13": 6,
+        "2026-05-14": 5,
+        "2026-05-15": 8
+      },
+      "total": 19
+    }
+  },
+  "customCss": "",
+  "reset_tokens": {
+    "8Ml3vgpNT2K4taIyrY0PEkI8UL-xa0giaRSFsYMidfI": {
+      "expires": "2026-05-13T04:22:28.164648",
+      "used": false,
+      "username": "filankes"
+    },
+    "HHLdspUyS5ncjhp0_07NI0qg2mQSZEEya51RmDV3ABE": {
+      "expires": "2026-05-13T04:24:09.871570",
+      "used": false,
+      "username": "filankes"
+    },
+    "Uf4tBN6xxu6Cf_HV8XyYO1TDkI-O3fXpdXt5q7a2Jb4": {
+      "expires": "2026-05-13T04:24:53.981897",
+      "used": false,
+      "username": "filankes"
+    }
+  },
+  "font": {
+    "body": "'DM Sans', sans-serif",
+    "heading": "'Playfair Display', serif",
+    "id": "dmsans"
+  },
+  "layout": "list",
+  "subscription": {
+    "status": "expired",
+    "trial_start": "2026-05-15T02:58:25.217821",
+    "trial_end": "2026-05-29T02:58:25.217821",
+    "paid_until": "2026-06-14T03:25:13.013095",
+    "payment_history": [
+      {
+        "date": "2026-05-15T02:19:40.829161",
+        "amount": 29.97,
+        "months": 3,
+        "until": "2026-08-13T02:19:40.829161",
+        "note": "Manual aktivasiya"
+      },
+      {
+        "date": "2026-05-15T02:21:07.532438",
+        "amount": 9.99,
+        "months": 1,
+        "until": "2026-09-12T02:19:40.829161",
+        "note": "Manual aktivasiya"
+      },
+      {
+        "date": "2026-05-15T02:26:16.970079",
+        "amount": 9.99,
+        "months": 1,
+        "until": "2026-06-14T02:26:16.970079",
+        "note": "Manual aktivasiya"
+      },
+      {
+        "date": "2026-05-15T02:27:11.049193",
+        "amount": 9.99,
+        "months": 1,
+        "until": "2026-06-14T02:27:11.049193",
+        "note": "Manual aktivasiya"
+      },
+      {
+        "date": "2026-05-15T03:25:13.013095",
+        "amount": 9.99,
+        "months": 1,
+        "until": "2026-06-14T03:25:13.013095",
+        "note": "Manual aktivasiya"
+      }
+    ]
+  }
+}
