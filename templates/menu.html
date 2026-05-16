@@ -546,32 +546,29 @@ let lang = 'az', activeCat = 'all', searchQuery = '';
 let STATE = loadFallbackState();
 
 // Tema tətbiq et
-function applyThemeVars() {
+// Tema, font, layout, css — STATE-dən tətbiq et (localStorage fallback yoxdur)
+function applyThemeVars(v) {
   try {
-    const vars = localStorage.getItem('cafe_theme_vars');
-    if (vars) {
-      const v = JSON.parse(vars);
-      const root = document.documentElement.style;
-      if (v.accent)      root.setProperty('--accent', v.accent);
-      if (v.accent2)     root.setProperty('--accent2', v.accent2 || v.accent);
-      if (v.bg)          root.setProperty('--bg', v.bg);
-      if (v.card)        root.setProperty('--card', v.card);
-      if (v.text)        root.setProperty('--text', v.text);
-      if (v.muted)       root.setProperty('--muted', v.muted);
-      if (v.border)      root.setProperty('--border', v.border);
-      if (v.headerText)  root.setProperty('--header-text', v.headerText);
-    }
+    if (!v && STATE && STATE.theme && STATE.theme.vars) v = STATE.theme.vars;
+    if (!v) return;
+    const root = document.documentElement.style;
+    if (v.accent)      root.setProperty('--accent', v.accent);
+    if (v.accent2)     root.setProperty('--accent2', v.accent2 || v.accent);
+    if (v.bg)          root.setProperty('--bg', v.bg);
+    if (v.card)        root.setProperty('--card', v.card);
+    if (v.text)        root.setProperty('--text', v.text);
+    if (v.muted)       root.setProperty('--muted', v.muted);
+    if (v.border)      root.setProperty('--border', v.border);
+    if (v.headerText)  root.setProperty('--header-text', v.headerText);
   } catch(e) {}
 }
 
-function applyFontVars() {
+function applyFontVars(v) {
   try {
-    const vars = localStorage.getItem('cafe_font_vars');
-    if (!vars) return;
-    const v = JSON.parse(vars);
+    if (!v && STATE && STATE.font) v = STATE.font;
+    if (!v) return;
     if (v.body)    document.documentElement.style.setProperty('--font-body', v.body);
     if (v.heading) document.documentElement.style.setProperty('--font-heading', v.heading);
-    // Dynamically load Google Font if needed
     const fontName = v.body.split(',')[0].replace(/'/g,'').trim();
     const known = ['DM Sans','Playfair Display'];
     if (!known.includes(fontName)) {
@@ -585,16 +582,16 @@ function applyFontVars() {
   } catch(e) {}
 }
 
-function applyLayoutVars() {
+function applyLayoutVars(layout) {
   try {
-    const layout = localStorage.getItem('cafe_layout') || 'list';
-    document.body.setAttribute('data-layout', layout);
+    if (!layout && STATE && STATE.layout) layout = STATE.layout;
+    document.body.setAttribute('data-layout', layout || 'list');
   } catch(e) {}
 }
 
-function applyCustomCss() {
+function applyCustomCss(css) {
   try {
-    const css = localStorage.getItem('cafe_custom_css');
+    if (!css && STATE && STATE.customCss) css = STATE.customCss;
     if (!css) return;
     let styleEl = document.getElementById('custom-css-tag');
     if (!styleEl) { styleEl = document.createElement('style'); styleEl.id = 'custom-css-tag'; document.head.appendChild(styleEl); }
@@ -602,20 +599,8 @@ function applyCustomCss() {
   } catch(e) {}
 }
 
-applyThemeVars();
-applyFontVars();
+// İlk yükləmədə STATE hələ boş ola bilər — API cavabından sonra tətbiq ediləcək
 applyLayoutVars();
-applyCustomCss();
-
-// localStorage dəyişərsə (admin paneldən) avtomatik yenilə
-window.addEventListener('storage', e => {
-  if (e.key === 'cafe_data')        { STATE = loadState(); render(); }
-  if (e.key === 'cafe_theme_vars')  { applyThemeVars(); }
-  if (e.key === 'cafe_font_vars')   { applyFontVars(); }
-  if (e.key === 'cafe_layout')      { applyLayoutVars(); render(); }
-  if (e.key === 'cafe_custom_css')  { applyCustomCss(); }
-  if (e.key === 'cafe_logo')        { loadLogo(); }
-});
 
 function cleanPrice(p) {
   return String(p || '').replace(/₼/g,'').replace(/#8380;?/g,'').replace(/AZN/gi,'').replace(/[^\d.,]/g,'').trim();
