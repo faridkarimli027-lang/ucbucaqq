@@ -534,7 +534,8 @@ function normalizeItems(data) {
 function loadFallbackState() {
   // Yalnız server əlçatmaz olduqda istifadə edilir
   try {
-    const saved = localStorage.getItem('cafe_data');
+    var u = (new URLSearchParams(window.location.search)).get('user') || 'default';
+    const saved = localStorage.getItem('cafe_data_' + u) || localStorage.getItem('cafe_data');
     if (saved) return normalizeItems(JSON.parse(saved));
   } catch(e) {}
   return EMBEDDED_DATA;
@@ -638,17 +639,17 @@ function getCafe() {
 function trackClick(item) {
   var key = item.nameAz || item.nameEn || 'unknown';
   fetch('/api/stats', {method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({type:'click', item: key})}).catch(()=>{});
+    body: JSON.stringify({type:'click', item: key, user: MENU_USER})}).catch(()=>{});
 }
 
 function trackMenuOpen() {
   fetch('/api/stats', {method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({type:'open'})}).catch(()=>{});
+    body: JSON.stringify({type:'open', user: MENU_USER})}).catch(()=>{});
 }
 
 function trackCatClick(catId) {
   fetch('/api/stats', {method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({type:'cat', cat: catId})}).catch(()=>{});
+    body: JSON.stringify({type:'cat', cat: catId, user: MENU_USER})}).catch(()=>{});
 }
 
 function openModal(item) {
@@ -920,34 +921,35 @@ function loadLogo() {
   }
 }
 
-// Flask API-dən data yüklə — slug varsa /api/data/<slug>, yoxdursa /api/data
-(function() {
-  // URL-dən slug oxu: /menu/<slug>
-  var pathParts = window.location.pathname.split('/').filter(Boolean);
-  var slug = (pathParts[0] === 'menu' && pathParts[1]) ? pathParts[1] : null;
-  var apiUrl = slug ? '/api/data/' + slug : '/api/data';
-
-  fetch(apiUrl)
-    .then(r => { if (!r.ok) throw new Error('no server'); return r.json(); })
-    .then(data => {
-      if (data && (data.items !== undefined || data.categories)) {
-        STATE = normalizeItems(data);
-        try { localStorage.setItem('cafe_data', JSON.stringify(STATE)); } catch(e) {}
-      }
-      if (STATE.theme && STATE.theme.vars) applyThemeVars();
-      if (STATE.font) applyFontVars();
-      if (STATE.layout) applyLayoutVars();
-      if (STATE.customCss) applyCustomCss();
-      render();
-      loadLogo();
-      trackMenuOpen();
-    })
-    .catch(() => {
-      render();
-      loadLogo();
-      trackMenuOpen();
-    });
+// URL-dən ?user= parametrini oxu (məs: /menu?user=ali)
+var MENU_USER = (function() {
+  var p = new URLSearchParams(window.location.search);
+  return p.get('user') || '';
 })();
+
+// Flask API-dən data yüklə — server yoxdursa localStorage ilə davam et
+var dataUrl = MENU_USER ? '/api/data?user=' + encodeURIComponent(MENU_USER) : '/api/data';
+fetch(dataUrl)
+  .then(r => { if (!r.ok) throw new Error('no server'); return r.json(); })
+  .then(data => {
+    if (data && (data.items !== undefined || data.categories)) {
+      STATE = normalizeItems(data);
+      try { localStorage.setItem('cafe_data_' + (MENU_USER || 'default'), JSON.stringify(STATE)); } catch(e) {}
+    }
+    if (STATE.theme && STATE.theme.vars) applyThemeVars();
+    if (STATE.font) applyFontVars();
+    if (STATE.layout) applyLayoutVars();
+    if (STATE.customCss) applyCustomCss();
+    render();
+    loadLogo();
+    trackMenuOpen();
+  })
+  .catch(() => {
+    // Server yoxdur — localStorage-dakı data ilə işlə, xəta göstərmə
+    render();
+    loadLogo();
+    trackMenuOpen();
+  });
 
 // Kateqoriya barı — mouse drag scroll
 (function() {
