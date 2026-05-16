@@ -933,6 +933,9 @@ var syncTimeout = null;
 function loadData() { return {cafe:{nameAz:"Üçbucaq Restoran"},categories:[],items:[]}; }
 
 async function saveData() {
+  // localStorage-a dərhal yaz — menu.html sinxron oxusun
+  try { localStorage.setItem('cafe_data', JSON.stringify(STATE)); } catch(e) {}
+
   clearTimeout(syncTimeout);
   syncTimeout = setTimeout(async function() {
     try {
@@ -955,7 +958,7 @@ async function loadFromServer() {
     var r = await fetch('/api/data');
     var data = await r.json();
     STATE = data;
-    // Əgər serverdə loqo yoxdursa, localStorage-dan götür
+    try { localStorage.setItem('cafe_data', JSON.stringify(STATE)); } catch(e) {}
     if (STATE.cafe && !STATE.cafe.logo) {
       var localLogo = localStorage.getItem('cafe_logo');
       if (localLogo) STATE.cafe.logo = localLogo;
