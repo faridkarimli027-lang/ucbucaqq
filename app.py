@@ -14,15 +14,15 @@ app.secret_key = os.environ.get('SECRET_KEY', 'ucbucaq-restoran-secret-2025')
 #   MAIL_USERNAME = sizin@gmail.com
 #   MAIL_PASSWORD = Gmail App Password (boşluqsuz 16 simvol)
 #   APP_BASE_URL  = https://sizin-app-adı.up.railway.app
-_mail_user = os.environ.get('MAIL_USERNAME', '')
-_mail_pass = os.environ.get('MAIL_PASSWORD', '')
+_mail_user = os.environ.get('MAIL_USERNAME', 'ferid94kerinli@gmail.com')
+_mail_pass = os.environ.get('MAIL_PASSWORD', 'pojfqbiblhupjmig')
 app.config['MAIL_SERVER']         = 'smtp.gmail.com'
 app.config['MAIL_PORT']           = 587
 app.config['MAIL_USE_TLS']        = True
 app.config['MAIL_USERNAME']       = _mail_user
 app.config['MAIL_PASSWORD']       = _mail_pass
 app.config['MAIL_DEFAULT_SENDER'] = ('QR Menu', _mail_user)
-APP_BASE_URL = os.environ.get('APP_BASE_URL', 'http://localhost:5000').rstrip('/')
+APP_BASE_URL = os.environ.get('APP_BASE_URL', 'https://ucbucaqq-production.up.railway.app')
 
 mail = Mail(app)
 
