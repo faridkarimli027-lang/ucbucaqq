@@ -909,7 +909,7 @@ function showAdminUI(username, role) {
     el.style.display = isSuperAdmin ? (el.classList.contains('drawer-overlay') ? 'none' : 'block') : 'none';
   });
 
-  renderDashboard();
+  loadFromServer();
 }
 function doLogout() {
   fetch('/api/logout', {method:'POST'}).finally(function(){
@@ -961,22 +961,26 @@ async function saveData() {
 async function loadFromServer() {
   try {
     var r = await fetch('/api/data');
+    if (!r.ok) throw new Error('server error ' + r.status);
     var data = await r.json();
+    if (!data || !data.categories) throw new Error('empty response');
     STATE = data;
     try { localStorage.setItem('cafe_data', JSON.stringify(STATE)); } catch(e) {}
     if (STATE.cafe && !STATE.cafe.logo) {
       var localLogo = localStorage.getItem('cafe_logo');
       if (localLogo) STATE.cafe.logo = localLogo;
     }
-    // Əgər loqo varsa, localStorage-a da yaz (sinxron saxla)
     if (STATE.cafe && STATE.cafe.logo) {
       localStorage.setItem('cafe_logo', STATE.cafe.logo);
     }
     renderDashboard();
+    renderMenuPage();
   } catch(e) {
-    // Server yoxdursa localStorage-daki loqonu STATE-ə yüklə
+    console.warn('loadFromServer xətası:', e);
     var localLogo = localStorage.getItem('cafe_logo');
     if (localLogo && STATE.cafe) STATE.cafe.logo = localLogo;
+    renderDashboard();
+    renderMenuPage();
   }
 }
 
