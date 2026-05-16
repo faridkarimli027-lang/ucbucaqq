@@ -215,26 +215,7 @@ input[type=file] { display:none; }
   </div>
 </div>
 
-<!-- ABUNƏLİK BİTİB MODAL -->
-<div id="sub-expired-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1500;align-items:center;justify-content:center;backdrop-filter:blur(6px)">
-  <div style="background:#1C1917;border:1px solid rgba(255,255,255,0.12);border-radius:24px;padding:2.5rem;width:440px;max-width:92vw;animation:loginSlideUp 0.35s ease both;text-align:center">
-    <div style="font-size:3rem;margin-bottom:12px">🔒</div>
-    <h2 style="color:#fff;font-family:'Playfair Display',serif;font-weight:600;margin:0 0 8px;font-size:1.4rem">Abunəlik Bitib</h2>
-    <p style="color:rgba(255,255,255,0.55);font-size:0.88rem;line-height:1.65;margin-bottom:1.5rem">
-      Bu funksiyadan istifadə etmək üçün abunəliyin aktiv olması tələb olunur.<br>
-      Zəhmət olmasa ödəniş edin və ya superadminlə əlaqə saxlayın.
-    </p>
-    <div style="background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.3);border-radius:14px;padding:1.25rem;margin-bottom:1.5rem">
-      <div style="color:#C9A84C;font-size:1.1rem;font-weight:700;margin-bottom:4px">QR Menyu Pro — 9.99 AZN/ay</div>
-      <div style="color:rgba(255,255,255,0.55);font-size:0.78rem">14 günlük pulsuz trial daxildir</div>
-    </div>
-    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-      <button onclick="document.getElementById('sub-expired-modal').style.display='none'" style="padding:0.65rem 1.4rem;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.7);border:1px solid rgba(255,255,255,0.15);border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.85rem">← Geri qayıt</button>
-      <button onclick="document.getElementById('sub-expired-modal').style.display='none';showPage('cafe',document.querySelector('.nav-item:nth-child(2)'))" style="padding:0.65rem 1.4rem;background:var(--accent);color:#fff;border:none;border-radius:10px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:500">🏪 Kafe məlumatları</button>
-    </div>
-    <p style="color:rgba(255,255,255,0.25);font-size:0.72rem;margin-top:1.25rem">Ödəniş etdikdən sonra superadmin panelindən aktivləşdiriləcək</p>
-  </div>
-</div>
+
 
 <!-- ŞİFRƏ SIFIRLAMA MODAL -->
 <div id="forgot-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:2000;align-items:center;justify-content:center;backdrop-filter:blur(4px)">
@@ -303,7 +284,7 @@ input[type=file] { display:none; }
     <div class="nav-item" onclick="showPage('analytics',this)"><span class="nav-icon">📈</span><span data-i18n="nav_analytics">Statistika</span></div>
     <div class="nav-item" onclick="showPage('theme',this)"><span class="nav-icon">&#127912;</span><span data-i18n="nav_theme">Görünüş</span></div>
     <div class="nav-item" onclick="showPage('qr',this)"><span class="nav-icon">&#128247;</span><span data-i18n="nav_qr">QR Kod</span></div>
-    <div class="nav-item superadmin-only" style="display:none" onclick="showPage('subscriptions',this)"><span class="nav-icon">💳</span><span>Abunəlik</span></div>
+
     <div class="nav-item" onclick="showPage('settings',this)"><span class="nav-icon">&#9881;</span><span data-i18n="nav_settings">Ayarlar</span></div>
     <div class="nav-item logout-nav" onclick="doLogout()"><span class="nav-icon">🚪</span><span data-i18n="logout">Çıxış</span></div>
   </nav>
@@ -319,8 +300,7 @@ input[type=file] { display:none; }
     <div class="stats-grid">
       <div class="stat-card"><div class="stat-label" data-i18n="stat_items">Məhsullar</div><div class="stat-value" id="stat-items">0</div></div>
       <div class="stat-card"><div class="stat-label" data-i18n="stat_cats">Kateqoriyalar</div><div class="stat-value" id="stat-cats">0</div></div>
-      <div class="stat-card superadmin-only" style="border-color:var(--accent);display:none"><div class="stat-label">Abunəlik Statusu</div><div class="stat-value" id="dash-sub-active" style="color:var(--accent);font-size:1rem;margin-top:6px">—</div></div>
-      <div class="stat-card superadmin-only" style="display:none"><div class="stat-label">Qalan Müddət</div><div class="stat-value" id="dash-sub-mrr" style="font-size:1.3rem">—</div></div>
+
     </div>
     <div class="card">
       <div style="font-size:0.85rem;color:var(--muted);margin-bottom:1rem;font-weight:500;" data-i18n="recent">Son əlavə edilən məhsullar</div>
@@ -602,114 +582,7 @@ input[type=file] { display:none; }
     </div>
   </div>
 
-  <!-- SUBSCRIPTIONS (Superadmin — bu kafenin öz abunəliyi) -->
-  <div class="page" id="page-subscriptions">
-    <div class="page-header">
-      <h2 class="page-title">💳 Abunəlik İdarəetməsi</h2>
-    </div>
 
-    <!-- Cari status banner -->
-    <div id="sub-status-banner" style="border-radius:var(--radius);padding:1.25rem 1.5rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border:2px solid var(--accent);background:rgba(201,168,76,0.08)">
-      <div style="display:flex;align-items:center;gap:14px">
-        <div id="sub-status-icon" style="font-size:2rem">⏳</div>
-        <div>
-          <div id="sub-status-title" style="font-size:1rem;font-weight:600;color:var(--text)">Yüklənir...</div>
-          <div id="sub-status-desc"  style="font-size:0.8rem;color:var(--muted);margin-top:2px"></div>
-        </div>
-      </div>
-      <div id="sub-days-badge" style="font-size:0.78rem;font-weight:600;padding:6px 14px;border-radius:20px;background:var(--accent);color:#fff;white-space:nowrap"></div>
-    </div>
-
-    <!-- Plan kartı -->
-    <div style="margin-bottom:1.5rem">
-      <div style="font-size:0.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:1rem">📦 Mövcud Plan</div>
-      <div class="card" style="max-width:400px;border-top:4px solid var(--accent);padding:1.5rem">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
-          <div>
-            <div style="font-size:1.1rem;font-weight:700;color:var(--accent)">QR Menyu Pro</div>
-            <div style="font-size:0.75rem;color:var(--muted);margin-top:2px">Aylıq abunəlik</div>
-          </div>
-          <div style="font-size:1.8rem;font-weight:700">9.99 <span style="font-size:0.85rem;font-weight:400;color:var(--muted)">AZN/ay</span></div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:6px">
-          <div style="font-size:0.8rem;color:var(--text)">✅ Limitsiz menyu məhsulu</div>
-          <div style="font-size:0.8rem;color:var(--text)">✅ Şəkil yükləmə</div>
-          <div style="font-size:0.8rem;color:var(--text)">✅ Statistika & analitika</div>
-          <div style="font-size:0.8rem;color:var(--text)">✅ Tema & görünüş idarəetməsi</div>
-          <div style="font-size:0.8rem;color:var(--text)">✅ QR kod generatoru</div>
-          <div style="font-size:0.8rem;color:var(--text)">✅ Çap / PDF ixracı</div>
-          <div style="font-size:0.8rem;color:var(--muted)">⚠️ <em>Abunəlik bitdikdə yalnız kafe məlumatları işləyir</em></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Superadmin idarəetmə paneli -->
-    <div style="font-size:0.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:1rem">⚙️ Superadmin İdarəetməsi</div>
-
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-bottom:1.5rem">
-
-      <!-- Aktivləşdir -->
-      <div class="card" style="border-left:4px solid #16a34a">
-        <div style="font-size:0.88rem;font-weight:600;color:var(--text);margin-bottom:0.75rem">✅ Abunəliyi Aktivləşdir</div>
-        <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.75rem">Ödəniş alındıqdan sonra istifadəçinin abunəliyini əl ilə aktivləşdirin.</div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <div class="form-group">
-            <label>Müddət</label>
-            <select id="activate-months" style="width:100%">
-              <option value="1">1 ay — 9.99 AZN</option>
-              <option value="3">3 ay — 29.97 AZN</option>
-              <option value="6">6 ay — 59.94 AZN</option>
-              <option value="12">12 ay — 119.88 AZN</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Qeyd (ödəniş məlumatı)</label>
-            <input type="text" id="activate-note" placeholder="Məs: Nağd ödəniş, 15.05.2026">
-          </div>
-          <button class="btn btn-primary" onclick="activateSubscription()" style="background:#16a34a;margin-top:4px">✅ Aktivləşdir</button>
-        </div>
-      </div>
-
-      <!-- Ləğv et -->
-      <div class="card" style="border-left:4px solid var(--danger)">
-        <div style="font-size:0.88rem;font-weight:600;color:var(--text);margin-bottom:0.75rem">❌ Abunəliyi Ləğv Et</div>
-        <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.75rem">İstifadəçinin abunəliyini dərhal dayandırır. Yalnız kafe məlumatları funksiyası işləyəcək.</div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <div style="background:#fee2e2;border-radius:8px;padding:10px 12px;font-size:0.75rem;color:#991b1b">
-            ⚠️ Bu əməliyyat geri alına bilməz. İstifadəçi dərhal kilitlənəcək.
-          </div>
-          <button class="btn btn-danger" onclick="cancelSubscription()" style="margin-top:4px">❌ Abunəliyi Ləğv Et</button>
-        </div>
-      </div>
-
-      <!-- Trial sıfırla -->
-      <div class="card" style="border-left:4px solid #2563eb">
-        <div style="font-size:0.88rem;font-weight:600;color:var(--text);margin-bottom:0.75rem">🔄 Trial-ı Sıfırla</div>
-        <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.75rem">Test məqsədli: 14 günlük pulsuz trial müddətini yenidən başladır.</div>
-        <div style="background:#eff6ff;border-radius:8px;padding:10px 12px;font-size:0.75rem;color:#1e40af;margin-bottom:8px">
-          ℹ️ Yalnız inkişaf / test mühitində istifadə edin.
-        </div>
-        <button class="btn btn-ghost" onclick="resetTrial()" style="border-color:#2563eb;color:#2563eb;width:100%">🔄 Trial-ı Sıfırla</button>
-      </div>
-    </div>
-
-    <!-- Ödəniş tarixi -->
-    <div style="font-size:0.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:1rem">📋 Ödəniş Tarixi</div>
-    <div class="card" style="padding:0;overflow:hidden">
-      <table class="items-table">
-        <thead><tr>
-          <th style="padding-left:1rem">Tarix</th>
-          <th>Məbləğ</th>
-          <th>Müddət</th>
-          <th>Qüvvədə dək</th>
-          <th style="padding-right:1rem">Qeyd</th>
-        </tr></thead>
-        <tbody id="payment-history-tbody">
-          <tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--muted)">Ödəniş tarixi yoxdur</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
 
   <!-- SETTINGS -->
   <div class="page" id="page-settings">
@@ -1011,7 +884,6 @@ function showAdminUI(username, role) {
   });
 
   renderDashboard();
-  checkSubscriptionOnLogin();
 }
 function doLogout() {
   fetch('/api/logout', {method:'POST'}).finally(function(){
@@ -1088,19 +960,6 @@ function renderDashboard() {
   var total = STATE.items.length;
   document.getElementById('stat-items').textContent = total;
   document.getElementById('stat-cats').textContent = STATE.categories.length;
-  // Abunəlik statusunu yüklə
-  if (CURRENT_SUB) {
-    var statusLabel = CURRENT_SUB.status === 'active' ? '✅ Aktiv' : CURRENT_SUB.status === 'trial' ? '⏳ Trial' : '❌ Bitib';
-    setEl('dash-sub-active', statusLabel);
-    setEl('dash-sub-mrr', CURRENT_SUB.days_left !== null ? (CURRENT_SUB.days_left + ' gün') : '—');
-  } else {
-    loadSubscriptionStatus(function(sub) {
-      if (!sub) return;
-      var statusLabel = sub.status === 'active' ? '✅ Aktiv' : sub.status === 'trial' ? '⏳ Trial' : '❌ Bitib';
-      setEl('dash-sub-active', statusLabel);
-      setEl('dash-sub-mrr', sub.days_left !== null ? (sub.days_left + ' gün') : '—');
-    });
-  }
   var tbody = document.getElementById('recent-body');
   tbody.innerHTML = '';
   STATE.items.slice(-5).reverse().forEach(function(item) {
@@ -2803,184 +2662,21 @@ function setEl(id, val) { var el = document.getElementById(id); if (el) el.textC
 // ══════════════════════════════════════════
 // ABUNƏLİK İDARƏETMƏ SİSTEMİ (Superadmin)
 // ══════════════════════════════════════════
-var CURRENT_SUB = null;
 
-function loadSubscriptionStatus(cb) {
-  fetch('/api/subscription', { headers: {'Content-Type':'application/json'} })
-    .then(function(r){ return r.json(); })
-    .then(function(d) {
-      CURRENT_SUB = d;
-      if (cb) cb(d);
-    }).catch(function(){
-      if (cb) cb(null);
-    });
-}
 
-function initSubscriptions() {
-  loadSubscriptionStatus(function(sub) {
-    renderSubBanner(sub);
-    renderPaymentHistory(sub);
-  });
-}
-
-function renderSubBanner(sub) {
-  if (!sub) return;
-  var banner    = document.getElementById('sub-status-banner');
-  var iconEl    = document.getElementById('sub-status-icon');
-  var titleEl   = document.getElementById('sub-status-title');
-  var descEl    = document.getElementById('sub-status-desc');
-  var badgeEl   = document.getElementById('sub-days-badge');
-  if (!banner) return;
-
-  var status = sub.status;
-  var daysLeft = sub.days_left;
-
-  if (status === 'trial') {
-    banner.style.borderColor = '#2563eb';
-    banner.style.background  = 'rgba(37,99,235,0.08)';
-    iconEl.textContent   = '⏳';
-    titleEl.textContent  = '14 Günlük Pulsuz Trial';
-    descEl.textContent   = 'Trial müddəti bitdikdən sonra ödəniş tələb olunacaq.';
-    badgeEl.textContent  = daysLeft + ' gün qaldı';
-    badgeEl.style.background = '#2563eb';
-  } else if (status === 'active') {
-    banner.style.borderColor = '#16a34a';
-    banner.style.background  = 'rgba(22,163,74,0.08)';
-    iconEl.textContent   = '✅';
-    titleEl.textContent  = 'Abunəlik Aktiv';
-    var paidUntil = sub.paid_until ? new Date(sub.paid_until).toLocaleDateString('az-AZ') : '—';
-    descEl.textContent   = 'Qüvvədədir: ' + paidUntil + ' tarixinə qədər.';
-    badgeEl.textContent  = daysLeft + ' gün qaldı';
-    badgeEl.style.background = '#16a34a';
-  } else {
-    banner.style.borderColor = '#dc2626';
-    banner.style.background  = 'rgba(220,38,38,0.08)';
-    iconEl.textContent   = '❌';
-    titleEl.textContent  = 'Abunəlik Bitib';
-    descEl.textContent   = 'Funksiyalar məhdudlaşdırılıb. Yalnız kafe məlumatları işləyir.';
-    badgeEl.textContent  = 'Aktiv deyil';
-    badgeEl.style.background = '#dc2626';
-  }
-}
-
-function renderPaymentHistory(sub) {
-  var tbody = document.getElementById('payment-history-tbody');
-  if (!tbody || !sub) return;
-  var history = sub.payment_history || [];
-  if (!history.length) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--muted)">Ödəniş tarixi yoxdur</td></tr>';
-    return;
-  }
-  tbody.innerHTML = history.slice().reverse().map(function(p) {
-    var date     = new Date(p.date).toLocaleDateString('az-AZ');
-    var until    = p.until ? new Date(p.until).toLocaleDateString('az-AZ') : '—';
-    var months   = p.months || 1;
-    return '<tr>' +
-      '<td style="padding-left:1rem;font-size:0.82rem">' + date + '</td>' +
-      '<td style="font-weight:600;color:var(--accent)">' + (p.amount||'').toFixed(2) + ' AZN</td>' +
-      '<td style="font-size:0.82rem;color:var(--muted)">' + months + ' ay</td>' +
-      '<td style="font-size:0.82rem">' + until + '</td>' +
-      '<td style="font-size:0.78rem;color:var(--muted);padding-right:1rem">' + (p.note||'—') + '</td>' +
-    '</tr>';
-  }).join('');
-}
-
-function activateSubscription() {
-  var months = parseInt(document.getElementById('activate-months').value) || 1;
-  var note   = document.getElementById('activate-note').value.trim() || 'Manual aktivasiya';
-  if (!confirm(months + ' aylıq abunəliyi aktivləşdirməyə əminsinizmi?\nMəbləğ: ' + (months * 9.99).toFixed(2) + ' AZN')) return;
-  fetch('/api/subscription/activate', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({ months: months, note: note })
-  }).then(function(r){ return r.json(); }).then(function(d) {
-    if (d.ok) {
-      showToast('✅ Abunəlik ' + months + ' ay müddətinə aktivləşdirildi!');
-      document.getElementById('activate-note').value = '';
-      initSubscriptions();
-    } else {
-      showToast('❌ ' + (d.error || 'Xəta baş verdi'));
-    }
-  }).catch(function(){ showToast('❌ Bağlantı xətası'); });
-}
-
-function cancelSubscription() {
-  if (!confirm('Abunəliyi ləğv etmək istədiyinizdən əminsinizmi?\nİstifadəçi dərhal kilitlənəcək!')) return;
-  fetch('/api/subscription/cancel', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'}
-  }).then(function(r){ return r.json(); }).then(function(d) {
-    if (d.ok) {
-      showToast('Abunəlik ləğv edildi');
-      initSubscriptions();
-    } else {
-      showToast('❌ ' + (d.error || 'Xəta'));
-    }
-  }).catch(function(){ showToast('❌ Bağlantı xətası'); });
-}
-
-function resetTrial() {
-  if (!confirm('Trial-ı sıfırlamaq istədiyinizdən əminsinizmi?')) return;
-  fetch('/api/subscription/reset-trial', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'}
-  }).then(function(r){ return r.json(); }).then(function(d) {
-    if (d.ok) {
-      showToast('✅ Trial 14 günlük sıfırlandı');
-      initSubscriptions();
-    } else {
-      showToast('❌ ' + (d.error || 'Xəta'));
-    }
-  }).catch(function(){ showToast('❌ Bağlantı xətası'); });
-}
-
-// Abunəlik bitmişsə "expired" modunu yoxla — girişdən sonra çağırılır
-function checkSubscriptionOnLogin() {
-  loadSubscriptionStatus(function(sub) {
-    CURRENT_SUB = sub;
-    // Sidebar-da abunəlik badge-i göstər
-    if (sub) renderSidebarSubBadge(sub);
-  });
-}
-
-function renderSidebarSubBadge(sub) {
-  var existing = document.getElementById('sidebar-sub-badge');
-  if (existing) existing.remove();
-  if (!sub || sub.status === 'active') return;
-  var label = sub.status === 'trial'
-    ? '⏳ Trial: ' + sub.days_left + ' gün'
-    : '❌ Abunəlik bitib';
-  var color = sub.status === 'trial' ? '#2563eb' : '#dc2626';
-  var badge = document.createElement('div');
-  badge.id = 'sidebar-sub-badge';
-  badge.style.cssText = 'margin:8px 1.25rem 0;padding:5px 10px;border-radius:8px;font-size:0.7rem;font-weight:600;text-align:center;color:#fff;background:' + color;
-  badge.textContent = label;
-  var sidebarBottom = document.querySelector('.sidebar-bottom');
-  if (sidebarBottom) sidebarBottom.insertBefore(badge, sidebarBottom.firstChild);
-}
-
-// showPage — abunəlik yoxlaması ilə yenidən yazılmış
 function showPage(id, el) {
-  var session = JSON.parse(sessionStorage.getItem('cafe_admin_session') || '{}');
-  var isSuperAdmin = session.role === 'superadmin';
-  var allowedWithoutSub = ['dashboard', 'cafe', 'settings'];
-  if (!isSuperAdmin && CURRENT_SUB && CURRENT_SUB.status === 'expired' && allowedWithoutSub.indexOf(id) === -1) {
-    document.getElementById('sub-expired-modal').style.display = 'flex';
-    return;
-  }
   document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
   document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
   document.getElementById('page-' + id).classList.add('active');
   if (el) el.classList.add('active');
-  if (id === 'dashboard')     renderDashboard();
-  if (id === 'menu')          renderMenuPage();
-  if (id === 'categories')    renderCatsPage();
-  if (id === 'cafe')          loadCafeForm();
-  if (id === 'theme')         renderThemePage();
-  if (id === 'analytics')     renderAnalytics();
-  if (id === 'print')         renderPrintPage();
-  if (id === 'settings')      { renderSettingsPage(); setTimeout(updateAdminThemeBtns, 50); }
-  if (id === 'subscriptions') initSubscriptions();
+  if (id === 'dashboard')  renderDashboard();
+  if (id === 'menu')       renderMenuPage();
+  if (id === 'categories') renderCatsPage();
+  if (id === 'cafe')       loadCafeForm();
+  if (id === 'theme')      renderThemePage();
+  if (id === 'analytics')  renderAnalytics();
+  if (id === 'print')      renderPrintPage();
+  if (id === 'settings')   { renderSettingsPage(); setTimeout(updateAdminThemeBtns, 50); }
 }
 
 // ══════════════════════════════════════════
