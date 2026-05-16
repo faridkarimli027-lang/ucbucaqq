@@ -570,35 +570,40 @@ input[type=file] { display:none; }
         <div id="qr-url-display" style="font-size:0.72rem;color:var(--muted);word-break:break-all;text-align:center;max-width:260px;line-height:1.5"></div>
       </div>
 
-      <!-- Sağ: Link redaktəsi + məlumat -->
+      <!-- Sağ: Link + məlumat -->
       <div style="display:flex;flex-direction:column;gap:1rem">
 
+        <div class="card" style="background:rgba(201,168,76,0.06);border-color:rgba(201,168,76,0.3)">
+          <div style="font-size:0.72rem;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:0.6rem">👤 Sizin menyu linkiniz</div>
+          <div id="qr-user-link" style="font-size:0.82rem;font-weight:500;color:var(--text);word-break:break-all;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:0.6rem 0.75rem;margin-bottom:0.6rem;font-family:monospace"></div>
+          <p style="font-size:0.72rem;color:var(--muted);line-height:1.5">Bu link yalnız <strong>sizin</strong> menyunuzu açır. QR kodu bu linkdən yaranır.</p>
+        </div>
+
         <div class="card">
-          <div style="font-size:0.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:0.75rem">🔗 Menyu linki</div>
+          <div style="font-size:0.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:0.75rem">🔗 Xüsusi link (istəyə görə)</div>
           <div style="display:flex;gap:8px;align-items:center">
-            <input type="text" id="qr-url-input" placeholder="https://sizin-sayt.com/menu" style="flex:1;font-size:0.83rem">
+            <input type="text" id="qr-url-input" placeholder="https://sizin-sayt.com/menu?user=..." style="flex:1;font-size:0.83rem">
             <button class="btn btn-primary" onclick="generateQRCode()">Yarat</button>
           </div>
           <p style="font-size:0.72rem;color:var(--muted);margin-top:0.6rem;line-height:1.5">
-            QR skan ediləndə bu link avtomatik açılır.<br>
-            Render, Heroku və ya öz serverinizin URL-ini daxil edin.
+            Boş buraxsanız, avtomatik öz linkiniz istifadə olunur.
           </p>
         </div>
 
-        <div class="card" style="background:rgba(201,168,76,0.06);border-color:rgba(201,168,76,0.25)">
+        <div class="card" style="background:rgba(201,168,76,0.04);border-color:rgba(201,168,76,0.2)">
           <div style="font-size:0.72rem;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:0.75rem">💡 Necə istifadə etmək olar?</div>
           <div style="display:flex;flex-direction:column;gap:8px">
             <div style="display:flex;gap:10px;align-items:flex-start;font-size:0.82rem">
               <span style="width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:700;flex-shrink:0">1</span>
-              <span style="color:var(--muted);line-height:1.5">Serverin URL-ini yuxarıdakı xanaya daxil edin (məs: <b style="color:var(--text)">https://ucbucaq.onrender.com/menu</b>)</span>
+              <span style="color:var(--muted);line-height:1.5">QR kodu avtomatik hazırdır — <b style="color:var(--text)">PNG yüklə</b> düyməsinə basın</span>
             </div>
             <div style="display:flex;gap:10px;align-items:flex-start;font-size:0.82rem">
               <span style="width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:700;flex-shrink:0">2</span>
-              <span style="color:var(--muted);line-height:1.5"><b style="color:var(--text)">PNG yüklə</b> düyməsi ilə QR şəklini endirin</span>
+              <span style="color:var(--muted);line-height:1.5">QR şəklini çap edib masaya qoyun</span>
             </div>
             <div style="display:flex;gap:10px;align-items:flex-start;font-size:0.82rem">
               <span style="width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:700;flex-shrink:0">3</span>
-              <span style="color:var(--muted);line-height:1.5">QR kodu çap edib masaya qoyun — müştəri skan edəndə <b style="color:var(--text)">birbaşa menyuya</b> keçir</span>
+              <span style="color:var(--muted);line-height:1.5">Müştəri skan edəndə <b style="color:var(--text)">birbaşa sizin menyunuza</b> keçir</span>
             </div>
           </div>
         </div>
@@ -904,7 +909,7 @@ function showAdminUI(username, role) {
     el.style.display = isSuperAdmin ? (el.classList.contains('drawer-overlay') ? 'none' : 'block') : 'none';
   });
 
-  loadFromServer();
+  renderDashboard();
 }
 function doLogout() {
   fetch('/api/logout', {method:'POST'}).finally(function(){
@@ -956,24 +961,22 @@ async function saveData() {
 async function loadFromServer() {
   try {
     var r = await fetch('/api/data');
-    if (!r.ok) throw new Error('not ok');
     var data = await r.json();
-    if (!data || !data.categories) throw new Error('empty');
     STATE = data;
     try { localStorage.setItem('cafe_data', JSON.stringify(STATE)); } catch(e) {}
     if (STATE.cafe && !STATE.cafe.logo) {
       var localLogo = localStorage.getItem('cafe_logo');
       if (localLogo) STATE.cafe.logo = localLogo;
     }
+    // Əgər loqo varsa, localStorage-a da yaz (sinxron saxla)
     if (STATE.cafe && STATE.cafe.logo) {
       localStorage.setItem('cafe_logo', STATE.cafe.logo);
     }
     renderDashboard();
-    renderMenuPage();
   } catch(e) {
+    // Server yoxdursa localStorage-daki loqonu STATE-ə yüklə
     var localLogo = localStorage.getItem('cafe_logo');
     if (localLogo && STATE.cafe) STATE.cafe.logo = localLogo;
-    renderDashboard();
   }
 }
 
@@ -1894,13 +1897,22 @@ renderThemePage = function() {
 };
 
 // ── QR ──
+function getMyMenuUrl() {
+  // Giriş etmiş userin öz menyu URL-i: /menu?user=<username>
+  var session = JSON.parse(sessionStorage.getItem('cafe_admin_session') || '{}');
+  var username = session.username || '';
+  var base = window.location.origin + '/menu';
+  return username ? base + '?user=' + encodeURIComponent(username) : base;
+}
+
 function generateQRCode(autoUrl) {
-  var url = autoUrl || document.getElementById('qr-url-input').value.trim();
-  if (!url) {
-    // URL yoxdursa, serverin öz /menu URL-ini avtomatik yığ
-    url = window.location.origin + '/menu';
-    document.getElementById('qr-url-input').value = url;
-  }
+  var customInput = document.getElementById('qr-url-input').value.trim();
+  var url = autoUrl || customInput || getMyMenuUrl();
+
+  // User link kutucuğunu doldur
+  var userLinkEl = document.getElementById('qr-user-link');
+  if (userLinkEl) userLinkEl.textContent = getMyMenuUrl();
+
   try {
     var canvas = document.getElementById('qr-canvas');
     new QRious({ element: canvas, value: url, size: 220, foreground: '#1C1917', background: '#FFFFFF', level: 'H', padding: 16 });
@@ -1908,19 +1920,23 @@ function generateQRCode(autoUrl) {
     document.getElementById('qr-url-display').textContent = url;
   } catch(e) { showToast('QR yaratmaq alınmadı'); }
 }
+
 function downloadQRCode() {
   var canvas = document.getElementById('qr-canvas');
   if (!canvas.width) { showToast('Əvvəlcə QR yaradın'); return; }
+  var session = JSON.parse(sessionStorage.getItem('cafe_admin_session') || '{}');
+  var username = session.username || 'menu';
   var a = document.createElement('a');
   a.href = canvas.toDataURL('image/png');
-  a.download = 'ucbucaq-menu-qr.png';
+  a.download = username + '-menu-qr.png';
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
   showToast('PNG yükləndi');
 }
+
 function copyQrLink() {
-  var url = document.getElementById('qr-url-input').value.trim();
+  var url = document.getElementById('qr-url-display').textContent.trim() || getMyMenuUrl();
   if (!url) { showToast('Link yoxdur'); return; }
   navigator.clipboard.writeText(url).then(function(){ showToast('Link kopyalandı'); }).catch(function(){ showToast('Kopyalamaq alınmadı'); });
 }
@@ -2692,7 +2708,7 @@ function showPage(id, el) {
   if (id === 'analytics')  renderAnalytics();
   if (id === 'print')      renderPrintPage();
   if (id === 'settings')   { renderSettingsPage(); setTimeout(updateAdminThemeBtns, 50); }
-  if (id === 'qr')         { setTimeout(function(){ generateQRCode(); }, 100); }
+  if (id === 'qr')         { setTimeout(function(){ generateQRCode(getMyMenuUrl()); }, 100); }
 }
 
 // ══════════════════════════════════════════
