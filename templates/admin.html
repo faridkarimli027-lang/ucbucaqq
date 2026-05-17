@@ -779,7 +779,13 @@ function doForgotPassword() {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({username: email})
-  }).then(function(r){ return r.json().then(function(d){ return {status: r.status, data: d}; }); }).then(function(res){
+  }).then(function(r){
+    var status = r.status;
+    return r.text().then(function(text){
+      try { return {status: status, data: JSON.parse(text)}; }
+      catch(e) { return {status: status, data: {error: 'Server xətası (' + status + ')'}}; }
+    });
+  }).then(function(res){
     var d = res.data;
     if (d.ok) {
       document.getElementById('forgot-step1').style.display = 'none';
@@ -788,8 +794,8 @@ function doForgotPassword() {
       msgEl.textContent = d.error || ('Xəta: ' + res.status);
       btn.disabled = false; btn.textContent = 'Link göndər';
     }
-  }).catch(function(err){
-    msgEl.textContent = 'Bağlantı xətası: ' + (err.message || err);
+  }).catch(function(){
+    msgEl.textContent = 'Server ilə bağlantı xətası';
     btn.disabled = false; btn.textContent = 'Link göndər';
   });
 }
