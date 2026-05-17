@@ -1697,8 +1697,9 @@ function closeConfirm() {
   _confirmCallback = null;
 }
 function confirmOk() {
+  var cb = _confirmCallback;
   closeConfirm();
-  if (_confirmCallback) _confirmCallback();
+  if (cb) cb();
 }
 document.getElementById('confirm-modal').addEventListener('click', function(e){
   if (e.target === this) closeConfirm();
