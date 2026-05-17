@@ -416,55 +416,45 @@ def api_forgot_password():
     if not recipient_email or '@' not in recipient_email:
         return jsonify({'error': 'Bu istifadəçiyə email təyin edilməyib. Superadmin ilə əlaqə saxlayın.'}), 400
 
-    # Reset token
-    token   = secrets.token_urlsafe(32)
-    expires = (datetime.now() + timedelta(hours=1)).isoformat()
-
-    # Tokenləri reset_tokens.json-da saxla (users.json-dan ayrı)
-    reset_file = os.path.join(BASE_DIR, 'reset_tokens.json')
     try:
-        with open(reset_file, 'r', encoding='utf-8') as f:
-            reset_tokens = json.load(f)
-    except Exception:
-        reset_tokens = {}
+        token   = secrets.token_urlsafe(32)
+        expires = (datetime.now() + timedelta(hours=1)).isoformat()
 
-    reset_tokens[token] = {'username': matched_user, 'expires': expires, 'used': False}
-    with open(reset_file, 'w', encoding='utf-8') as f:
-        json.dump(reset_tokens, f, ensure_ascii=False, indent=2)
+        reset_file = os.path.join(BASE_DIR, 'reset_tokens.json')
+        try:
+            with open(reset_file, 'r', encoding='utf-8') as rf:
+                reset_tokens = json.load(rf)
+        except Exception:
+            reset_tokens = {}
+        reset_tokens[token] = {'username': matched_user, 'expires': expires, 'used': False}
+        with open(reset_file, 'w', encoding='utf-8') as rf:
+            json.dump(reset_tokens, rf, ensure_ascii=False, indent=2)
 
-    reset_link = f"{APP_BASE_URL}/reset-password?token={token}"
-    try:
+        reset_link = APP_BASE_URL + '/reset-password?token=' + token
+        html_body = (
+            '<div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;padding:32px;background:#FDF8F3;border-radius:16px">'
+            '<h2 style="color:#C9A84C">QR Menu Admin</h2>'
+            '<p>Salam <strong>' + matched_user + '</strong>,</p>'
+            '<p>Şifrə sıfırlama sorğusu alındı. Aşağıdakı düyməyə basın:</p>'
+            '<p style="text-align:center;margin:28px 0">'
+            '<a href="' + reset_link + '" style="background:#C9A84C;color:#fff;text-decoration:none;padding:14px 32px;border-radius:10px;font-weight:600">Şifrəni sıfırla</a>'
+            '</p>'
+            '<p style="color:#999;font-size:0.8rem">Bu link <strong>1 saat</strong> erzinde etibarlıdır.</p>'
+            '</div>'
+        )
         msg = Message(
-            subject='QR Menu — Şifrə sıfırlama',
+            subject='QR Menu - Sifre sifirlama',
             recipients=[recipient_email],
-            html=f"""
-            <div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;padding:32px;
-                        background:#FDF8F3;border-radius:16px">
-              <h2 style="color:#C9A84C">QR Menu Admin</h2>
-              <p>Salam <strong>{matched_user}</strong>,</p>
-              <p>Şifrə sıfırlama sorğusu alındı. Aşağıdakı düyməyə basın:</p>
-              <p style="text-align:center;margin:28px 0">
-                <a href="{reset_link}"
-                   style="background:#C9A84C;color:#fff;text-decoration:none;
-                          padding:14px 32px;border-radius:10px;font-weight:600">
-                  Şifrəni sıfırla
-                </a>
-              </p>
-              <p style="color:#999;font-size:0.8rem">
-                Bu link <strong>1 saat</strong> ərzində etibarlıdır.
-              </p>
-            </div>
-            """,
-            body=f"Şifrə sıfırlama linki: {reset_link}"
+            html=html_body,
+            body='Sifre sifirlama linki: ' + reset_link
         )
         mail.send(msg)
     except Exception as e:
         import traceback
-        err_msg = traceback.format_exc()
-        print('[EMAIL ERROR]', err_msg)
-        return jsonify({'error': 'Email göndərilmədi: ' + str(e)}), 500
+        print('[FORGOT PASSWORD ERROR]', traceback.format_exc())
+        return jsonify({'error': 'Xeta: ' + str(e)}), 500
 
-    return jsonify({'ok': True, 'message': 'Şifrə sıfırlama linki emailinizə göndərildi'})
+    return jsonify({'ok': True, 'message': 'Sifre sifirlama linki emailinize gonderildi'})
 
 
 @app.route('/reset-password')
