@@ -396,21 +396,25 @@ def api_clear_stats():
 @app.route('/api/forgot-password', methods=['POST'])
 def api_forgot_password():
     data = request.json or {}
-    recipient_email = data.get('email', '').strip()
-    if not recipient_email or '@' not in recipient_email:
-        return jsonify({'error': 'Düzgün email daxil edin'}), 400
+    username = data.get('username', '').strip()
+    if not username:
+        return jsonify({'error': 'İstifadəçi adı daxil edin'}), 400
 
     users = load_users()
 
-    # Həmin email hansı userdə qeydiyyatdadırsa onu tap
+    # Username ilə tap (case-insensitive)
     matched_user = None
-    for uname, info in users.items():
-        if info.get('email', '').strip().lower() == recipient_email.lower():
+    for uname in users:
+        if uname.lower() == username.lower():
             matched_user = uname
             break
 
     if not matched_user:
-        return jsonify({'error': 'Bu email ilə qeydiyyatlı istifadəçi tapılmadı'}), 400
+        return jsonify({'error': 'Bu istifadəçi adı tapılmadı'}), 400
+
+    recipient_email = users[matched_user].get('email', '').strip()
+    if not recipient_email or '@' not in recipient_email:
+        return jsonify({'error': 'Bu istifadəçiyə email təyin edilməyib. Superadmin ilə əlaqə saxlayın.'}), 400
 
     # Reset token
     token   = secrets.token_urlsafe(32)
