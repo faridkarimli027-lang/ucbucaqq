@@ -459,7 +459,10 @@ def api_forgot_password():
         )
         mail.send(msg)
     except Exception as e:
-        return jsonify({'error': f'Email göndərilmədi: {str(e)}'}), 500
+        import traceback
+        err_msg = traceback.format_exc()
+        print('[EMAIL ERROR]', err_msg)
+        return jsonify({'error': 'Email göndərilmədi: ' + str(e)}), 500
 
     return jsonify({'ok': True, 'message': 'Şifrə sıfırlama linki emailinizə göndərildi'})
 
