@@ -267,6 +267,7 @@ def api_add_user():
     username = data.get('username', '').strip().lower()
     password = data.get('password', '')
     role     = data.get('role', 'manager')
+    email    = data.get('email', '').strip()
     if not username or not password:
         return jsonify({'error': 'Ad və şifrə tələb olunur'}), 400
     if role == 'superadmin':
@@ -274,7 +275,7 @@ def api_add_user():
     users = load_users()
     if username in users:
         return jsonify({'error': 'Bu istifadəçi artıq mövcuddur'}), 400
-    users[username] = {'password': generate_password_hash(password), 'role': role, 'email': ''}
+    users[username] = {'password': generate_password_hash(password), 'role': role, 'email': email}
     save_users(users)
     # Yeni userin boş data faylını yarad
     import copy
