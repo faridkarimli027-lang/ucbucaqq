@@ -226,8 +226,8 @@ input[type=file] { display:none; }
     </div>
     <div id="forgot-step1">
       <div class="login-field" style="margin-bottom:12px">
-        <label style="font-size:0.72rem;font-weight:500;color:rgba(255,255,255,0.45);letter-spacing:0.5px;text-transform:uppercase;display:block;margin-bottom:5px">Email ünvanı</label>
-        <input class="login-input" id="forgot-email" type="email" placeholder="sizin@gmail.com" onkeydown="if(event.key==='Enter')doForgotPassword()">
+        <label style="font-size:0.72rem;font-weight:500;color:rgba(255,255,255,0.45);letter-spacing:0.5px;text-transform:uppercase;display:block;margin-bottom:5px">İstifadəçi adı</label>
+        <input class="login-input" id="forgot-email" type="text" placeholder="istifadəçi adınız" onkeydown="if(event.key==='Enter')doForgotPassword()">
       </div>
       <div id="forgot-msg" style="font-size:0.78rem;text-align:center;min-height:1.2em;margin-bottom:8px"></div>
       <button class="login-btn" id="forgot-btn" onclick="doForgotPassword()">Link göndər</button>
@@ -773,12 +773,12 @@ function doForgotPassword() {
   var msgEl = document.getElementById('forgot-msg');
   var btn   = document.getElementById('forgot-btn');
   msgEl.style.color = '#fca5a5';
-  if (!email) { msgEl.textContent = 'Email daxil edin'; return; }
+  if (!email) { msgEl.textContent = 'İstifadəçi adı daxil edin'; return; }
   btn.disabled = true; btn.textContent = '⏳ Göndərilir...';
   fetch('/api/forgot-password', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({email: email})
+    body: JSON.stringify({username: email})
   }).then(function(r){ return r.json().then(function(d){ return {status: r.status, data: d}; }); }).then(function(res){
     var d = res.data;
     if (d.ok) {
@@ -2466,7 +2466,7 @@ function saveUserEmail() {
   fetch('/api/users/' + username + '/email', {
     method: 'PUT',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({email: email})
+    body: JSON.stringify({username: email})
   }).then(function(r){ return r.json(); }).then(function(d){
     if (d.ok) showToast('✅ Email yadda saxlandı');
     else showToast('❌ ' + (d.error || 'Xəta'));
