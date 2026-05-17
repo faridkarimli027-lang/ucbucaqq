@@ -409,11 +409,11 @@ def api_forgot_password():
             break
 
     if not matched_user:
-        return jsonify({'error': 'İstifadəçi tapılmadı'}), 400
+        return jsonify({'error': 'Bu email və ya istifadəçi adı tapılmadı. Superadmin ilə əlaqə saxlayın.'}), 400
 
-    recipient_email = users[matched_user].get('email') or username_or_email
-    if '@' not in recipient_email:
-        return jsonify({'error': 'Bu istifadəçinin email-i qeydiyyatda yoxdur'}), 400
+    recipient_email = users[matched_user].get('email', '').strip()
+    if not recipient_email or '@' not in recipient_email:
+        return jsonify({'error': f'"{matched_user}" istifadəçisinin email ünvanı qeydiyyatda yoxdur. Superadmin email əlavə etməlidir.'}), 400
 
     # Reset token
     token   = secrets.token_urlsafe(32)
