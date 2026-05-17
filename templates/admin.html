@@ -186,6 +186,19 @@ input[type=file] { display:none; }
 </head>
 <body>
 
+<!-- TƏSDİQ MODALI -->
+<div id="confirm-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:3000;align-items:center;justify-content:center;backdrop-filter:blur(4px)">
+  <div style="background:var(--card);border-radius:16px;padding:1.75rem;width:340px;max-width:92vw;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:popIn 0.2s ease both">
+    <div style="font-size:1.5rem;text-align:center;margin-bottom:0.75rem" id="confirm-icon">🗑</div>
+    <h3 style="text-align:center;font-size:1rem;font-weight:600;margin-bottom:0.5rem" id="confirm-title">Silmək istədiyinizdən əminsinizmi?</h3>
+    <p style="text-align:center;font-size:0.83rem;color:var(--muted);margin-bottom:1.25rem" id="confirm-desc"></p>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost" style="flex:1" onclick="closeConfirm()">Ləğv et</button>
+      <button class="btn btn-danger" style="flex:1;background:var(--danger);color:#fff" id="confirm-ok-btn" onclick="confirmOk()">Sil</button>
+    </div>
+  </div>
+</div>
+
 <!-- LOGIN -->
 <div id="login-screen">
   <div class="login-bg-pattern"></div>
@@ -1084,11 +1097,13 @@ function adminUploadLogo(input) {
     }).catch(function(){ showToast('❌ Yüklənmə xətası'); });
 }
 function adminDeleteLogo() {
-  localStorage.removeItem('cafe_logo');
-  if (STATE.cafe) delete STATE.cafe.logo;
-  saveData();
-  adminLoadLogo();
-  showToast('Loqo silindi');
+  showConfirm('Loqonu sil', 'Loqo silinəcək və menyu səhifəsindən yox olacaq.', function(){
+    localStorage.removeItem('cafe_logo');
+    if (STATE.cafe) delete STATE.cafe.logo;
+    saveData();
+    adminLoadLogo();
+    showToast('Loqo silindi');
+  }, '🖼️');
 }
 function renderSocialPreview() {
   var c = STATE.cafe;
@@ -1315,7 +1330,13 @@ function clearItemImage() {
   document.getElementById('img-preview-wrap').innerHTML = '<div class="placeholder"><span>&#128444;</span>Seçilmiş şəkil burada görünəcək</div>';
   document.getElementById('item-img-del-btn').style.display = 'none';
 }
-function deleteItem(idx) { STATE.items.splice(idx,1); saveData(); renderMenuPage(); showToast('Məhsul silindi'); }
+function deleteItem(idx) {
+  var item = STATE.items[idx];
+  var name = item ? (item.nameAz || 'Məhsul') : 'Məhsul';
+  showConfirm('Məhsulu sil', '"' + name + '" silinəcək. Bu əməliyyat geri qaytarıla bilməz.', function(){
+    STATE.items.splice(idx,1); saveData(); renderMenuPage(); showToast('Məhsul silindi');
+  }, '🗑');
+}
 
 // ── CATEGORIES ──
 function renderCatsPage() {
@@ -1394,7 +1415,9 @@ function deleteCat(idx) {
   var cat=STATE.categories[idx];
   var count=STATE.items.filter(function(i){ return i.catId===cat.id; }).length;
   if (count>0) { showToast('Əvvəlcə bu kateqoriyanın '+count+' məhsulunu silin'); return; }
-  STATE.categories.splice(idx,1); saveData(); renderCatsPage(); showToast('Kateqoriya silindi');
+  showConfirm('Kateqoriyanı sil', '"' + cat.labelAz + '" kateqoriyası silinəcək.', function(){
+    STATE.categories.splice(idx,1); saveData(); renderCatsPage(); showToast('Kateqoriya silindi');
+  }, '📁');
 }
 
 // ── ANALYTICS ──
@@ -1656,6 +1679,30 @@ function openPrintPreview(autoPrint) {
   win.document.write(html);
   win.document.close();
 }
+
+
+// ── TƏSDİQ MODALI ──
+var _confirmCallback = null;
+function showConfirm(title, desc, callback, icon) {
+  document.getElementById('confirm-title').textContent = title || 'Silmək istədiyinizdən əminsinizmi?';
+  document.getElementById('confirm-desc').textContent  = desc  || '';
+  document.getElementById('confirm-icon').textContent  = icon  || '🗑';
+  _confirmCallback = callback;
+  var m = document.getElementById('confirm-modal');
+  m.style.display = 'flex';
+  setTimeout(function(){ document.getElementById('confirm-ok-btn').focus(); }, 100);
+}
+function closeConfirm() {
+  document.getElementById('confirm-modal').style.display = 'none';
+  _confirmCallback = null;
+}
+function confirmOk() {
+  closeConfirm();
+  if (_confirmCallback) _confirmCallback();
+}
+document.getElementById('confirm-modal').addEventListener('click', function(e){
+  if (e.target === this) closeConfirm();
+});
 
 // ── THEMES ──
 var THEMES = [
@@ -2601,12 +2648,13 @@ function saveUser() {
 }
 
 function deleteUser(key) {
-  if (!confirm(key + ' istifadəçisini silmək istədiyinizdən əminsinizmi?')) return;
-  fetch('/api/users/' + key, {method: 'DELETE'})
-    .then(function(r){ return r.json(); }).then(function(d){
-      if (d.ok) { showToast('İstifadəçi silindi'); renderUsersList(); }
-      else showToast('❌ ' + (d.error || 'Xəta'));
-    });
+  showConfirm('İstifadəçini sil', '"' + key + '" istifadəçisi və bütün məlumatları silinəcək.', function(){
+    fetch('/api/users/' + key, {method: 'DELETE'})
+      .then(function(r){ return r.json(); }).then(function(d){
+        if (d.ok) { showToast('İstifadəçi silindi'); renderUsersList(); }
+        else showToast('❌ ' + (d.error || 'Xəta'));
+      });
+  }, '👤');
 }
 
 function syncCredentials(users) {
