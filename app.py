@@ -404,7 +404,7 @@ def api_forgot_password():
     # email və ya username ilə axtar
     matched_user = None
     for uname, info in users.items():
-        if uname == username_or_email or info.get('email', '').lower() == username_or_email:
+        if uname.lower() == username_or_email or info.get('email', '').lower() == username_or_email:
             matched_user = uname
             break
 
