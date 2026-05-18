@@ -588,7 +588,12 @@ input[type=file] { display:none; }
 
         <div class="card" style="background:rgba(201,168,76,0.06);border-color:rgba(201,168,76,0.3)">
           <div style="font-size:0.72rem;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:0.6rem">👤 Sizin menyu linkiniz</div>
-          <div id="qr-user-link" style="font-size:0.82rem;font-weight:500;color:var(--text);word-break:break-all;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:0.6rem 0.75rem;margin-bottom:0.6rem;font-family:monospace"></div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:0.6rem">
+            <div id="qr-user-link" style="flex:1;font-size:0.82rem;font-weight:500;color:var(--text);word-break:break-all;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:0.6rem 0.75rem;font-family:monospace"></div>
+            <button onclick="copyQrLink()" title="Linki kopyala" style="flex-shrink:0;width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:var(--bg);border:1px solid var(--border);border-radius:8px;cursor:pointer;color:var(--muted);transition:all 0.18s" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'" id="copy-link-btn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            </button>
+          </div>
           <p style="font-size:0.72rem;color:var(--muted);line-height:1.5">Bu link yalnız <strong>sizin</strong> menyunuzu açır. QR kodu bu linkdən yaranır.</p>
         </div>
 
@@ -2006,9 +2011,22 @@ function downloadQRCode() {
 }
 
 function copyQrLink() {
-  var url = document.getElementById('qr-url-display').textContent.trim() || getMyMenuUrl();
+  var url = document.getElementById('qr-user-link').textContent.trim() || document.getElementById('qr-url-display').textContent.trim() || getMyMenuUrl();
   if (!url) { showToast('Link yoxdur'); return; }
-  navigator.clipboard.writeText(url).then(function(){ showToast('Link kopyalandı'); }).catch(function(){ showToast('Kopyalamaq alınmadı'); });
+  var btn = document.getElementById('copy-link-btn');
+  navigator.clipboard.writeText(url).then(function(){
+    showToast('Link kopyalandı');
+    if (btn) {
+      btn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+      btn.style.borderColor = '#16a34a';
+      btn.style.color = '#16a34a';
+      setTimeout(function(){
+        btn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+        btn.style.borderColor = 'var(--border)';
+        btn.style.color = 'var(--muted)';
+      }, 2000);
+    }
+  }).catch(function(){ showToast('Kopyalamaq alınmadı'); });
 }
 
 // ── SETTINGS ──
