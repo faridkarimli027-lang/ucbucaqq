@@ -937,7 +937,7 @@ function doLogout() {
     document.getElementById('login-btn').textContent = 'Daxil ol';
     var ls = document.getElementById('login-screen');
     ls.style.display = 'flex'; ls.classList.remove('hidden');
-    showToast('Uğurla çıxış edildi');
+    showToast(interfaceLang==='en'?'Logged out successfully':'Uğurla çıxış edildi');
   });
 }
 function togglePass() {
@@ -966,11 +966,11 @@ async function saveData() {
         body: JSON.stringify(STATE)
       });
       if (r.status === 402) {
-        showToast('❌ Abunəlik bitib — dəyişikliklər saxlanılmadı');
+        showToast(interfaceLang==='en'?'❌ Subscription expired — changes not saved':'❌ Abunəlik bitib — dəyişikliklər saxlanılmadı');
         document.getElementById('sub-expired-modal').style.display = 'flex';
-      } else if (r.ok) showToast('✅ Yadda saxlandı');
-      else showToast('⚠️ Saxlama xətası');
-    } catch(e) { showToast('⚠️ Bağlantı xətası'); }
+      } else if (r.ok) showToast(interfaceLang==='en'?'✅ Saved':'✅ Yadda saxlandı');
+      else showToast(interfaceLang==='en'?'⚠️ Save error':'⚠️ Saxlama xətası');
+    } catch(e) { showToast(interfaceLang==='en'?'⚠️ Connection error':'⚠️ Bağlantı xətası'); }
   }, 800);
 }
 
@@ -1057,7 +1057,7 @@ function saveCafeInfo() {
     icon:   (document.getElementById('cafe-icon') ? document.getElementById('cafe-icon').value : (STATE.cafe.icon||'')),
   });
   saveData();
-  showToast('Kafe məlumatları yadda saxlandı');
+  showToast(interfaceLang==='en'?'Cafe info saved':'Kafe məlumatları yadda saxlandı');
 }
 function saveIntegration() {
   STATE.cafe = Object.assign(STATE.cafe || {}, {
@@ -1068,7 +1068,7 @@ function saveIntegration() {
   });
   saveData();
   renderSocialPreview();
-  showToast('İnteqrasiya məlumatları yadda saxlandı');
+  showToast(interfaceLang==='en'?'Integration info saved':'İnteqrasiya məlumatları yadda saxlandı');
 }
 function adminLoadLogo() {
   var url = (STATE.cafe && STATE.cafe.logo) ? STATE.cafe.logo : localStorage.getItem('cafe_logo');
@@ -1089,7 +1089,7 @@ function adminUploadLogo(input) {
   if (!input || !input.files || !input.files[0]) return;
   var formData = new FormData();
   formData.append('file', input.files[0]);
-  showToast('⏳ Loqo yüklənir...');
+  showToast(interfaceLang==='en'?'⏳ Uploading logo...':'⏳ Loqo yüklənir...');
   fetch('/api/upload/logo', {method:'POST', body: formData})
     .then(function(r){ return r.json(); })
     .then(function(d){
@@ -1097,17 +1097,17 @@ function adminUploadLogo(input) {
         STATE.cafe.logo = d.url;
         saveData();
         adminLoadLogo();
-        showToast('✅ Loqo yadda saxlandı');
-      } else { showToast('❌ ' + (d.error || 'Xəta')); }
-    }).catch(function(){ showToast('❌ Yüklənmə xətası'); });
+        showToast(interfaceLang==='en'?'✅ Logo saved':'✅ Loqo yadda saxlandı');
+      } else { showToast('❌ ' + (d.error || (interfaceLang==='en'?'Error':'Xəta'))); }
+    }).catch(function(){ showToast(interfaceLang==='en'?'❌ Upload error':'❌ Yüklənmə xətası'); });
 }
 function adminDeleteLogo() {
-  showConfirm('Loqonu sil', 'Loqo silinəcək və menyu səhifəsindən yox olacaq.', function(){
+  showConfirm(interfaceLang==='en'?'Remove Logo':'Loqonu sil', interfaceLang==='en'?'Logo will be removed from the menu page.':'Loqo silinəcək və menyu səhifəsindən yox olacaq.', function(){
     localStorage.removeItem('cafe_logo');
     if (STATE.cafe) delete STATE.cafe.logo;
     saveData();
     adminLoadLogo();
-    showToast('Loqo silindi');
+    showToast(interfaceLang==='en'?'Logo removed':'Loqo silindi');
   }, '🖼️');
 }
 function renderSocialPreview() {
@@ -1214,7 +1214,7 @@ function renderItemsTable() {
       dragSrcIdx = null;
       saveData();
       renderMenuPage();
-      showToast('Sıralama yeniləndi');
+      showToast(interfaceLang==='en'?'Order updated':'Sıralama yeniləndi');
     });
 
     tbody.appendChild(tr);
@@ -1227,14 +1227,14 @@ function toggleActive(idx) {
   STATE.items[idx].inactive = !STATE.items[idx].inactive;
   saveData();
   renderItemsTable();
-  showToast(STATE.items[idx].inactive ? 'Məhsul deaktiv edildi' : 'Məhsul aktiv edildi');
+  showToast(STATE.items[idx].inactive?(interfaceLang==='en'?'Item deactivated':'Məhsul deaktiv edildi'):(interfaceLang==='en'?'Item activated':'Məhsul aktiv edildi'));
 }
 
 function moveItemCat(idx, newCatId) {
   STATE.items[idx].catId = newCatId;
   saveData();
   renderMenuPage();
-  showToast('Kateqoriya dəyişdirildi');
+  showToast(interfaceLang==='en'?'Category changed':'Kateqoriya dəyişdirildi');
 }
 
 // ── ITEM CRUD ──
@@ -1295,7 +1295,7 @@ function previewImage(input) {
   if (!input || !input.files || !input.files[0]) return;
   var formData = new FormData();
   formData.append('file', input.files[0]);
-  showToast('⏳ Şəkil yüklənir...');
+  showToast(interfaceLang==='en'?'⏳ Uploading image...':'⏳ Şəkil yüklənir...');
   fetch('/api/upload', {method:'POST', body: formData})
     .then(function(r){ return r.json(); })
     .then(function(d){
@@ -1303,13 +1303,13 @@ function previewImage(input) {
         tempImageBase64 = d.url;
         document.getElementById('img-preview-wrap').innerHTML = '<img src="'+d.url+'" alt="" style="width:100%;height:100%;object-fit:cover">';
         document.getElementById('f-image').value = d.url;
-        showToast('✅ Şəkil yükləndi');
-      } else { showToast('❌ ' + (d.error||'Xəta')); }
-    }).catch(function(){ showToast('❌ Yüklənmə xətası'); });
+        showToast(interfaceLang==='en'?'✅ Image uploaded':'✅ Şəkil yükləndi');
+      } else { showToast('❌ ' + (d.error||(interfaceLang==='en'?'Error':'Xəta'))); }
+    }).catch(function(){ showToast(interfaceLang==='en'?'❌ Upload error':'❌ Yüklənmə xətası'); });
 }
 function saveItem() {
   var nameAz = document.getElementById('f-name-az').value.trim();
-  if (!nameAz) { showToast('Ad (AZ) tələb olunur'); return; }
+  if (!nameAz) { showToast(interfaceLang==='en'?'Name (AZ) is required':'Ad (AZ) tələb olunur'); return; }
   var existingImage = (editingItemIdx !== null && STATE.items[editingItemIdx]) ? (STATE.items[editingItemIdx].image || STATE.items[editingItemIdx].img || null) : null;
   var finalImage;
   if (tempImageBase64) { finalImage = tempImageBase64; }
@@ -1325,8 +1325,8 @@ function saveItem() {
     icon: '🍽️',
     image: finalImage
   };
-  if (editingItemIdx !== null) { STATE.items[editingItemIdx]=item; showToast('Məhsul yeniləndi'); }
-  else { STATE.items.push(item); showToast('Məhsul əlavə edildi'); }
+  if (editingItemIdx !== null) { STATE.items[editingItemIdx]=item; showToast(interfaceLang==='en'?'Item updated':'Məhsul yeniləndi'); }
+  else { STATE.items.push(item); showToast(interfaceLang==='en'?'Item added':'Məhsul əlavə edildi'); }
   itemImageDeleted = false;
   saveData(); closeDrawerDirect('item-drawer'); renderMenuPage();
 }
@@ -1338,8 +1338,8 @@ function clearItemImage() {
 function deleteItem(idx) {
   var item = STATE.items[idx];
   var name = item ? (item.nameAz || 'Məhsul') : 'Məhsul';
-  showConfirm('Məhsulu sil', '"' + name + '" silinəcək. Bu əməliyyat geri qaytarıla bilməz.', function(){
-    STATE.items.splice(idx,1); saveData(); renderMenuPage(); showToast('Məhsul silindi');
+  showConfirm(interfaceLang==='en'?'Delete Item':'Məhsulu sil', interfaceLang==='en'?'"' + name + '" will be deleted. This cannot be undone.':'"' + name + '" silinəcək. Bu əməliyyat geri qaytarıla bilməz.', function(){
+    STATE.items.splice(idx,1); saveData(); renderMenuPage(); showToast(interfaceLang==='en'?'Item deleted':'Məhsul silindi');
   }, '🗑');
 }
 
@@ -1385,7 +1385,7 @@ function editCat(idx) {
 }
 function saveCat() {
   var labelAz=document.getElementById('cf-label-az').value.trim();
-  if (!labelAz) { showToast('Azərbaycanca ad tələb olunur'); return; }
+  if (!labelAz) { showToast(interfaceLang==='en'?'Azerbaijani name is required':'Azərbaycanca ad tələb olunur'); return; }
   var existingCat = editingCatIdx !== null ? STATE.categories[editingCatIdx] : null;
   var id = existingCat ? existingCat.id : labelAz.toLowerCase().replace(/ə/g,'e').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ü/g,'u').replace(/ğ/g,'g').replace(/ş/g,'s').replace(/ç/g,'c').replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'') + '-' + Date.now().toString(36);
   // Şəkil məntiqi: yeni şəkil seçilibsə onu götür, silinibsə null, heç nə dəyişməyibsə köhnəni saxla
@@ -1404,8 +1404,8 @@ function saveCat() {
     bg: existingCat ? (existingCat.bg || '#F5F5F5') : '#F5F5F5',
     image: finalImage
   };
-  if (editingCatIdx!==null) { STATE.categories[editingCatIdx]=cat; showToast('Kateqoriya yeniləndi'); }
-  else { STATE.categories.push(cat); showToast('Kateqoriya əlavə edildi'); }
+  if (editingCatIdx!==null) { STATE.categories[editingCatIdx]=cat; showToast(interfaceLang==='en'?'Category updated':'Kateqoriya yeniləndi'); }
+  else { STATE.categories.push(cat); showToast(interfaceLang==='en'?'Category added':'Kateqoriya əlavə edildi'); }
   tempCatImage = null; catImageDeleted = false;
   saveData(); closeDrawerDirect('cat-drawer'); renderCatsPage();
 }
@@ -1423,9 +1423,9 @@ function resetCatImagePreview() {
 function deleteCat(idx) {
   var cat=STATE.categories[idx];
   var count=STATE.items.filter(function(i){ return i.catId===cat.id; }).length;
-  if (count>0) { showToast('Əvvəlcə bu kateqoriyanın '+count+' məhsulunu silin'); return; }
-  showConfirm('Kateqoriyanı sil', '"' + cat.labelAz + '" kateqoriyası silinəcək.', function(){
-    STATE.categories.splice(idx,1); saveData(); renderCatsPage(); showToast('Kateqoriya silindi');
+  if (count>0) { showToast(interfaceLang==='en'?'First delete '+count+' item(s) in this category':'Əvvəlcə bu kateqoriyanın '+count+' məhsulunu silin'); return; }
+  showConfirm(interfaceLang==='en'?'Delete Category':'Kateqoriyanı sil', interfaceLang==='en'?'"' + cat.labelAz + '" will be deleted.':'"' + cat.labelAz + '" kateqoriyası silinəcək.', function(){
+    STATE.categories.splice(idx,1); saveData(); renderCatsPage(); showToast(interfaceLang==='en'?'Category deleted':'Kateqoriya silindi');
   }, '📁');
 }
 
@@ -1548,16 +1548,16 @@ function _drawAnalytics(data) {
 function clearStats() {
   fetch('/api/stats', {method:'DELETE'}).then(function(){
     renderAnalytics();
-    showToast('Statistika sıfırlandı');
+    showToast(interfaceLang==='en'?'Statistics reset':'Statistika sıfırlandı');
   });
 }
 
 // ── PRINT ──
 var PRINT_TEMPLATES = [
-  { id:'a4-classic',   name:'A4 Klassik',    desc:'Sadə, tam siyahı',         icon:'📄', cols:1 },
-  { id:'a4-two-col',   name:'A4 İki Sütun',  desc:'Kompakt, 2 sütun',         icon:'📋', cols:2 },
-  { id:'folded',       name:'Qatlanmış',      desc:'A4 üç hissəyə bölünür',    icon:'📑', cols:3 },
-  { id:'card',         name:'Kart Menyu',     desc:'Masa üstü kart formatı',   icon:'🃏', cols:2 },
+  { id:'a4-classic',  name:'A4 Klassik',   nameEn:'A4 Classic',    desc:'Sadə, tam siyahı',       descEn:'Simple, full list',        icon:'📄', cols:1 },
+  { id:'a4-two-col',  name:'A4 İki Sütun', nameEn:'A4 Two Column', desc:'Kompakt, 2 sütun',       descEn:'Compact, 2 columns',       icon:'📋', cols:2 },
+  { id:'folded',      name:'Qatlanmış',    nameEn:'Folded',        desc:'A4 üç hissəyə bölünür',  descEn:'A4 divided into 3 parts',  icon:'📑', cols:3 },
+  { id:'card',        name:'Kart Menyu',   nameEn:'Card Menu',     desc:'Masa üstü kart formatı', descEn:'Table card format',        icon:'🃏', cols:2 },
 ];
 var activePrintTemplate = 'a4-classic';
 
@@ -1573,10 +1573,12 @@ function renderPrintPage() {
     card.style.cssText = 'padding:1rem;cursor:pointer;border:2px solid '+(isActive?'var(--accent)':'var(--border)')+';text-align:center;transition:all 0.15s;';
     card.onclick = function(){ activePrintTemplate=t.id; renderPrintPage(); };
     var selectedLabel = az ? '✔ Seçildi' : '✔ Selected';
+    var tName = az ? t.name : (t.nameEn || t.name);
+    var tDesc = az ? t.desc : (t.descEn || t.desc);
     card.innerHTML =
       '<div style="font-size:2rem;margin-bottom:6px">'+t.icon+'</div>'+
-      '<div style="font-weight:500;font-size:0.85rem">'+t.name+'</div>'+
-      '<div style="font-size:0.72rem;color:var(--muted);margin-top:2px">'+t.desc+'</div>'+
+      '<div style="font-weight:500;font-size:0.85rem">'+tName+'</div>'+
+      '<div style="font-size:0.72rem;color:var(--muted);margin-top:2px">'+tDesc+'</div>'+
       (isActive?'<div style="font-size:0.72rem;color:var(--accent);margin-top:6px;font-weight:500">'+selectedLabel+'</div>':'');
     grid.appendChild(card);
   });
@@ -1722,6 +1724,7 @@ var THEMES = [
     id:'ember',
     name:'🔥 Ember Nights',
     desc:'Qara üzərində kor-kor yanan kömür kimi isti',
+    descEn:'Warm as glowing embers on a dark background',
     preview:['#FF4500','#0D0D0D','#FF6B35','#1A1A1A'],
     vars:{accent:'#FF4500',bg:'#0D0D0D',card:'#1A1A1A',text:'#F5F0EB',muted:'#8B6355',border:'rgba(255,69,0,0.2)',header:'#0D0D0D',headerText:'#FF4500'}
   },
@@ -1729,6 +1732,7 @@ var THEMES = [
     id:'arctic',
     name:'🧊 Arctic Breeze',
     desc:'Buzlu mavi, soyuq və təmiz premium hiss',
+    descEn:'Icy blue, cool and clean premium feel',
     preview:['#00B4D8','#F0F8FF','#023E8A','#FFFFFF'],
     vars:{accent:'#00B4D8',bg:'#F0F8FF',card:'#FFFFFF',text:'#023E8A',muted:'#5A8FA8',border:'rgba(0,180,216,0.15)',header:'#023E8A',headerText:'#00B4D8'}
   },
@@ -1736,6 +1740,7 @@ var THEMES = [
     id:'midnight',
     name:'🌙 Midnight Gold',
     desc:'Dərin tünd gecə — qızıl aksentlər ilə',
+    descEn:'Deep dark night with golden accents',
     preview:['#D4AF37','#0A0A1A','#D4AF37','#12122A'],
     vars:{accent:'#D4AF37',bg:'#0A0A1A',card:'#12122A',text:'#F0E8C8',muted:'#8B7A45',border:'rgba(212,175,55,0.2)',header:'#0A0A1A',headerText:'#D4AF37'}
   },
@@ -1743,6 +1748,7 @@ var THEMES = [
     id:'sakura',
     name:'🌸 Sakura Garden',
     desc:'Yapon albalı çiçəyi — zərif və incə',
+    descEn:'Japanese cherry blossom — delicate and elegant',
     preview:['#E91E8C','#FFF0F8','#4A0028','#FFFFFF'],
     vars:{accent:'#E91E8C',bg:'#FFF0F8',card:'#FFFFFF',text:'#4A0028',muted:'#A06080',border:'rgba(233,30,140,0.12)',header:'#E91E8C',headerText:'#ffffff'}
   },
@@ -1750,13 +1756,15 @@ var THEMES = [
     id:'forest',
     name:'🌲 Deep Forest',
     desc:'Meşənin dərinliyi — torpaq və yaşıl',
+    descEn:'The depths of the forest — earthy greens',
     preview:['#2D6A4F','#0D1F0F','#52B788','#162D1A'],
     vars:{accent:'#52B788',bg:'#0D1F0F',card:'#162D1A',text:'#D8F3DC',muted:'#52734D',border:'rgba(82,183,136,0.18)',header:'#0D1F0F',headerText:'#52B788'}
   },
   {
     id:'sunset',
     name:'🌅 Baku Sunset',
-    desc:'Bakı üzərindəki qsunset — narıncı, qırmızı, bənövşəyi',
+    desc:'Bakı üzərindəki sunset — narıncı, qırmızı, bənövşəyi',
+    descEn:'Sunset over Baku — orange, red, violet',
     preview:['#FF6B35','#1A0A2E','#FF3CAC','#2D1B4E'],
     vars:{accent:'#FF6B35',bg:'#1A0A2E',card:'#2D1B4E',text:'#FFE5D4',muted:'#9B6B8A',border:'rgba(255,107,53,0.2)',header:'#1A0A2E',headerText:'#FF6B35'}
   },
@@ -1764,6 +1772,7 @@ var THEMES = [
     id:'espresso',
     name:'☕ Espresso Bar',
     desc:'Qəhvənin özü — tünd, dərin, zəngin',
+    descEn:'Coffee itself — dark, deep, rich',
     preview:['#C8A96E','#1C0F07','#C8A96E','#2A1810'],
     vars:{accent:'#C8A96E',bg:'#1C0F07',card:'#2A1810',text:'#F5ECD7',muted:'#8B6B45',border:'rgba(200,169,110,0.2)',header:'#1C0F07',headerText:'#C8A96E'}
   },
@@ -1771,6 +1780,7 @@ var THEMES = [
     id:'neon',
     name:'⚡ Neon City',
     desc:'Gecə şəhəri — neon işıqlar, qaranlıq küçələr',
+    descEn:'Night city — neon lights, dark streets',
     preview:['#00FF88','#030312','#00CFFF','#080825'],
     vars:{accent:'#00FF88',bg:'#030312',card:'#080825',text:'#E0FFE8',muted:'#3A7A5A',border:'rgba(0,255,136,0.15)',header:'#030312',headerText:'#00FF88'}
   },
@@ -1778,6 +1788,7 @@ var THEMES = [
     id:'clay',
     name:'🏺 Clay & Cream',
     desc:'Əl ilə yoğrulmuş gil — natural, minimal, istiqanlı',
+    descEn:'Hand-molded clay — natural, minimal, warm',
     preview:['#B5622A','#F7F0E8','#5C3317','#FFFFFF'],
     vars:{accent:'#B5622A',bg:'#F7F0E8',card:'#FFFFFF',text:'#3D2010',muted:'#9B7A5A',border:'rgba(181,98,42,0.15)',header:'#B5622A',headerText:'#ffffff'}
   },
@@ -1785,6 +1796,7 @@ var THEMES = [
     id:'lavender',
     name:'💜 Lavender Dusk',
     desc:'Bənövşə tarlası — yumşaq, rahatladıcı, premium',
+    descEn:'Lavender field — soft, relaxing, premium',
     preview:['#7C3AED','#F5F0FF','#2D0A6E','#FFFFFF'],
     vars:{accent:'#7C3AED',bg:'#F5F0FF',card:'#FFFFFF',text:'#1E0A4E',muted:'#7A6090',border:'rgba(124,58,237,0.12)',header:'#7C3AED',headerText:'#ffffff'}
   },
@@ -1792,6 +1804,7 @@ var THEMES = [
     id:'coral',
     name:'🪸 Coral Reef',
     desc:'Mərcan rəngi — canlı, enerjili, yay hissi',
+    descEn:'Coral color — vibrant, energetic, summery',
     preview:['#FF6B6B','#FFF5F5','#8B0000','#FFFFFF'],
     vars:{accent:'#FF6B6B',bg:'#FFF5F5',card:'#FFFFFF',text:'#4A0000',muted:'#A06060',border:'rgba(255,107,107,0.15)',header:'#FF6B6B',headerText:'#ffffff'}
   },
@@ -1799,6 +1812,7 @@ var THEMES = [
     id:'slate',
     name:'🩶 Slate & Steel',
     desc:'Soyuq çəlik — minimalist, korporativ, güclü',
+    descEn:'Cold steel — minimalist, corporate, bold',
     preview:['#64748B','#0F172A','#94A3B8','#1E293B'],
     vars:{accent:'#94A3B8',bg:'#0F172A',card:'#1E293B',text:'#F1F5F9',muted:'#64748B',border:'rgba(148,163,184,0.15)',header:'#0F172A',headerText:'#94A3B8'}
   }
@@ -1848,11 +1862,12 @@ function renderThemePage() {
     var actionEl = isActive
       ? '<div style="font-size:0.74rem;color:var(--accent);margin-top:8px;font-weight:500">'+activeStatus+'</div>'
       : '<button class="btn btn-ghost btn-sm" style="width:100%;margin-top:8px" onclick="event.stopPropagation();applyTheme(\'' + theme.id + '\')">'+selectLabel+'</button>';
+    var themeDesc = az ? theme.desc : (theme.descEn || theme.desc);
     body.innerHTML =
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">' +
         '<div style="font-weight:500;font-size:0.88rem">' + theme.name + '</div>' + activeTag +
       '</div>' +
-      '<div style="font-size:0.76rem;color:var(--muted)">' + theme.desc + '</div>' + actionEl;
+      '<div style="font-size:0.76rem;color:var(--muted)">' + themeDesc + '</div>' + actionEl;
 
     card.appendChild(strip);
     card.appendChild(body);
@@ -1870,18 +1885,18 @@ function applyTheme(themeId) {
   STATE.theme = { id: themeId, vars: theme.vars };
   saveData();
   renderThemePage();
-  showToast('"' + theme.name + '" temas\u0131 t\u0259tbiq edildi');
+  showToast(interfaceLang==='en' ? '"' + theme.name + '" theme applied' : '"' + theme.name + '" temas\u0131 t\u0259tbiq edildi');
 }
 
 
 // ── FONTS ──
 var FONTS = [
-  { id:'dmsans',    name:'DM Sans',          desc:'Müasir, oxunaqlı',      body:"'DM Sans', sans-serif",      heading:"'Playfair Display', serif" },
-  { id:'inter',     name:'Inter',             desc:'Texniki, səliqəli',     body:"'Inter', sans-serif",         heading:"'Inter', sans-serif" },
-  { id:'lora',      name:'Lora',              desc:'Klassik, zərif',        body:"'Lora', serif",               heading:"'Lora', serif" },
-  { id:'poppins',   name:'Poppins',           desc:'Dost, yüngül',          body:"'Poppins', sans-serif",       heading:"'Poppins', sans-serif" },
-  { id:'merriweather', name:'Merriweather',   desc:'Qəzet, etibarlı',       body:"'Merriweather', serif",       heading:"'Merriweather', serif" },
-  { id:'nunito',    name:'Nunito',            desc:'Yumşaq, həvəskar',      body:"'Nunito', sans-serif",        heading:"'Nunito', sans-serif" },
+  { id:'dmsans',       name:'DM Sans',       desc:'Müasir, oxunaqlı',   descEn:'Modern, readable',        body:"'DM Sans', sans-serif",      heading:"'Playfair Display', serif" },
+  { id:'inter',        name:'Inter',          desc:'Texniki, səliqəli',  descEn:'Technical, clean',        body:"'Inter', sans-serif",         heading:"'Inter', sans-serif" },
+  { id:'lora',         name:'Lora',           desc:'Klassik, zərif',     descEn:'Classic, elegant',        body:"'Lora', serif",               heading:"'Lora', serif" },
+  { id:'poppins',      name:'Poppins',        desc:'Dost, yüngül',       descEn:'Friendly, light',         body:"'Poppins', sans-serif",       heading:"'Poppins', sans-serif" },
+  { id:'merriweather', name:'Merriweather',   desc:'Qəzet, etibarlı',    descEn:'Newspaper, trustworthy',  body:"'Merriweather', serif",       heading:"'Merriweather', serif" },
+  { id:'nunito',       name:'Nunito',         desc:'Yumşaq, həvəskar',   descEn:'Soft, enthusiastic',      body:"'Nunito', sans-serif",        heading:"'Nunito', sans-serif" },
 ];
 
 function renderFontGrid() {
@@ -1898,13 +1913,14 @@ function renderFontGrid() {
     var activeLabel  = az ? 'Aktiv' : 'Active';
     var activeStatus = az ? '✔ Aktiv' : '✔ Active';
     var selectLabel  = az ? 'Seç' : 'Select';
+    var fontDesc = az ? font.desc : (font.descEn || font.desc);
     card.innerHTML =
       '<div style="font-family:'+font.body+';font-size:1.3rem;font-weight:600;margin-bottom:4px">Aa</div>' +
       '<div style="font-weight:500;font-size:0.85rem;display:flex;align-items:center;justify-content:space-between">' +
         font.name +
         (isActive ? '<span style="font-size:0.65rem;padding:1px 7px;border-radius:6px;background:var(--accent);color:#fff">'+activeLabel+'</span>' : '') +
       '</div>' +
-      '<div style="font-size:0.73rem;color:var(--muted)">'+font.desc+'</div>' +
+      '<div style="font-size:0.73rem;color:var(--muted)">'+fontDesc+'</div>' +
       (!isActive ? '<button class="btn btn-ghost btn-sm" style="width:100%;margin-top:8px" onclick="event.stopPropagation();applyFont(\''+font.id+'\')">'+selectLabel+'</button>' : '<div style="font-size:0.73rem;color:var(--accent);margin-top:8px;font-weight:500">'+activeStatus+'</div>');
     grid.appendChild(card);
   });
@@ -1918,14 +1934,14 @@ function applyFont(fontId) {
   STATE.font = { id: fontId, body: font.body, heading: font.heading };
   saveData();
   renderFontGrid();
-  showToast('"'+font.name+'" şrifti tətbiq edildi');
+  showToast(interfaceLang==='en' ? '"'+font.name+'" font applied' : '"'+font.name+'" \u015frifti t\u0259tbiq edildi');
 }
 
 // ── LAYOUTS ──
 var LAYOUTS = [
-  { id:'list',  name:'Siyahı',   desc:'Horizontal, kompakt', icon:'≡' },
-  { id:'card',  name:'Kart',     desc:'Böyük kart, şəkilli',  icon:'▦' },
-  { id:'grid',  name:'Grid',     desc:'2 sütun, sıx',         icon:'⊞' },
+  { id:'list', name:'Siyahı', nameEn:'List',  desc:'Horizontal, kompakt',  descEn:'Horizontal, compact', icon:'≡' },
+  { id:'card', name:'Kart',   nameEn:'Card',  desc:'Böyük kart, şəkilli',  descEn:'Large card, with image', icon:'▦' },
+  { id:'grid', name:'Grid',   nameEn:'Grid',  desc:'2 sütun, sıx',         descEn:'2 columns, dense', icon:'⊞' },
 ];
 
 function renderLayoutGrid() {
@@ -1940,10 +1956,12 @@ function renderLayoutGrid() {
     card.style.cssText = 'padding:1rem;cursor:pointer;border:2px solid '+(isActive?'var(--accent)':'var(--border)')+';text-align:center;transition:all 0.15s;';
     card.onclick = function(){ applyLayout(layout.id); };
     var activeStatus = az ? '✔ Aktiv' : '✔ Active';
+    var layoutName = az ? layout.name : (layout.nameEn || layout.name);
+    var layoutDesc = az ? layout.desc : (layout.descEn || layout.desc);
     card.innerHTML =
       '<div style="font-size:1.8rem;margin-bottom:6px;color:'+(isActive?'var(--accent)':'var(--muted)')+'">'+layout.icon+'</div>' +
-      '<div style="font-weight:500;font-size:0.85rem">'+layout.name+'</div>' +
-      '<div style="font-size:0.72rem;color:var(--muted)">'+layout.desc+'</div>' +
+      '<div style="font-weight:500;font-size:0.85rem">'+layoutName+'</div>' +
+      '<div style="font-size:0.72rem;color:var(--muted)">'+layoutDesc+'</div>' +
       (isActive ? '<div style="font-size:0.72rem;color:var(--accent);margin-top:6px;font-weight:500">'+activeStatus+'</div>' : '');
     grid.appendChild(card);
   });
@@ -1954,7 +1972,8 @@ function applyLayout(layoutId) {
   STATE.layout = layoutId;
   saveData();
   renderLayoutGrid();
-  showToast('"'+LAYOUTS.find(function(l){return l.id===layoutId;}).name+'" layoutu tətbiq edildi');
+  var l = LAYOUTS.find(function(l){return l.id===layoutId;});
+  showToast(interfaceLang==='en' ? '"'+(l.nameEn||l.name)+'" layout applied' : '"'+l.name+'" layoutu t\u0259tbiq edildi');
 }
 
 // ── CUSTOM CSS ──
@@ -1968,7 +1987,7 @@ function saveCustomCss() {
   localStorage.setItem('cafe_custom_css', css);
   STATE.customCss = css;
   saveData();
-  showToast('Özel CSS yadda saxlandı');
+  showToast(interfaceLang==='en'?'Custom CSS saved':'Özel CSS yadda saxlandı');
 }
 
 function clearCustomCss() {
@@ -1976,7 +1995,7 @@ function clearCustomCss() {
   localStorage.removeItem('cafe_custom_css');
   STATE.customCss = '';
   saveData();
-  showToast('Özel CSS silindi');
+  showToast(interfaceLang==='en'?'Custom CSS cleared':'Özel CSS silindi');
 }
 
 // Override renderThemePage to also render font/layout/css
@@ -2009,12 +2028,12 @@ function generateQRCode(autoUrl) {
     new QRious({ element: canvas, value: url, size: 220, foreground: '#1C1917', background: '#FFFFFF', level: 'H', padding: 16 });
     canvas.style.display = 'block';
     document.getElementById('qr-url-display').textContent = url;
-  } catch(e) { showToast('QR yaratmaq alınmadı'); }
+  } catch(e) { showToast(interfaceLang==='en'?'Failed to generate QR':'QR yaratmaq alınmadı'); }
 }
 
 function downloadQRCode() {
   var canvas = document.getElementById('qr-canvas');
-  if (!canvas.width) { showToast('Əvvəlcə QR yaradın'); return; }
+  if (!canvas.width) { showToast(interfaceLang==='en'?'Generate QR first':'Əvvəlcə QR yaradın'); return; }
   var session = JSON.parse(sessionStorage.getItem('cafe_admin_session') || '{}');
   var username = session.username || 'menu';
   var a = document.createElement('a');
@@ -2023,15 +2042,15 @@ function downloadQRCode() {
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
-  showToast('PNG yükləndi');
+  showToast(interfaceLang==='en'?'PNG downloaded':'PNG yükləndi');
 }
 
 function copyQrLink() {
   var url = document.getElementById('qr-user-link').textContent.trim() || document.getElementById('qr-url-display').textContent.trim() || getMyMenuUrl();
-  if (!url) { showToast('Link yoxdur'); return; }
+  if (!url) { showToast(interfaceLang==='en'?'No link found':'Link yoxdur'); return; }
   var btn = document.getElementById('copy-link-btn');
   navigator.clipboard.writeText(url).then(function(){
-    showToast('Link kopyalandı');
+    showToast(interfaceLang==='en'?'Link copied':'Link kopyalandı');
     if (btn) {
       btn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
       btn.style.borderColor = '#16a34a';
@@ -2042,7 +2061,7 @@ function copyQrLink() {
         btn.style.color = 'var(--muted)';
       }, 2000);
     }
-  }).catch(function(){ showToast('Kopyalamaq alınmadı'); });
+  }).catch(function(){ showToast(interfaceLang==='en'?'Copy failed':'Kopyalamaq alınmadı'); });
 }
 
 // ── SETTINGS ──
@@ -2530,6 +2549,7 @@ function applyI18n(lang) {
   if (document.getElementById('layout-grid'))  renderLayoutGrid();
   if (document.getElementById('print-template-grid')) renderPrintPage();
   if (document.getElementById('cats-list'))    renderCatsPage();
+  if (document.getElementById('users-list'))   renderUsersList();
 }
 
 function setInterfaceLang(lang) {
@@ -2584,45 +2604,47 @@ function loadUserEmailInput() {
 function saveUserEmail() {
   var session = JSON.parse(sessionStorage.getItem('cafe_admin_session') || '{}');
   var username = session.username;
-  if (!username) { showToast('Giriş tələb olunur'); return; }
+  if (!username) { showToast(interfaceLang==='en'?'Login required':'Giriş tələb olunur'); return; }
   var email = (document.getElementById('s-email') || {}).value.trim();
   fetch('/api/users/' + username + '/email', {
     method: 'PUT',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({username: email})
   }).then(function(r){ return r.json(); }).then(function(d){
-    if (d.ok) showToast('✅ Email yadda saxlandı');
-    else showToast('❌ ' + (d.error || 'Xəta'));
-  }).catch(function(){ showToast('❌ Bağlantı xətası'); });
+    if (d.ok) showToast(interfaceLang==='en'?'✅ Email saved':'✅ Email yadda saxlandı');
+    else showToast('❌ ' + (d.error || (interfaceLang==='en'?'Error':'Xəta')));
+  }).catch(function(){ showToast(interfaceLang==='en'?'❌ Connection error':'❌ Bağlantı xətası'); });
 }
 
 function renderUsersList() {
+  var az = interfaceLang !== 'en';
   var list = document.getElementById('users-list');
-  list.innerHTML = '<p style="color:var(--muted);font-size:0.85rem;padding:0.5rem 0">Yüklənir...</p>';
+  list.innerHTML = '<p style="color:var(--muted);font-size:0.85rem;padding:0.5rem 0">'+(az?'Yüklənir...':'Loading...')+'</p>';
   var sess = JSON.parse(sessionStorage.getItem('cafe_admin_session') || '{}');
   var currentUser = sess.username || '';
   fetch('/api/users').then(function(r){
-    if (!r.ok) { list.innerHTML = '<p style="color:var(--muted);font-size:0.85rem;padding:0.5rem 0">Yüklənmə xətası (' + r.status + ')</p>'; return null; }
+    if (!r.ok) { list.innerHTML = '<p style="color:var(--muted);font-size:0.85rem;padding:0.5rem 0">'+(az?'Yüklənmə xətası':'Load error')+' (' + r.status + ')</p>'; return null; }
     return r.json();
   }).then(function(users){
     if (!users) return;
     list.innerHTML = '';
     var keys = Object.keys(users);
     if (keys.length === 0) {
-      list.innerHTML = '<p style="color:var(--muted);font-size:0.85rem;padding:0.5rem 0">İstifadəçi yoxdur</p>';
+      list.innerHTML = '<p style="color:var(--muted);font-size:0.85rem;padding:0.5rem 0">'+(az?'İstifadəçi yoxdur':'No users')+'</p>';
       return;
     }
     keys.forEach(function(key) {
       var u = users[key];
       var isMe = key === currentUser;
-      var roleLabel = u.role === 'superadmin' ? 'Superadmin' : u.role === 'admin' ? 'Administrator' : 'Manager';
+      var roleLabel = u.role === 'superadmin' ? 'Superadmin' : u.role === 'admin' ? (az?'Administrator':'Administrator') : (az?'Manager':'Manager');
+      var youLabel = az ? 'Siz' : 'You';
       var row = document.createElement('div');
       row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:0.65rem 0;border-bottom:1px solid var(--border);';
       row.innerHTML =
         '<div style="display:flex;align-items:center;gap:10px">' +
           '<div style="width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:600">' + key.charAt(0).toUpperCase() + '</div>' +
           '<div>' +
-            '<div style="font-weight:500;font-size:0.88rem">' + key + (isMe ? ' <span style="font-size:0.65rem;padding:1px 6px;background:#eaf3de;color:#3B6D11;border-radius:5px">Siz</span>' : '') + '</div>' +
+            '<div style="font-weight:500;font-size:0.88rem">' + key + (isMe ? ' <span style="font-size:0.65rem;padding:1px 6px;background:#eaf3de;color:#3B6D11;border-radius:5px">'+youLabel+'</span>' : '') + '</div>' +
             '<div style="font-size:0.73rem;color:var(--muted)">' + roleLabel + (u.email ? ' · ' + u.email : '') + '</div>' +
           '</div>' +
         '</div>' +
@@ -2633,14 +2655,15 @@ function renderUsersList() {
       list.appendChild(row);
     });
   }).catch(function(e){
-    list.innerHTML = '<p style="color:var(--muted);font-size:0.85rem;padding:0.5rem 0">Yüklənmə xətası</p>';
+    var az2 = interfaceLang !== 'en';
+    list.innerHTML = '<p style="color:var(--muted);font-size:0.85rem;padding:0.5rem 0">'+(az2?'Yüklənmə xətası':'Load error')+'</p>';
   });
 }
 
 function openAddUser() {
   editingUserKey = null;
   var session = JSON.parse(sessionStorage.getItem('cafe_admin_session') || '{}');
-  document.getElementById('user-drawer-title').textContent = 'İstifadəçi əlavə et';
+  document.getElementById('user-drawer-title').textContent = interfaceLang==='en' ? 'Add User' : 'İstifadəçi əlavə et';
   document.getElementById('u-username').value = '';
   document.getElementById('u-username').disabled = false;
   document.getElementById('u-pass').value = '';
@@ -2652,7 +2675,7 @@ function openAddUser() {
 
 function openEditUser(key) {
   editingUserKey = key;
-  document.getElementById('user-drawer-title').textContent = 'İstifadəçini düzəlt';
+  document.getElementById('user-drawer-title').textContent = interfaceLang==='en' ? 'Edit User' : 'İstifadəçini düzəlt';
   document.getElementById('u-username').value = key;
   document.getElementById('u-username').disabled = true;
   document.getElementById('u-pass').value = '';
@@ -2666,13 +2689,13 @@ function openEditUser(key) {
 
 function saveUser() {
   var role = document.getElementById('u-role').value;
-  if (role === 'superadmin') { showToast('Superadmin rolu əlavə edilə bilməz'); return; }
+  if (role === 'superadmin') { showToast(interfaceLang==='en'?'Cannot add superadmin role':'Superadmin rolu əlavə edilə bilməz'); return; }
   var username = document.getElementById('u-username').value.trim().toLowerCase();
   var pass  = document.getElementById('u-pass').value;
   var pass2 = document.getElementById('u-pass2').value;
   var role  = document.getElementById('u-role').value;
-  if (!username) { showToast('İstifadəçi adı tələb olunur'); return; }
-  if (pass && pass !== pass2) { showToast('Şifrələr uyğun deyil'); return; }
+  if (!username) { showToast(interfaceLang==='en'?'Username is required':'İstifadəçi adı tələb olunur'); return; }
+  if (pass && pass !== pass2) { showToast(interfaceLang==='en'?'Passwords do not match':'Şifrələr uyğun deyil'); return; }
 
   if (editingUserKey) {
     // Rolu yenilə
@@ -2681,8 +2704,8 @@ function saveUser() {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({role: role})
     }).then(function(r){ return r.json(); }).then(function(d){
-      if (d.ok) showToast('İstifadəçi yeniləndi');
-      else showToast('❌ ' + (d.error || 'Xəta'));
+      if (d.ok) showToast(interfaceLang==='en'?'User updated':'İstifadəçi yeniləndi');
+      else showToast('❌ ' + (d.error || (interfaceLang==='en'?'Error':'Xəta')));
     });
     // Emaili yenilə
     var emailVal = (document.getElementById('u-email') || {}).value;
@@ -2702,14 +2725,14 @@ function saveUser() {
       });
     }
   } else {
-    if (!pass) { showToast('Şifrə tələb olunur'); return; }
+    if (!pass) { showToast(interfaceLang==='en'?'Password is required':'Şifrə tələb olunur'); return; }
     fetch('/api/users', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({username: username, password: pass, role: role, email: document.getElementById('u-email').value.trim()})
     }).then(function(r){ return r.json(); }).then(function(d){
-      if (d.ok) showToast('✅ İstifadəçi əlavə edildi');
-      else showToast('❌ ' + (d.error || 'Xəta'));
+      if (d.ok) showToast(interfaceLang==='en'?'✅ User added':'✅ İstifadəçi əlavə edildi');
+      else showToast('❌ ' + (d.error || (interfaceLang==='en'?'Error':'Xəta')));
       renderUsersList();
     });
   }
@@ -2718,11 +2741,11 @@ function saveUser() {
 }
 
 function deleteUser(key) {
-  showConfirm('İstifadəçini sil', '"' + key + '" istifadəçisi və bütün məlumatları silinəcək.', function(){
+  showConfirm(interfaceLang==='en'?'Delete User':'İstifadəçini sil', interfaceLang==='en'?'"' + key + '" user and all their data will be deleted.':'"' + key + '" istifadəçisi və bütün məlumatları silinəcək.', function(){
     fetch('/api/users/' + key, {method: 'DELETE'})
       .then(function(r){ return r.json(); }).then(function(d){
-        if (d.ok) { showToast('İstifadəçi silindi'); renderUsersList(); }
-        else showToast('❌ ' + (d.error || 'Xəta'));
+        if (d.ok) { showToast(interfaceLang==='en'?'User deleted':'İstifadəçi silindi'); renderUsersList(); }
+        else showToast('❌ ' + (d.error || (interfaceLang==='en'?'Error':'Xəta')));
       });
   }, '👤');
 }
@@ -2740,15 +2763,15 @@ function changePassword() {
   var nw2 = document.getElementById('s-new-pass2').value;
   var session = JSON.parse(sessionStorage.getItem('cafe_admin_session') || '{}');
   var username = session.username;
-  if (!cur || !nw || !nw2) { showToast('Bütün xanaları doldurun'); return; }
-  if (nw !== nw2) { showToast('Yeni şifrələr uyğun deyil'); return; }
-  if (nw.length < 6) { showToast('Şifrə ən az 6 simvol olmalıdır'); return; }
+  if (!cur || !nw || !nw2) { showToast(interfaceLang==='en'?'Fill in all fields':'Bütün xanaları doldurun'); return; }
+  if (nw !== nw2) { showToast(interfaceLang==='en'?'New passwords do not match':'Yeni şifrələr uyğun deyil'); return; }
+  if (nw.length < 6) { showToast(interfaceLang==='en'?'Password must be at least 6 characters':'Şifrə ən az 6 simvol olmalıdır'); return; }
   fetch('/api/login', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({username: username, password: cur})
   }).then(function(r){ return r.json(); }).then(function(d){
-    if (!d.ok) { showToast('Cari şifrə yanlışdır'); return; }
+    if (!d.ok) { showToast(interfaceLang==='en'?'Current password is incorrect':'Cari şifrə yanlışdır'); return; }
     fetch('/api/users/' + username + '/set-password', {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
@@ -2758,12 +2781,12 @@ function changePassword() {
         document.getElementById('s-cur-pass').value = '';
         document.getElementById('s-new-pass').value = '';
         document.getElementById('s-new-pass2').value = '';
-        showToast('Sifrə uğurla yeniləndi');
+        showToast(interfaceLang==='en'?'Password updated successfully':'Sifrə uğurla yeniləndi');
       } else {
-        showToast((d.error || 'Xəta baş verdi'));
+        showToast(d.error || (interfaceLang==='en'?'An error occurred':'Xəta baş verdi'));
       }
     });
-  }).catch(function(){ showToast('Bağlantı xətası'); });
+  }).catch(function(){ showToast(interfaceLang==='en'?'Connection error':'Bağlantı xətası'); });
 }
 
 // ── HELPERS ──
@@ -2794,7 +2817,7 @@ window.addEventListener('load', function() {
         localStorage.setItem('cafe_logo', base64);
         saveData();
         adminLoadLogo();
-        showToast('✅ Loqo yadda saxlandı');
+        showToast(interfaceLang==='en'?'✅ Logo saved':'✅ Loqo yadda saxlandı');
       };
       reader.readAsDataURL(file);
       logoInp.value = '';
