@@ -438,7 +438,7 @@ input[type=file] { display:none; }
   <div class="page" id="page-categories">
     <div class="page-header">
       <h2 class="page-title" data-i18n="nav_categories">Kateqoriyalar</h2>
-      <button class="btn btn-primary" onclick="openAddCat()">+ Kateqoriya əlavə et</button>
+      <button class="btn btn-primary" data-i18n="addCat" onclick="openAddCat()">+ Kateqoriya əlavə et</button>
     </div>
     <div id="cats-list"></div>
   </div>
@@ -566,18 +566,18 @@ input[type=file] { display:none; }
 
       <!-- Sol: QR görüntüsü -->
       <div class="card" style="display:flex;flex-direction:column;align-items:center;padding:2rem;gap:1.25rem">
-        <div style="font-size:0.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;align-self:flex-start">📷 Menyu QR Kodu</div>
+        <div data-i18n="qrSectionTitle" style="font-size:0.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;align-self:flex-start">📷 Menyu QR Kodu</div>
 
         <!-- QR wrapper — ağ fon, kənar padding, logo -->
         <div id="qr-frame" style="background:#fff;border-radius:18px;padding:18px;box-shadow:0 4px 24px rgba(0,0,0,0.10);display:flex;flex-direction:column;align-items:center;gap:10px">
           <canvas id="qr-canvas" style="border-radius:8px;display:block"></canvas>
-          <div style="font-size:0.68rem;font-weight:700;color:#1C1917;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px">Menyu üçün skan edin</div>
+          <div id="qr-scan-label" data-i18n="qrScanLabel" style="font-size:0.68rem;font-weight:700;color:#1C1917;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px">Menyu üçün skan edin</div>
         </div>
 
         <!-- Düymələr -->
         <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;width:100%">
-          <button class="btn btn-primary" onclick="downloadQRCode()" style="flex:1;min-width:120px">⬇️ PNG yüklə</button>
-          <button class="btn btn-ghost" onclick="copyQrLink()" style="flex:1;min-width:120px">🔗 Linki kopyala</button>
+          <button class="btn btn-primary" onclick="downloadQRCode()" style="flex:1;min-width:120px" data-i18n="qrDownload">⬇️ PNG yüklə</button>
+          <button class="btn btn-ghost" onclick="copyQrLink()" style="flex:1;min-width:120px" data-i18n="qrCopyLink">🔗 Linki kopyala</button>
         </div>
 
         <div id="qr-url-display" style="font-size:0.72rem;color:var(--muted);word-break:break-all;text-align:center;max-width:260px;line-height:1.5"></div>
@@ -587,32 +587,32 @@ input[type=file] { display:none; }
       <div style="display:flex;flex-direction:column;gap:1rem">
 
         <div class="card" style="background:rgba(201,168,76,0.06);border-color:rgba(201,168,76,0.3)">
-          <div style="font-size:0.72rem;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:0.6rem">👤 Sizin menyu linkiniz</div>
+          <div data-i18n="qrYourLink" style="font-size:0.72rem;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:0.6rem">👤 Sizin menyu linkiniz</div>
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:0.6rem">
             <div id="qr-user-link" style="flex:1;font-size:0.82rem;font-weight:500;color:var(--text);word-break:break-all;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:0.6rem 0.75rem;font-family:monospace"></div>
             <button onclick="copyQrLink()" title="Linki kopyala" style="flex-shrink:0;width:34px;height:34px;display:flex;align-items:center;justify-content:center;background:var(--bg);border:1px solid var(--border);border-radius:8px;cursor:pointer;color:var(--muted);transition:all 0.18s" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'" id="copy-link-btn">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
             </button>
           </div>
-          <p style="font-size:0.72rem;color:var(--muted);line-height:1.5">Bu link yalnız <strong>sizin</strong> menyunuzu açır. QR kodu bu linkdən yaranır.</p>
+          <p data-i18n="qrLinkDesc" style="font-size:0.72rem;color:var(--muted);line-height:1.5">Bu link yalnız <strong>sizin</strong> menyunuzu açır. QR kodu bu linkdən yaranır.</p>
         </div>
 
 
 
         <div class="card" style="background:rgba(201,168,76,0.04);border-color:rgba(201,168,76,0.2)">
-          <div style="font-size:0.72rem;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:0.75rem">💡 Necə istifadə etmək olar?</div>
+          <div data-i18n="qrHow" style="font-size:0.72rem;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:0.75rem">💡 Necə istifadə etmək olar?</div>
           <div style="display:flex;flex-direction:column;gap:8px">
             <div style="display:flex;gap:10px;align-items:flex-start;font-size:0.82rem">
               <span style="width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:700;flex-shrink:0">1</span>
-              <span style="color:var(--muted);line-height:1.5">QR kodu avtomatik hazırdır — <b style="color:var(--text)">PNG yüklə</b> düyməsinə basın</span>
+              <span data-i18n="qrStep1New" style="color:var(--muted);line-height:1.5">QR kodu avtomatik hazırdır — <b style="color:var(--text)">PNG yüklə</b> düyməsinə basın</span>
             </div>
             <div style="display:flex;gap:10px;align-items:flex-start;font-size:0.82rem">
               <span style="width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:700;flex-shrink:0">2</span>
-              <span style="color:var(--muted);line-height:1.5">QR şəklini çap edib masaya qoyun</span>
+              <span data-i18n="qrStep2New" style="color:var(--muted);line-height:1.5">QR şəklini çap edib masaya qoyun</span>
             </div>
             <div style="display:flex;gap:10px;align-items:flex-start;font-size:0.82rem">
               <span style="width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:700;flex-shrink:0">3</span>
-              <span style="color:var(--muted);line-height:1.5">Müştəri skan edəndə <b style="color:var(--text)">birbaşa sizin menyunuza</b> keçir</span>
+              <span data-i18n="qrStep3New" style="color:var(--muted);line-height:1.5">Müştəri skan edəndə <b style="color:var(--text)">birbaşa sizin menyunuza</b> keçir</span>
             </div>
           </div>
         </div>
@@ -1345,6 +1345,7 @@ function deleteItem(idx) {
 
 // ── CATEGORIES ──
 function renderCatsPage() {
+  var az = interfaceLang !== 'en';
   var list = document.getElementById('cats-list'); list.innerHTML='';
   STATE.categories.forEach(function(cat,idx) {
     var card=document.createElement('div'); card.className='card';
@@ -1353,13 +1354,16 @@ function renderCatsPage() {
     var thumbInner = cat.image
       ? '<img src="'+cat.image+'" style="width:100%;height:100%;object-fit:cover;border-radius:8px">'
       : '&#128194;';
-    card.innerHTML='<div style="display:flex;align-items:center;gap:12px"><div style="width:42px;height:42px;border-radius:8px;background:'+cat.bg+';display:flex;align-items:center;justify-content:center;font-size:1.1rem;overflow:hidden;flex-shrink:0">'+thumbInner+'</div><div><div style="font-weight:500">'+cat.labelAz+' <span style="color:var(--muted);font-size:0.75rem">('+cat.labelEn+')</span></div><div style="font-size:0.75rem;color:var(--muted)">'+count+' məhsul</div></div></div><div class="actions"><button class="btn btn-ghost btn-sm" onclick="editCat('+idx+')">✏️ Düzəlt</button><button class="btn btn-danger btn-sm" onclick="deleteCat('+idx+')">🗑 Sil</button></div>';
+    var countLabel = az ? (count+' məhsul') : (count+' item'+(count!==1?'s':''));
+    var editLabel  = az ? '✏️ Düzəlt' : '✏️ Edit';
+    var delLabel   = az ? '🗑 Sil' : '🗑 Delete';
+    card.innerHTML='<div style="display:flex;align-items:center;gap:12px"><div style="width:42px;height:42px;border-radius:8px;background:'+cat.bg+';display:flex;align-items:center;justify-content:center;font-size:1.1rem;overflow:hidden;flex-shrink:0">'+thumbInner+'</div><div><div style="font-weight:500">'+cat.labelAz+' <span style="color:var(--muted);font-size:0.75rem">('+cat.labelEn+')</span></div><div style="font-size:0.75rem;color:var(--muted)">'+countLabel+'</div></div></div><div class="actions"><button class="btn btn-ghost btn-sm" onclick="editCat('+idx+')">'+editLabel+'</button><button class="btn btn-danger btn-sm" onclick="deleteCat('+idx+')">'+delLabel+'</button></div>';
     list.appendChild(card);
   });
 }
 function openAddCat() {
   editingCatIdx=null;
-  document.getElementById('cat-drawer-title').textContent='Kateqoriya əlavə et';
+  document.getElementById('cat-drawer-title').textContent = interfaceLang==='en' ? 'Add Category' : 'Kateqoriya əlavə et';
   ['cf-label-az','cf-label-en'].forEach(function(id){ document.getElementById(id).value=''; });
   tempCatImage = null; catImageDeleted = false;
   resetCatImagePreview();
@@ -1367,7 +1371,7 @@ function openAddCat() {
 }
 function editCat(idx) {
   editingCatIdx=idx; var cat=STATE.categories[idx];
-  document.getElementById('cat-drawer-title').textContent='Kateqoriyanı düzəlt';
+  document.getElementById('cat-drawer-title').textContent = interfaceLang==='en' ? 'Edit Category' : 'Kateqoriyanı düzəlt';
   document.getElementById('cf-label-az').value=cat.labelAz;
   document.getElementById('cf-label-en').value=cat.labelEn;
   tempCatImage = null; catImageDeleted = false;
@@ -1558,6 +1562,7 @@ var PRINT_TEMPLATES = [
 var activePrintTemplate = 'a4-classic';
 
 function renderPrintPage() {
+  var az = interfaceLang !== 'en';
   // Templates
   var grid = document.getElementById('print-template-grid');
   grid.innerHTML = '';
@@ -1567,19 +1572,20 @@ function renderPrintPage() {
     card.className = 'card';
     card.style.cssText = 'padding:1rem;cursor:pointer;border:2px solid '+(isActive?'var(--accent)':'var(--border)')+';text-align:center;transition:all 0.15s;';
     card.onclick = function(){ activePrintTemplate=t.id; renderPrintPage(); };
+    var selectedLabel = az ? '✔ Seçildi' : '✔ Selected';
     card.innerHTML =
       '<div style="font-size:2rem;margin-bottom:6px">'+t.icon+'</div>'+
       '<div style="font-weight:500;font-size:0.85rem">'+t.name+'</div>'+
       '<div style="font-size:0.72rem;color:var(--muted);margin-top:2px">'+t.desc+'</div>'+
-      (isActive?'<div style="font-size:0.72rem;color:var(--accent);margin-top:6px;font-weight:500">✔ Seçildi</div>':'');
+      (isActive?'<div style="font-size:0.72rem;color:var(--accent);margin-top:6px;font-weight:500">'+selectedLabel+'</div>':'');
     grid.appendChild(card);
   });
 
   // Category filter
   var catSel = document.getElementById('print-cat-filter');
-  catSel.innerHTML = '<option value="all">Hamısı</option>';
+  catSel.innerHTML = '<option value="all">'+(az?'Hamısı':'All')+'</option>';
   STATE.categories.forEach(function(c) {
-    catSel.innerHTML += '<option value="'+c.id+'">'+c.labelAz+'</option>';
+    catSel.innerHTML += '<option value="'+c.id+'">'+(az ? c.labelAz : (c.labelEn||c.labelAz))+'</option>';
   });
 }
 
@@ -1810,6 +1816,7 @@ function layoutKey() { return 'cafe_layout_'      + getCurrentUsername(); }
 function getActiveThemeId() { return localStorage.getItem(themeKey()) || 'classic'; }
 
 function renderThemePage() {
+  var az = interfaceLang !== 'en';
   var activeId = getActiveThemeId();
   var grid = document.getElementById('theme-grid');
   grid.innerHTML = '';
@@ -1834,10 +1841,13 @@ function renderThemePage() {
     // Body
     var body = document.createElement('div');
     body.style.cssText = 'padding:0.9rem 1rem;';
-    var activeTag = isActive ? '<span style="font-size:0.65rem;font-weight:600;padding:2px 7px;border-radius:6px;background:var(--accent);color:#fff">Aktiv</span>' : '';
+    var activeLabel  = az ? 'Aktiv' : 'Active';
+    var activeStatus = az ? '&#10004; Hal-hazırda aktiv' : '&#10004; Currently active';
+    var selectLabel  = az ? 'Bu temanı seç' : 'Select this theme';
+    var activeTag = isActive ? '<span style="font-size:0.65rem;font-weight:600;padding:2px 7px;border-radius:6px;background:var(--accent);color:#fff">'+activeLabel+'</span>' : '';
     var actionEl = isActive
-      ? '<div style="font-size:0.74rem;color:var(--accent);margin-top:8px;font-weight:500">&#10004; Hal-hazırda aktiv</div>'
-      : '<button class="btn btn-ghost btn-sm" style="width:100%;margin-top:8px" onclick="event.stopPropagation();applyTheme(\'' + theme.id + '\')">Bu temanı seç</button>';
+      ? '<div style="font-size:0.74rem;color:var(--accent);margin-top:8px;font-weight:500">'+activeStatus+'</div>'
+      : '<button class="btn btn-ghost btn-sm" style="width:100%;margin-top:8px" onclick="event.stopPropagation();applyTheme(\'' + theme.id + '\')">'+selectLabel+'</button>';
     body.innerHTML =
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">' +
         '<div style="font-weight:500;font-size:0.88rem">' + theme.name + '</div>' + activeTag +
@@ -1875,6 +1885,7 @@ var FONTS = [
 ];
 
 function renderFontGrid() {
+  var az = interfaceLang !== 'en';
   var activeId = localStorage.getItem(fontKey()) || 'dmsans';
   var grid = document.getElementById('font-grid');
   grid.innerHTML = '';
@@ -1884,14 +1895,17 @@ function renderFontGrid() {
     card.className = 'card';
     card.style.cssText = 'padding:1rem;cursor:pointer;border:2px solid '+(isActive?'var(--accent)':'var(--border)')+';transition:all 0.15s;';
     card.onclick = function(){ applyFont(font.id); };
+    var activeLabel  = az ? 'Aktiv' : 'Active';
+    var activeStatus = az ? '✔ Aktiv' : '✔ Active';
+    var selectLabel  = az ? 'Seç' : 'Select';
     card.innerHTML =
       '<div style="font-family:'+font.body+';font-size:1.3rem;font-weight:600;margin-bottom:4px">Aa</div>' +
       '<div style="font-weight:500;font-size:0.85rem;display:flex;align-items:center;justify-content:space-between">' +
         font.name +
-        (isActive ? '<span style="font-size:0.65rem;padding:1px 7px;border-radius:6px;background:var(--accent);color:#fff">Aktiv</span>' : '') +
+        (isActive ? '<span style="font-size:0.65rem;padding:1px 7px;border-radius:6px;background:var(--accent);color:#fff">'+activeLabel+'</span>' : '') +
       '</div>' +
       '<div style="font-size:0.73rem;color:var(--muted)">'+font.desc+'</div>' +
-      (!isActive ? '<button class="btn btn-ghost btn-sm" style="width:100%;margin-top:8px" onclick="event.stopPropagation();applyFont(\''+font.id+'\')">Seç</button>' : '<div style="font-size:0.73rem;color:var(--accent);margin-top:8px;font-weight:500">✔ Aktiv</div>');
+      (!isActive ? '<button class="btn btn-ghost btn-sm" style="width:100%;margin-top:8px" onclick="event.stopPropagation();applyFont(\''+font.id+'\')">'+selectLabel+'</button>' : '<div style="font-size:0.73rem;color:var(--accent);margin-top:8px;font-weight:500">'+activeStatus+'</div>');
     grid.appendChild(card);
   });
 }
@@ -1915,6 +1929,7 @@ var LAYOUTS = [
 ];
 
 function renderLayoutGrid() {
+  var az = interfaceLang !== 'en';
   var activeId = localStorage.getItem(layoutKey()) || 'list';
   var grid = document.getElementById('layout-grid');
   grid.innerHTML = '';
@@ -1924,11 +1939,12 @@ function renderLayoutGrid() {
     card.className = 'card';
     card.style.cssText = 'padding:1rem;cursor:pointer;border:2px solid '+(isActive?'var(--accent)':'var(--border)')+';text-align:center;transition:all 0.15s;';
     card.onclick = function(){ applyLayout(layout.id); };
+    var activeStatus = az ? '✔ Aktiv' : '✔ Active';
     card.innerHTML =
       '<div style="font-size:1.8rem;margin-bottom:6px;color:'+(isActive?'var(--accent)':'var(--muted)')+'">'+layout.icon+'</div>' +
       '<div style="font-weight:500;font-size:0.85rem">'+layout.name+'</div>' +
       '<div style="font-size:0.72rem;color:var(--muted)">'+layout.desc+'</div>' +
-      (isActive ? '<div style="font-size:0.72rem;color:var(--accent);margin-top:6px;font-weight:500">✔ Aktiv</div>' : '');
+      (isActive ? '<div style="font-size:0.72rem;color:var(--accent);margin-top:6px;font-weight:500">'+activeStatus+'</div>' : '');
     grid.appendChild(card);
   });
 }
@@ -2161,6 +2177,14 @@ var I18N = {
     fontTitle: '🔤 Şrift seçimi',
     layoutTitle: '📐 Kart layoutu',
     customCss: '✏️ Özel CSS',
+    // QR yeni açarlar
+    qrSectionTitle: '📷 Menyu QR Kodu',
+    qrScanLabel: 'Menyu üçün skan edin',
+    qrYourLink: '👤 Sizin menyu linkiniz',
+    qrLinkDesc: 'Bu link yalnız <strong>sizin</strong> menyunuzu açır. QR kodu bu linkdən yaranır.',
+    qrStep1New: 'QR kodu avtomatik hazırdır — <b>PNG yüklə</b> düyməsinə basın',
+    qrStep2New: 'QR şəklini çap edib masaya qoyun',
+    qrStep3New: 'Müştəri skan edəndə <b>birbaşa sizin menyunuza</b> keçir',
   },
   en: {
     nav_dashboard: 'Dashboard',
@@ -2292,6 +2316,14 @@ var I18N = {
     fontTitle: '🔤 Font Selection',
     layoutTitle: '📐 Card Layout',
     customCss: '✏️ Custom CSS',
+    // QR new keys
+    qrSectionTitle: '📷 Menu QR Code',
+    qrScanLabel: 'Scan for menu',
+    qrYourLink: '👤 Your menu link',
+    qrLinkDesc: 'This link opens <strong>only your</strong> menu. The QR code is generated from this link.',
+    qrStep1New: 'QR code is ready automatically — click <b>Download PNG</b>',
+    qrStep2New: 'Print the QR image and place it on the table',
+    qrStep3New: 'When customers scan, they go <b>directly to your menu</b>',
   }
 };
 
@@ -2462,6 +2494,16 @@ function applyI18n(lang) {
   var qrGenBtn = document.querySelector('button[onclick="generateQRCode()"]');
   if (qrGenBtn) qrGenBtn.textContent = az ? 'Yarat' : 'Generate';
 
+  // 21b. QR innerHTML elementlər (bold teq saxlamaq üçün)
+  var qrLinkDescEl = document.querySelector('[data-i18n="qrLinkDesc"]');
+  if (qrLinkDescEl) qrLinkDescEl.innerHTML = t['qrLinkDesc'] || qrLinkDescEl.innerHTML;
+  var qrStep1El = document.querySelector('[data-i18n="qrStep1New"]');
+  if (qrStep1El) qrStep1El.innerHTML = t['qrStep1New'] || qrStep1El.innerHTML;
+  var qrStep2El = document.querySelector('[data-i18n="qrStep2New"]');
+  if (qrStep2El) qrStep2El.innerHTML = t['qrStep2New'] || qrStep2El.innerHTML;
+  var qrStep3El = document.querySelector('[data-i18n="qrStep3New"]');
+  if (qrStep3El) qrStep3El.innerHTML = t['qrStep3New'] || qrStep3El.innerHTML;
+
   // 22. Drawer ətraflı məlumat label-ləri
   document.querySelectorAll('label:not([id])').forEach(function(lbl) {
     var txt = lbl.textContent.trim();
@@ -2477,8 +2519,17 @@ function applyI18n(lang) {
   // 24. data-i18n olan bütün digər elementlər (əvvəl işlənməyənlər)
   document.querySelectorAll('[data-i18n]').forEach(function(el) {
     var key = el.getAttribute('data-i18n');
+    // innerHTML tələb edənləri yuxarıda işlədik — skip et
+    if (['qrLinkDesc','qrStep1New','qrStep2New','qrStep3New'].indexOf(key) !== -1) return;
     if (t[key] !== undefined) el.textContent = t[key];
   });
+
+  // 25. Dinamik kartları yenidən render et (dil dəyişdikdə kart mətnləri yenilənsin)
+  if (document.getElementById('theme-grid'))   renderThemePage();
+  if (document.getElementById('font-grid'))    renderFontGrid();
+  if (document.getElementById('layout-grid'))  renderLayoutGrid();
+  if (document.getElementById('print-template-grid')) renderPrintPage();
+  if (document.getElementById('cats-list'))    renderCatsPage();
 }
 
 function setInterfaceLang(lang) {
