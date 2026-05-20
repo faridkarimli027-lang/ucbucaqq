@@ -337,6 +337,13 @@ input[type=file] { display:none; }
       <div class="save-bar"><button class="btn btn-primary" data-i18n="save" onclick="saveCafeInfo()">Yadda saxla</button></div>
     </div>
 
+    <!-- İş saatları -->
+    <div class="card">
+      <div style="font-size:0.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:1rem">🕐 İş saatları</div>
+      <div id="hours-rows" style="display:flex;flex-direction:column;gap:10px;margin-bottom:1rem"></div>
+      <div class="save-bar"><button class="btn btn-primary" onclick="saveHours()">Yadda saxla</button></div>
+    </div>
+
     <!-- Loqo -->
     <div class="card">
       <div data-i18n="logo" style="font-size:0.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:1rem">🖼️ Loqo</div>
@@ -1046,6 +1053,62 @@ function loadCafeForm() {
   document.getElementById('cafe-maps').value      = c.maps      || '';
   adminLoadLogo();
   renderSocialPreview();
+  renderHoursForm();
+}
+
+var DAYS_AZ = ['Bazar ertəsi','Çərşənbə axşamı','Çərşənbə','Cümə axşamı','Cümə','Şənbə','Bazar'];
+var DAYS_EN = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+var DEFAULT_HOURS = [
+  {open:'09:00',close:'23:00',closed:false},
+  {open:'09:00',close:'23:00',closed:false},
+  {open:'09:00',close:'23:00',closed:false},
+  {open:'09:00',close:'23:00',closed:false},
+  {open:'09:00',close:'23:00',closed:false},
+  {open:'09:00',close:'23:00',closed:false},
+  {open:'09:00',close:'23:00',closed:false}
+];
+
+function renderHoursForm() {
+  var hours = (STATE.cafe && STATE.cafe.hours) ? STATE.cafe.hours : DEFAULT_HOURS;
+  var cont = document.getElementById('hours-rows');
+  if (!cont) return;
+  cont.innerHTML = '';
+  hours.forEach(function(h, i) {
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 12px;background:var(--bg);border-radius:10px;border:1px solid var(--border)';
+    row.innerHTML =
+      '<span style="min-width:140px;font-size:0.85rem;font-weight:500;color:var(--text)">'+ DAYS_AZ[i] +'</span>' +
+      '<input type="time" value="'+(h.open||'09:00')+'" id="h-open-'+i+'" style="padding:6px 10px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:0.85rem;background:var(--input-bg);color:var(--text);'+(h.closed?'opacity:0.35':'')+'" '+(h.closed?'disabled':'')+' onchange="hoursChanged()">' +
+      '<span style="color:var(--muted);font-size:0.8rem">—</span>' +
+      '<input type="time" value="'+(h.close||'23:00')+'" id="h-close-'+i+'" style="padding:6px 10px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:0.85rem;background:var(--input-bg);color:var(--text);'+(h.closed?'opacity:0.35':'')+'" '+(h.closed?'disabled':'')+' onchange="hoursChanged()">' +
+      '<label style="display:flex;align-items:center;gap:5px;font-size:0.8rem;color:var(--muted);cursor:pointer;margin-left:auto">' +
+        '<input type="checkbox" id="h-closed-'+i+'" '+(h.closed?'checked':'')+' onchange="toggleDayClosed('+i+')" style="accent-color:var(--accent)"> Bağlıdır' +
+      '</label>';
+    cont.appendChild(row);
+  });
+}
+
+function toggleDayClosed(i) {
+  var closed = document.getElementById('h-closed-'+i).checked;
+  var openEl = document.getElementById('h-open-'+i);
+  var closeEl = document.getElementById('h-close-'+i);
+  openEl.disabled = closed; openEl.style.opacity = closed ? '0.35' : '1';
+  closeEl.disabled = closed; closeEl.style.opacity = closed ? '0.35' : '1';
+}
+
+function hoursChanged() {} // placeholder for future live preview
+
+function saveHours() {
+  var hours = DEFAULT_HOURS.map(function(_, i) {
+    return {
+      open:   document.getElementById('h-open-'+i).value,
+      close:  document.getElementById('h-close-'+i).value,
+      closed: document.getElementById('h-closed-'+i).checked
+    };
+  });
+  STATE.cafe = Object.assign(STATE.cafe || {}, { hours: hours });
+  saveData();
+  showToast(interfaceLang==='en' ? 'Working hours saved' : 'İş saatları yadda saxlandı');
 }
 function saveCafeInfo() {
   STATE.cafe = Object.assign(STATE.cafe || {}, {
