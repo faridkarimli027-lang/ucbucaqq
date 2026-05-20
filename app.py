@@ -208,6 +208,32 @@ def api_save_data():
     return jsonify({'ok': True})
 
 # ────────────────────────────────────────────────────────────────
+# SUPERADMIN — başqa istifadəçinin datasını oxu/yaz
+# ────────────────────────────────────────────────────────────────
+@app.route('/api/admin/users/<username>/data')
+@superadmin_required
+def api_admin_get_user_data(username):
+    users = load_users()
+    if username not in users:
+        return jsonify({'error': 'İstifadəçi tapılmadı'}), 404
+    return jsonify(load_user_data(username))
+
+@app.route('/api/admin/users/<username>/data', methods=['PUT'])
+@superadmin_required
+def api_admin_save_user_data(username):
+    users = load_users()
+    if username not in users:
+        return jsonify({'error': 'İstifadəçi tapılmadı'}), 404
+    incoming = request.json
+    db = load_user_data(username)
+    allowed_keys = {'cafe', 'categories', 'items', 'theme'}
+    for key in incoming:
+        if key in allowed_keys:
+            db[key] = incoming[key]
+    save_user_data(username, db)
+    return jsonify({'ok': True})
+
+# ────────────────────────────────────────────────────────────────
 # ŞƏKIL YÜKLƏMƏ
 # ────────────────────────────────────────────────────────────────
 @app.route('/api/upload', methods=['POST'])
