@@ -10,8 +10,18 @@ app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'ucbucaq-restoran-secret-2025')
 
 # ── EMAIL KONFİQURASİYASI ──
-_mail_user = os.environ.get('MAIL_USERNAME', 'ferid94kerinli@gmail.com')
-_mail_pass = os.environ.get('MAIL_PASSWORD', 'pojfqbiblhupjmig')
+# Mühit dəyişənlərini .env faylından və ya server konfiqürasiyasından oxuyun.
+# Heç vaxt şifrəni birbaşa koda yazmayın!
+_mail_user = os.environ.get('MAIL_USERNAME')
+_mail_pass = os.environ.get('MAIL_PASSWORD')
+
+if not _mail_user or not _mail_pass:
+    import warnings
+    warnings.warn(
+        "MAIL_USERNAME və ya MAIL_PASSWORD mühit dəyişəni təyin edilməyib. "
+        "Email funksiyası işləməyəcək. Zəhmət olmasa .env faylını yoxlayın.",
+        RuntimeWarning
+    )
 app.config['MAIL_SERVER']         = 'smtp.gmail.com'
 app.config['MAIL_PORT']           = 465
 app.config['MAIL_USE_TLS']        = False
