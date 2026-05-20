@@ -287,14 +287,6 @@ input[type=file] { display:none; }
       <div class="session-role">Administrator</div>
     </div>
   </div>
-
-  <!-- RESTORAN SEÇİCİ (superadmin üçün) -->
-  <div class="superadmin-only" id="user-switcher-wrap" style="display:none;padding:0 0.75rem 0.5rem">
-    <div style="font-size:0.65rem;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px;padding:0 0.25rem">İdarə olunan restoran</div>
-    <select id="user-switcher" onchange="switchTargetUser(this.value)"
-      style="width:100%;padding:0.5rem 0.6rem;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:#fff;font-size:0.82rem;font-family:'DM Sans',sans-serif;cursor:pointer;outline:none">
-    </select>
-  </div>
   <nav>
     <div class="nav-item active" onclick="showPage('dashboard',this)"><span class="nav-icon">&#128202;</span><span data-i18n="nav_dashboard">Dashboard</span></div>
     <div class="nav-item" onclick="showPage('cafe',this)"><span class="nav-icon">&#127978;</span><span data-i18n="nav_cafe">Kafe məlumatı</span></div>
@@ -343,6 +335,13 @@ input[type=file] { display:none; }
         <div class="form-group"><label id="label-cafe-phone">Telefon</label><input type="tel" id="cafe-phone" placeholder="+994 50 000 00 00"></div>
       </div>
       <div class="save-bar"><button class="btn btn-primary" data-i18n="save" onclick="saveCafeInfo()">Yadda saxla</button></div>
+    </div>
+
+    <!-- İş saatları -->
+    <div class="card">
+      <div style="font-size:0.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:1rem">🕐 İş saatları</div>
+      <div id="hours-rows" style="display:flex;flex-direction:column;gap:10px;margin-bottom:1rem"></div>
+      <div class="save-bar"><button class="btn btn-primary" onclick="saveHours()">Yadda saxla</button></div>
     </div>
 
     <!-- Loqo -->
@@ -923,19 +922,15 @@ function showAdminUI(username, role) {
   document.getElementById('session-avatar').textContent = username.charAt(0).toUpperCase();
   sessionStorage.setItem('cafe_admin_session', JSON.stringify({username: username, role: role}));
 
+  // Rol badge-i göstər
   var roleLabel = role === 'superadmin' ? 'Superadmin' : role === 'admin' ? 'Administrator' : 'Manager';
   document.querySelector('.session-role') && (document.querySelector('.session-role').textContent = roleLabel);
 
+  // Superadmin-only elementləri göstər/gizlət
   var isSuperAdmin = role === 'superadmin';
   document.querySelectorAll('.superadmin-only').forEach(function(el){
     el.style.display = isSuperAdmin ? (el.classList.contains('drawer-overlay') ? 'none' : 'block') : 'none';
   });
-
-  // Superadmin üçün restoran seçicisini yüklə
-  if (isSuperAdmin) {
-    targetUser = username; // default: öz hesabı
-    loadUserSwitcher(username);
-  }
 
   loadFromServer();
 }
@@ -962,28 +957,17 @@ function togglePass() {
 // ── STATE ──
 var editingItemIdx = null, editingCatIdx = null, activeCatFilter = 'all', tempImageBase64 = null, tempCatImage = null, catImageDeleted = false, itemImageDeleted = false;
 var syncTimeout = null;
-var targetUser = null; // superadmin başqa userin datasını idarə edəndə
-
-function getTargetUser() {
-  if (targetUser) return targetUser;
-  try { return JSON.parse(sessionStorage.getItem('cafe_admin_session') || '{}').username || ''; } catch(e) { return ''; }
-}
 
 function loadData() { return {cafe:{nameAz:"Üçbucaq Restoran"},categories:[],items:[]}; }
 
 async function saveData() {
-  var u = getTargetUser();
-  try { localStorage.setItem('cafe_data_' + u, JSON.stringify(STATE)); } catch(e) {}
+  // localStorage-a dərhal yaz — menu.html sinxron oxusun
+  try { localStorage.setItem('cafe_data', JSON.stringify(STATE)); } catch(e) {}
 
   clearTimeout(syncTimeout);
   syncTimeout = setTimeout(async function() {
     try {
-      // superadmin başqa useri idarə edirsə superadmin endpoint-i istifadə et
-      var sess = JSON.parse(sessionStorage.getItem('cafe_admin_session') || '{}');
-      var url = (sess.role === 'superadmin' && targetUser && targetUser !== sess.username)
-        ? '/api/admin/users/' + encodeURIComponent(targetUser) + '/data'
-        : '/api/data';
-      var r = await fetch(url, {
+      var r = await fetch('/api/data', {
         method: 'PUT',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(STATE)
@@ -998,17 +982,13 @@ async function saveData() {
 }
 
 async function loadFromServer() {
-  var u = getTargetUser();
-  var sess = JSON.parse(sessionStorage.getItem('cafe_admin_session') || '{}');
-  var url = (sess.role === 'superadmin' && targetUser && targetUser !== sess.username)
-    ? '/api/admin/users/' + encodeURIComponent(targetUser) + '/data'
-    : '/api/data';
   try {
-    var r = await fetch(url);
+    var r = await fetch('/api/data');
     if (!r.ok) throw new Error('server error ' + r.status);
     var data = await r.json();
     if (!data || !data.categories) throw new Error('empty response');
     STATE = data;
+    // Serverdən gələn tema/font/layout-u localStorage-ə yaz və tətbiq et
     if (STATE.theme && STATE.theme.id) {
       localStorage.setItem(themeKey(), STATE.theme.id);
       if (STATE.theme.vars) localStorage.setItem(themeVKey(), JSON.stringify(STATE.theme.vars));
@@ -1020,7 +1000,7 @@ async function loadFromServer() {
     if (STATE.layout) {
       localStorage.setItem(layoutKey(), STATE.layout);
     }
-    try { localStorage.setItem('cafe_data_' + u, JSON.stringify(STATE)); } catch(e) {}
+    try { localStorage.setItem('cafe_data', JSON.stringify(STATE)); } catch(e) {}
     if (STATE.cafe && !STATE.cafe.logo) {
       var localLogo = localStorage.getItem('cafe_logo');
       if (localLogo) STATE.cafe.logo = localLogo;
@@ -1028,19 +1008,17 @@ async function loadFromServer() {
     if (STATE.cafe && STATE.cafe.logo) {
       localStorage.setItem('cafe_logo', STATE.cafe.logo);
     }
-    // Dashboard başlığında aktiv restoranı göstər
-    updateActiveUserBadge();
     renderDashboard();
     renderMenuPage();
   } catch(e) {
     console.warn('loadFromServer xətası:', e);
     var localLogo = localStorage.getItem('cafe_logo');
     if (localLogo && STATE.cafe) STATE.cafe.logo = localLogo;
-    updateActiveUserBadge();
     renderDashboard();
     renderMenuPage();
   }
 }
+
 var STATE = loadData();
 
 // ── NAVIGATION — abunəlik yoxlaması ilə aşağıda (showPage) ──
@@ -1075,6 +1053,62 @@ function loadCafeForm() {
   document.getElementById('cafe-maps').value      = c.maps      || '';
   adminLoadLogo();
   renderSocialPreview();
+  renderHoursForm();
+}
+
+var DAYS_AZ = ['Bazar ertəsi','Çərşənbə axşamı','Çərşənbə','Cümə axşamı','Cümə','Şənbə','Bazar'];
+var DAYS_EN = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+var DEFAULT_HOURS = [
+  {open:'09:00',close:'23:00',closed:false},
+  {open:'09:00',close:'23:00',closed:false},
+  {open:'09:00',close:'23:00',closed:false},
+  {open:'09:00',close:'23:00',closed:false},
+  {open:'09:00',close:'23:00',closed:false},
+  {open:'09:00',close:'23:00',closed:false},
+  {open:'09:00',close:'23:00',closed:false}
+];
+
+function renderHoursForm() {
+  var hours = (STATE.cafe && STATE.cafe.hours) ? STATE.cafe.hours : DEFAULT_HOURS;
+  var cont = document.getElementById('hours-rows');
+  if (!cont) return;
+  cont.innerHTML = '';
+  hours.forEach(function(h, i) {
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 12px;background:var(--bg);border-radius:10px;border:1px solid var(--border)';
+    row.innerHTML =
+      '<span style="min-width:140px;font-size:0.85rem;font-weight:500;color:var(--text)">'+ DAYS_AZ[i] +'</span>' +
+      '<input type="time" value="'+(h.open||'09:00')+'" id="h-open-'+i+'" style="padding:6px 10px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:0.85rem;background:var(--input-bg);color:var(--text);'+(h.closed?'opacity:0.35':'')+'" '+(h.closed?'disabled':'')+' onchange="hoursChanged()">' +
+      '<span style="color:var(--muted);font-size:0.8rem">—</span>' +
+      '<input type="time" value="'+(h.close||'23:00')+'" id="h-close-'+i+'" style="padding:6px 10px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:0.85rem;background:var(--input-bg);color:var(--text);'+(h.closed?'opacity:0.35':'')+'" '+(h.closed?'disabled':'')+' onchange="hoursChanged()">' +
+      '<label style="display:flex;align-items:center;gap:5px;font-size:0.8rem;color:var(--muted);cursor:pointer;margin-left:auto">' +
+        '<input type="checkbox" id="h-closed-'+i+'" '+(h.closed?'checked':'')+' onchange="toggleDayClosed('+i+')" style="accent-color:var(--accent)"> Bağlıdır' +
+      '</label>';
+    cont.appendChild(row);
+  });
+}
+
+function toggleDayClosed(i) {
+  var closed = document.getElementById('h-closed-'+i).checked;
+  var openEl = document.getElementById('h-open-'+i);
+  var closeEl = document.getElementById('h-close-'+i);
+  openEl.disabled = closed; openEl.style.opacity = closed ? '0.35' : '1';
+  closeEl.disabled = closed; closeEl.style.opacity = closed ? '0.35' : '1';
+}
+
+function hoursChanged() {} // placeholder for future live preview
+
+function saveHours() {
+  var hours = DEFAULT_HOURS.map(function(_, i) {
+    return {
+      open:   document.getElementById('h-open-'+i).value,
+      close:  document.getElementById('h-close-'+i).value,
+      closed: document.getElementById('h-closed-'+i).checked
+    };
+  });
+  STATE.cafe = Object.assign(STATE.cafe || {}, { hours: hours });
+  saveData();
+  showToast(interfaceLang==='en' ? 'Working hours saved' : 'İş saatları yadda saxlandı');
 }
 function saveCafeInfo() {
   STATE.cafe = Object.assign(STATE.cafe || {}, {
@@ -2038,10 +2072,11 @@ renderThemePage = function() {
 
 // ── QR ──
 function getMyMenuUrl() {
-  // Superadmin başqa restoranı idarə edirsə o restoranın URL-i
-  var u = targetUser || (JSON.parse(sessionStorage.getItem('cafe_admin_session') || '{}').username) || '';
+  // Giriş etmiş userin öz menyu URL-i: /menu?user=<username>
+  var session = JSON.parse(sessionStorage.getItem('cafe_admin_session') || '{}');
+  var username = session.username || '';
   var base = window.location.origin + '/menu';
-  return u ? base + '?user=' + encodeURIComponent(u) : base;
+  return username ? base + '?user=' + encodeURIComponent(username) : base;
 }
 
 function generateQRCode(autoUrl) {
@@ -2664,71 +2699,28 @@ function renderUsersList() {
     keys.forEach(function(key) {
       var u = users[key];
       var isMe = key === currentUser;
-      var isActive = key === targetUser;
-      var roleLabel = u.role === 'superadmin' ? 'Superadmin' : u.role === 'admin' ? 'Administrator' : (az?'Manager':'Manager');
+      var roleLabel = u.role === 'superadmin' ? 'Superadmin' : u.role === 'admin' ? (az?'Administrator':'Administrator') : (az?'Manager':'Manager');
       var youLabel = az ? 'Siz' : 'You';
       var row = document.createElement('div');
       row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:0.65rem 0;border-bottom:1px solid var(--border);';
       row.innerHTML =
         '<div style="display:flex;align-items:center;gap:10px">' +
-          '<div style="width:32px;height:32px;border-radius:50%;background:'+(isActive?'var(--accent)':'rgba(201,168,76,0.3)')+';color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:600">' + key.charAt(0).toUpperCase() + '</div>' +
+          '<div style="width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:600">' + key.charAt(0).toUpperCase() + '</div>' +
           '<div>' +
-            '<div style="font-weight:500;font-size:0.88rem">' + key +
-              (isMe ? ' <span style="font-size:0.65rem;padding:1px 6px;background:#eaf3de;color:#3B6D11;border-radius:5px">'+youLabel+'</span>' : '') +
-              (isActive ? ' <span style="font-size:0.65rem;padding:1px 6px;background:rgba(201,168,76,0.2);color:var(--accent);border-radius:5px">●&nbsp;Aktiv</span>' : '') +
-            '</div>' +
+            '<div style="font-weight:500;font-size:0.88rem">' + key + (isMe ? ' <span style="font-size:0.65rem;padding:1px 6px;background:#eaf3de;color:#3B6D11;border-radius:5px">'+youLabel+'</span>' : '') + '</div>' +
             '<div style="font-size:0.73rem;color:var(--muted)">' + roleLabel + (u.email ? ' · ' + u.email : '') + '</div>' +
           '</div>' +
         '</div>' +
         '<div style="display:flex;gap:6px">' +
-          '<button class="btn btn-primary btn-sm" onclick="switchTargetUser(\'' + key + '\')" title="'+(az?'Bu restoranı idarə et':'Manage this restaurant')+'">🏪</button>' +
           '<button class="btn btn-ghost btn-sm" onclick="openEditUser(\'' + key + '\')">✏️</button>' +
           (!isMe ? '<button class="btn btn-danger btn-sm" onclick="deleteUser(\'' + key + '\')">🗑</button>' : '') +
         '</div>';
       list.appendChild(row);
     });
-  }).catch(function(){
-    list.innerHTML = '<p style="color:var(--muted);font-size:0.85rem;padding:0.5rem 0">'+(az?'Yüklənmə xətası':'Load error')+'</p>';
+  }).catch(function(e){
+    var az2 = interfaceLang !== 'en';
+    list.innerHTML = '<p style="color:var(--muted);font-size:0.85rem;padding:0.5rem 0">'+(az2?'Yüklənmə xətası':'Load error')+'</p>';
   });
-}
-
-// ── RESTORAN SEÇİCİ ──
-function loadUserSwitcher(currentUsername) {
-  fetch('/api/users').then(function(r){ return r.json(); }).then(function(users){
-    var sel = document.getElementById('user-switcher');
-    if (!sel) return;
-    sel.innerHTML = '';
-    Object.keys(users).forEach(function(key) {
-      var opt = document.createElement('option');
-      opt.value = key;
-      var u = users[key];
-      var roleLabel = u.role === 'superadmin' ? ' 👑' : '';
-      opt.textContent = key + roleLabel;
-      if (key === (targetUser || currentUsername)) opt.selected = true;
-      sel.appendChild(opt);
-    });
-  }).catch(function(){});
-}
-
-function switchTargetUser(username) {
-  if (targetUser === username) return;
-  targetUser = username;
-  // Seçicini sinxronlaşdır
-  var sel = document.getElementById('user-switcher');
-  if (sel) sel.value = username;
-  // Dashboard-ı yenilə
-  showToast('🏪 ' + username + ' restoranına keçildi');
-  loadFromServer();
-  // İstifadəçilər siyahısını yenilə (aktiv işarəsi üçün)
-  if (document.getElementById('users-list')) renderUsersList();
-}
-
-function updateActiveUserBadge() {
-  var sess = JSON.parse(sessionStorage.getItem('cafe_admin_session') || '{}');
-  if (sess.role !== 'superadmin') return;
-  var u = targetUser || sess.username;
-  var h2 = document.querySelector('#page-dashboard .page-title');
-  if (h2) h2.textContent = 'Dashboard' + (u ? ' — ' + u : '');
 }
 
 function openAddUser() {
