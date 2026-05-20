@@ -369,17 +369,15 @@
   .hours-dot.closed-dot { background: #f87171; }
   .hours-popup {
     display: none;
-    position: absolute;
-    top: calc(100% + 8px);
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(20,14,10,0.96);
-    border: 1px solid rgba(255,255,255,0.12);
+    position: fixed;
+    background: rgba(20,14,10,0.97);
+    border: 1px solid rgba(255,255,255,0.15);
     border-radius: 16px;
     padding: 12px 16px;
-    min-width: 220px;
-    z-index: 100;
-    backdrop-filter: blur(12px);
+    min-width: 230px;
+    z-index: 9999;
+    backdrop-filter: blur(16px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
     animation: popIn 0.18s cubic-bezier(0.34,1.2,0.64,1) both;
   }
   .hours-popup.visible { display: block; }
@@ -1295,8 +1293,8 @@ function renderHoursBadge(cafe) {
   if (!hours || !hours.length) { wrap.style.display = 'none'; return; }
 
   const now = new Date();
-  const jsDay = now.getDay(); // 0=Sunday
-  const idx = jsDay === 0 ? 6 : jsDay - 1; // convert to Mon=0
+  const jsDay = now.getDay();
+  const idx = jsDay === 0 ? 6 : jsDay - 1;
   const h = hours[idx];
   const isAz = lang === 'az';
 
@@ -1316,29 +1314,48 @@ function renderHoursBadge(cafe) {
 
   wrap.style.display = 'block';
   wrap.innerHTML = `
-    <button class="hours-badge" onclick="toggleHoursPopup(event)">
+    <button class="hours-badge" id="hours-badge-btn" onclick="toggleHoursPopup(event)">
       <span class="hours-dot ${isOpen ? 'open' : 'closed-dot'}"></span>
       <span>${statusText}</span>
       <span style="font-size:0.7rem;opacity:0.6">▾</span>
-    </button>
-    <div class="hours-popup" id="hours-popup">
-      ${hours.map((d, i) => {
-        const isToday = i === idx;
-        const dayName = isAz ? DAYS_AZ[i] : DAYS_EN[i];
-        const timeStr = d.closed
-          ? `<span class="day-closed">${isAz ? 'Bağlı' : 'Closed'}</span>`
-          : `<span class="day-time">${d.open} – ${d.close}</span>`;
-        return `<div class="hours-popup-row${isToday ? ' today' : ''}">
-          <span class="day-name">${isToday ? '▶ ' : ''}${dayName}</span>${timeStr}
-        </div>`;
-      }).join('')}
+    </button>`;
+
+  // Remove old popup if exists
+  const old = document.getElementById('hours-popup');
+  if (old) old.remove();
+
+  // Build popup at body level
+  const popup = document.createElement('div');
+  popup.className = 'hours-popup';
+  popup.id = 'hours-popup';
+  popup.innerHTML = hours.map((d, i) => {
+    const isToday = i === idx;
+    const dayName = isAz ? DAYS_AZ[i] : DAYS_EN[i];
+    const timeStr = d.closed
+      ? `<span class="day-closed">${isAz ? 'Bağlı' : 'Closed'}</span>`
+      : `<span class="day-time">${d.open} – ${d.close}</span>`;
+    return `<div class="hours-popup-row${isToday ? ' today' : ''}">
+      <span class="day-name">${isToday ? '▶ ' : ''}${dayName}</span>${timeStr}
     </div>`;
+  }).join('');
+  document.body.appendChild(popup);
 }
 
 function toggleHoursPopup(e) {
   e.stopPropagation();
   const popup = document.getElementById('hours-popup');
-  if (popup) popup.classList.toggle('visible');
+  const btn = document.getElementById('hours-badge-btn');
+  if (!popup || !btn) return;
+  const isVisible = popup.classList.contains('visible');
+  if (isVisible) {
+    popup.classList.remove('visible');
+    return;
+  }
+  // Position popup under badge button
+  const rect = btn.getBoundingClientRect();
+  popup.style.top = (rect.bottom + window.scrollY + 8) + 'px';
+  popup.style.left = Math.max(8, rect.left + rect.width / 2 - 115) + 'px';
+  popup.classList.add('visible');
 }
 document.addEventListener('click', function() {
   const popup = document.getElementById('hours-popup');
