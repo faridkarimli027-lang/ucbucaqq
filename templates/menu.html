@@ -1007,12 +1007,10 @@ function openModal(item) {
   const ingredWrap = document.getElementById('modal-ingredients-wrap');
   const ingredEl = document.getElementById('modal-desc');
   const ingredLabel = document.getElementById('modal-ingredients-label');
-  const descText = lang === 'az'
-    ? (item.detailsAz || item.descAz || item.ingredients || '').trim()
-    : (item.detailsEn || item.descEn || item.ingredients || '').trim();
+  const descText = (item.ingredients || '').trim();
   if (descText) {
     ingredEl.textContent = descText;
-    ingredLabel.textContent = lang === 'az' ? 'Haqqında' : 'About';
+    ingredLabel.textContent = lang === 'az' ? 'Tərkib' : 'Ingredients';
     ingredWrap.style.display = '';
   } else {
     ingredWrap.style.display = 'none';
