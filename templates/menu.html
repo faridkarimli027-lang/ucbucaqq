@@ -817,11 +817,15 @@
     </div>
     <div class="cart-items" id="cart-items-list"></div>
     <div class="cart-footer">
+      <div id="cart-service-fee-row" style="display:none;justify-content:space-between;align-items:center;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid var(--border)">
+        <span id="cart-service-fee-label" style="font-size:0.78rem;color:var(--muted)">Xidmət haqqı (7%)</span>
+        <span id="cart-service-fee-val" style="font-size:0.85rem;font-weight:600;color:var(--muted)">0.00 ₼</span>
+      </div>
       <div class="cart-total-row">
         <span class="cart-total-label" id="cart-total-label">Cəmi</span>
         <span class="cart-total-val" id="cart-total">0.00 ₼</span>
       </div>
-      <button class="btn-clear-cart" onclick="clearCart()">Səbəti təmizlə</button>
+      <button class="btn-clear-cart" onclick="confirmClearCart()">Səbəti təmizlə</button>
     </div>
   </div>
 </div>
@@ -1003,9 +1007,12 @@ function openModal(item) {
   const ingredWrap = document.getElementById('modal-ingredients-wrap');
   const ingredEl = document.getElementById('modal-desc');
   const ingredLabel = document.getElementById('modal-ingredients-label');
-  if (item.ingredients && item.ingredients.trim()) {
-    ingredEl.textContent = item.ingredients;
-    ingredLabel.textContent = lang === 'az' ? 'Tərkib' : 'Ingredients';
+  const descText = lang === 'az'
+    ? (item.detailsAz || item.descAz || item.ingredients || '').trim()
+    : (item.detailsEn || item.descEn || item.ingredients || '').trim();
+  if (descText) {
+    ingredEl.textContent = descText;
+    ingredLabel.textContent = lang === 'az' ? 'Haqqında' : 'About';
     ingredWrap.style.display = '';
   } else {
     ingredWrap.style.display = 'none';
@@ -1064,10 +1071,15 @@ function render() {
 
   // Loqo
   loadLogo();
-  document.getElementById('footer-note').innerHTML =
-    lang === 'az'
+  const footerEl = document.getElementById('footer-note');
+  if (cafe.phone && cafe.phone.trim()) {
+    footerEl.style.display = '';
+    footerEl.innerHTML = lang === 'az'
       ? `Zəng etmək üçün: <strong>${cafe.phone}</strong>`
       : `Call us: <strong>${cafe.phone}</strong>`;
+  } else {
+    footerEl.style.display = 'none';
+  }
 
   // Social bar
   const socialBar = document.getElementById('social-bar');
@@ -1103,7 +1115,14 @@ function render() {
   cats.forEach(cat => {
     const btn = document.createElement('button');
     btn.className = 'cat-btn' + (activeCat === cat.id ? ' active' : '');
-    btn.textContent = lang === 'az' ? cat.labelAz : (cat.labelEn || cat.labelAz);
+    const catLabel = lang === 'az' ? cat.labelAz : (cat.labelEn || cat.labelAz);
+    if (cat.image) {
+      btn.innerHTML = `<img src="${cat.image}" style="width:16px;height:16px;border-radius:3px;object-fit:cover;margin-right:5px;vertical-align:middle">${catLabel}`;
+    } else if (cat.icon) {
+      btn.innerHTML = `<span style="margin-right:4px">${cat.icon}</span>${catLabel}`;
+    } else {
+      btn.textContent = catLabel;
+    }
     btn.onclick = () => { activeCat = cat.id; trackCatClick(cat.id); clearSearch(); };
     bar.appendChild(btn);
   });
@@ -1150,6 +1169,9 @@ function render() {
 
   if (!STATE) {
     sec.innerHTML = '<p style="text-align:center;color:var(--muted);padding:2rem">Menyu məlumatı tapılmadı</p>';
+  } else if (sec.innerHTML === '') {
+    const iAz = lang === 'az';
+    sec.innerHTML = `<div style="text-align:center;padding:3rem 1rem;color:var(--muted)"><div style="font-size:2.5rem;margin-bottom:0.75rem">🍽️</div><div style="font-size:0.9rem">${iAz ? 'Bu kateqoriyada məhsul yoxdur' : 'No items in this category'}</div></div>`;
   }
 }
 
@@ -1412,15 +1434,32 @@ function addToCartFromModal() {
 }
 
 function updateCartUI() {
-  const total = cart.reduce((s, r) => s + parseFloat(r.item.price || 0) * r.qty, 0);
+  const subtotal = cart.reduce((s, r) => s + parseFloat(r.item.price || 0) * r.qty, 0);
   const count = cart.reduce((s, r) => s + r.qty, 0);
   const fab = document.getElementById('cart-fab');
+  const iAz = lang === 'az';
+
+  // Xidmət haqqı
+  const fee = parseFloat((STATE && STATE.cafe && STATE.cafe.serviceFee) || 0);
+  const feeRow = document.getElementById('cart-service-fee-row');
+  const feeLabel = document.getElementById('cart-service-fee-label');
+  const feeVal = document.getElementById('cart-service-fee-val');
+  let grandTotal = subtotal;
+  if (fee > 0 && count > 0 && feeRow) {
+    const feeAmt = subtotal * fee / 100;
+    grandTotal = subtotal + feeAmt;
+    feeRow.style.display = 'flex';
+    feeLabel.textContent = (iAz ? 'Xidmət haqqı' : 'Service charge') + ' (' + fee + '%)';
+    feeVal.textContent = feeAmt.toFixed(2) + ' ₼';
+  } else if (feeRow) {
+    feeRow.style.display = 'none';
+  }
+
   document.getElementById('cart-fab-count').textContent = count;
-  document.getElementById('cart-total').textContent = total.toFixed(2) + ' ₼';
+  document.getElementById('cart-total').textContent = grandTotal.toFixed(2) + ' ₼';
   if (count > 0) fab.classList.add('visible');
   else fab.classList.remove('visible');
-  // Localized labels
-  const iAz = lang === 'az';
+
   document.getElementById('cart-title').textContent = '🛒 ' + (iAz ? 'Səbət' : 'Cart');
   document.getElementById('cart-fab-label').textContent = iAz ? 'Səbət' : 'Cart';
   document.getElementById('cart-total-label').textContent = iAz ? 'Cəmi' : 'Total';
@@ -1464,6 +1503,13 @@ function changeCartQty(idx, d) {
   cart[idx].qty += d;
   if (cart[idx].qty <= 0) cart.splice(idx, 1);
   updateCartUI();
+}
+
+function confirmClearCart() {
+  const iAz = lang === 'az';
+  if (confirm(iAz ? 'Səbəti təmizləmək istədiyinizdən əminsinizmi?' : 'Are you sure you want to clear the cart?')) {
+    clearCart();
+  }
 }
 
 function clearCart() {
