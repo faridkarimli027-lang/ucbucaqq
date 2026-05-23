@@ -333,6 +333,14 @@ input[type=file] { display:none; }
         <div class="form-group"><label id="label-cafe-addr-az">Ünvan (AZ)</label><input type="text" id="cafe-addr-az" placeholder="Bakı, Nizami küçəsi 42"></div>
         <div class="form-group"><label id="label-cafe-addr-en">Ünvan (EN)</label><input type="text" id="cafe-addr-en" placeholder="42 Nizami Street, Baku"></div>
         <div class="form-group"><label id="label-cafe-phone">Telefon</label><input type="tel" id="cafe-phone" placeholder="+994 50 000 00 00"></div>
+        <div class="form-group">
+          <label id="label-cafe-service-fee">🧾 Xidmət haqqı (%)</label>
+          <div style="position:relative">
+            <input type="number" id="cafe-service-fee" placeholder="7" min="0" max="100" step="0.5" style="padding-right:2.5rem">
+            <span style="position:absolute;right:0.75rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:0.85rem;pointer-events:none">%</span>
+          </div>
+          <span style="font-size:0.7rem;color:var(--muted)">0 daxil etsəniz xidmət haqqı göstərilməz. Menyu səhifəsinin altında yazı kimi görünür.</span>
+        </div>
       </div>
       <div class="save-bar"><button class="btn btn-primary" data-i18n="save" onclick="saveCafeInfo()">Yadda saxla</button></div>
     </div>
@@ -1051,6 +1059,7 @@ function loadCafeForm() {
   document.getElementById('cafe-instagram').value = c.instagram || '';
   document.getElementById('cafe-tiktok').value    = c.tiktok    || '';
   document.getElementById('cafe-maps').value      = c.maps      || '';
+  var sfEl = document.getElementById('cafe-service-fee'); if (sfEl) sfEl.value = (c.serviceFee !== undefined && c.serviceFee !== null) ? c.serviceFee : 7;
   adminLoadLogo();
   renderSocialPreview();
   renderHoursForm();
@@ -1118,6 +1127,7 @@ function saveCafeInfo() {
     addrEn: document.getElementById('cafe-addr-en').value,
     phone:  document.getElementById('cafe-phone').value,
     icon:   (document.getElementById('cafe-icon') ? document.getElementById('cafe-icon').value : (STATE.cafe.icon||'')),
+    serviceFee: parseFloat(document.getElementById('cafe-service-fee').value) || 0,
   });
   saveData();
   showToast(interfaceLang==='en'?'Cafe info saved':'Kafe məlumatları yadda saxlandı');
