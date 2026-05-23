@@ -337,9 +337,9 @@ input[type=file] { display:none; }
           <label id="label-cafe-service-fee">🧾 Xidmət haqqı (%)</label>
           <div style="position:relative">
             <input type="number" id="cafe-service-fee" placeholder="7" min="0" max="100" step="0.5" style="padding-right:2.5rem">
-            <span style="position:absolute;right:0.75rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:0.85rem;pointer-events:none">%</span>
+            <span style="position:absolute;right:0.75rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:0.7rem;pointer-events:none">%</span>
           </div>
-          <span style="font-size:0.7rem;color:var(--muted)">0 daxil etsəniz xidmət haqqı göstərilməz. Menyu səhifəsinin altında yazı kimi görünür.</span>
+          <span id="hint-cafe-service-fee" style="font-size:0.7rem;color:var(--muted)">0 daxil etsəniz xidmət haqqı göstərilməz. Menyu səhifəsinin altında yazı kimi görünür.</span>
         </div>
       </div>
       <div class="save-bar"><button class="btn btn-primary" data-i18n="save" onclick="saveCafeInfo()">Yadda saxla</button></div>
@@ -2507,11 +2507,17 @@ function applyI18n(lang) {
     'label-cafe-addr-az': az ? 'Ünvan (AZ)' : 'Address (AZ)',
     'label-cafe-addr-en': az ? 'Ünvan (EN)' : 'Address (EN)',
     'label-cafe-phone':   az ? 'Telefon' : 'Phone',
+    'label-cafe-service-fee': az ? '🧾 Xidmət haqqı (%)' : '🧾 Service Charge (%)'
   };
   Object.keys(cafeLabels).forEach(function(id) {
     var el = document.getElementById(id);
     if (el) el.textContent = cafeLabels[id];
   });
+  // Xidmət haqqı hint
+  var sfHint = document.getElementById('hint-cafe-service-fee');
+  if (sfHint) sfHint.textContent = az
+    ? '0 daxil etsəniz xidmət haqqı göstərilməz. Menyu səhifəsinin altında yazı kimi görünür.'
+    : 'Enter 0 to hide the service charge. Shown as a note at the bottom of the menu page.';
 
   // 12. Placeholder-lər
   var placeholders = {
