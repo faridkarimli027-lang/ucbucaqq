@@ -793,6 +793,11 @@
   </div>
 
   <div class="sections" id="menu-sections"></div>
+  <!-- XİDMƏT HAQQI BANNERİ -->
+  <div id="service-fee-banner" style="display:none;margin:0 1rem 0.5rem;padding:10px 16px;background:rgba(201,168,76,0.10);border:1px solid rgba(201,168,76,0.28);border-radius:12px;text-align:center;font-size:0.78rem;color:var(--muted)">
+    <span id="service-fee-text"></span>
+  </div>
+
   <div class="footer" id="footer-note">Zəng etmək üçün: <strong>+994 50 000 00 00</strong></div>
 
 </div>
@@ -1032,6 +1037,7 @@ function closeModalDirect() {
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalDirect(); });
 
 function setLang(l) {
+  renderServiceFeeBanner();
   lang = l;
   document.querySelectorAll('.lang-btn').forEach(b =>
     b.classList.toggle('active', b.textContent === l.toUpperCase()));
@@ -1241,6 +1247,20 @@ function highlight(text, query) {
     text.slice(idx + query.length);
 }
 
+function renderServiceFeeBanner() {
+  var banner = document.getElementById('service-fee-banner');
+  var text   = document.getElementById('service-fee-text');
+  if (!banner || !text) return;
+  var fee = STATE && STATE.cafe && STATE.cafe.serviceFee;
+  fee = parseFloat(fee);
+  if (!fee || fee <= 0) { banner.style.display = 'none'; return; }
+  var isAz = lang === 'az';
+  text.innerHTML = isAz
+    ? ('&#128712; Qiymətlərə <strong style="color:var(--accent)">' + fee + '% xidmət haqqı</strong> daxildir')
+    : ('&#128712; Prices include <strong style="color:var(--accent)">' + fee + '% service charge</strong>');
+  banner.style.display = 'block';
+}
+
 function loadLogo() {
   const url = (STATE.cafe && STATE.cafe.logo) ? STATE.cafe.logo : localStorage.getItem('cafe_logo');
   const wrap = document.getElementById('logo-wrap');
@@ -1273,12 +1293,14 @@ fetch(dataUrl)
     if (STATE.customCss) applyCustomCss();
     render();
     loadLogo();
+    renderServiceFeeBanner();
     trackMenuOpen();
   })
   .catch(() => {
     // Server yoxdur — localStorage-dakı data ilə işlə, xəta göstərmə
     render();
     loadLogo();
+    renderServiceFeeBanner();
     trackMenuOpen();
   });
 
