@@ -22,6 +22,7 @@ body.admin-dark {
 }
 body.admin-dark input[type=text],
 body.admin-dark input[type=tel],
+body.admin-dark input[type=number],
 body.admin-dark textarea,
 body.admin-dark select { background: var(--input-bg); color: var(--text); border-color: var(--border); }
 body.admin-dark input[type=password] { background: var(--input-bg); color: var(--text); border-color: var(--border); }
@@ -122,7 +123,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .form-group { display:flex;flex-direction:column;gap:5px; }
 .form-group.full { grid-column:1/-1; }
 label { font-size:0.75rem;font-weight:500;color:var(--muted); }
-input[type=text],input[type=tel],textarea,select { width:100%;padding:0.55rem 0.75rem;border:1px solid var(--border);border-radius:8px;font-size:0.85rem;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--input-bg);outline:none;transition:border-color 0.15s,background 0.2s,color 0.2s; }
+input[type=text],input[type=tel],input[type=number],textarea,select { width:100%;padding:0.55rem 0.75rem;border:1px solid var(--border);border-radius:8px;font-size:0.85rem;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--input-bg);outline:none;transition:border-color 0.15s,background 0.2s,color 0.2s; }
 input[type=password] { width:100%;padding:0.55rem 0.75rem;border:1px solid var(--border);border-radius:8px;font-size:0.85rem;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--input-bg);outline:none;transition:border-color 0.15s,background 0.2s,color 0.2s; }
 input:focus,textarea:focus,select:focus { border-color:var(--accent); }
 textarea { resize:vertical;min-height:70px; }
@@ -334,9 +335,9 @@ input[type=file] { display:none; }
         <div class="form-group"><label id="label-cafe-addr-en">Ünvan (EN)</label><input type="text" id="cafe-addr-en" placeholder="42 Nizami Street, Baku"></div>
         <div class="form-group"><label id="label-cafe-phone">Telefon</label><input type="tel" id="cafe-phone" placeholder="+994 50 000 00 00"></div>
         <div class="form-group">
-          <label id="label-cafe-service-fee">🧾 Xidmət haqqı (%)</label>
+          <label id="label-cafe-service-fee">Xidmət haqqı (%)</label>
           <div style="position:relative">
-            <input type="number" id="cafe-service-fee" placeholder="7" min="0" max="100" step="0.5" style="padding-right:2.5rem">
+            <input type="number" id="cafe-service-fee" placeholder="7" min="0" max="100" step="0.5" style="padding-right:2rem">
             <span style="position:absolute;right:0.75rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:0.7rem;pointer-events:none">%</span>
           </div>
           <span id="hint-cafe-service-fee" style="font-size:0.7rem;color:var(--muted)">0 daxil etsəniz xidmət haqqı göstərilməz. Menyu səhifəsinin altında yazı kimi görünür.</span>
@@ -2507,7 +2508,7 @@ function applyI18n(lang) {
     'label-cafe-addr-az': az ? 'Ünvan (AZ)' : 'Address (AZ)',
     'label-cafe-addr-en': az ? 'Ünvan (EN)' : 'Address (EN)',
     'label-cafe-phone':   az ? 'Telefon' : 'Phone',
-    'label-cafe-service-fee': az ? '🧾 Xidmət haqqı (%)' : '🧾 Service Charge (%)'
+    'label-cafe-service-fee': az ? 'Xidmət haqqı (%)' : 'Service Charge (%)'
   };
   Object.keys(cafeLabels).forEach(function(id) {
     var el = document.getElementById(id);
