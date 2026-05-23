@@ -1037,7 +1037,6 @@ function closeModalDirect() {
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalDirect(); });
 
 function setLang(l) {
-  renderServiceFeeBanner();
   lang = l;
   document.querySelectorAll('.lang-btn').forEach(b =>
     b.classList.toggle('active', b.textContent === l.toUpperCase()));
@@ -1048,6 +1047,7 @@ function setLang(l) {
   const ingredLabel = document.getElementById('modal-ingredients-label');
   if (ingredLabel) ingredLabel.textContent = l === 'az' ? 'Tərkib' : 'Ingredients';
   if (searchQuery) renderSearch(); else render();
+  renderServiceFeeBanner();
   updateCartUI();
 }
 
