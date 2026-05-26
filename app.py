@@ -5,6 +5,8 @@ from datetime import datetime, timedelta
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_mail import Mail, Message
+from PIL import Image
+import io
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'ucbucaq-restoran-secret-2025')
@@ -119,6 +121,43 @@ def save_user_data(username, data):
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXT
 
+# Şəkil ölçüsünü kiçiltmə köməkçisi
+# max_size: (en, hündürlük) piksel — böyüksə azaldılır, kiçiksə dəyişdirilmir
+# quality: JPEG/WEBP sıxışdırma keyfiyyəti (1-95)
+def resize_and_save(file_obj, save_path, max_size=(1200, 1200), quality=82):
+    img = Image.open(file_obj)
+    # EXIF orientasiyasını düzəlt (telefon şəkilləri üçün)
+    try:
+        from PIL.ExifTags import TAGS
+        exif = img._getexif()
+        if exif:
+            for tag, val in exif.items():
+                if TAGS.get(tag) == 'Orientation':
+                    rotations = {3: 180, 6: 270, 8: 90}
+                    if val in rotations:
+                        img = img.rotate(rotations[val], expand=True)
+                    break
+    except Exception:
+        pass
+    # Ölçünü azalt (nisbəti qoru)
+    img.thumbnail(max_size, Image.LANCZOS)
+    # GIF-ləri olduğu kimi saxla
+    ext = os.path.splitext(save_path)[1].lower()
+    if ext == '.gif':
+        img.save(save_path)
+        return
+    # PNG-ləri RGB-yə çevir (şəffaflıq varsa saxla)
+    if img.mode in ('RGBA', 'LA', 'P'):
+        img = img.convert('RGBA')
+        save_ext = '.png'
+        img.save(save_path.rsplit('.', 1)[0] + save_ext, 'PNG', optimize=True)
+        return
+    if img.mode != 'RGB':
+        img = img.convert('RGB')
+    # WEBP və ya JPEG kimi saxla
+    fmt = 'WEBP' if ext == '.webp' else 'JPEG'
+    img.save(save_path, fmt, quality=quality, optimize=True)
+
 def current_user():
     return session.get('user')
 
@@ -232,7 +271,13 @@ def api_upload():
         return jsonify({'error': 'Yalnız PNG, JPG, GIF, WEBP faylları qəbul edilir'}), 400
     ext = file.filename.rsplit('.', 1)[1].lower()
     filename = str(uuid.uuid4()) + '.' + ext
-    file.save(os.path.join(UPLOAD_DIR, filename))
+    save_path = os.path.join(UPLOAD_DIR, filename)
+    try:
+        resize_and_save(file, save_path, max_size=(1200, 1200), quality=82)
+    except Exception:
+        # Pillow oxuya bilməsə orijinalı saxla
+        file.seek(0)
+        file.save(save_path)
     url = '/static/uploads/' + filename
     return jsonify({'ok': True, 'url': url})
 
@@ -248,7 +293,12 @@ def api_upload_logo():
     # Hər userin loqosu ayrı saxlanır
     username = current_user()
     filename = f'logo_{secure_filename(username)}.{ext}'
-    file.save(os.path.join(UPLOAD_DIR, filename))
+    save_path = os.path.join(UPLOAD_DIR, filename)
+    try:
+        resize_and_save(file, save_path, max_size=(400, 400), quality=85)
+    except Exception:
+        file.seek(0)
+        file.save(save_path)
     url = '/static/uploads/' + filename + '?v=' + str(int(datetime.now().timestamp()))
     db = load_user_data(username)
     db['cafe']['logo'] = url
