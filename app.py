@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, render_template, session, redirect, url_for, send_from_directory
 from functools import wraps
-import json, os, uuid, secrets
+import json, os, uuid, secrets, sqlite3
+from contextlib import contextmanager
 from datetime import datetime, timedelta
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -58,9 +59,57 @@ USERS_FILE      = os.path.join(BASE_DIR, 'users.json')        # İstifadəçi he
 USER_DATA_DIR   = os.path.join(BASE_DIR, 'user_data')         # Hər userin öz data qovluğu
 UPLOAD_DIR      = os.path.join(BASE_DIR, 'static', 'uploads')
 ALLOWED_EXT     = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+DB_FILE         = os.environ.get('DB_FILE', os.path.join(BASE_DIR, 'ucbucaq.db'))
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(USER_DATA_DIR, exist_ok=True)
+
+
+# ────────────────────────────────────────────────────────────────
+# SQLite VERİLƏNLƏR BAZASI
+# ────────────────────────────────────────────────────────────────
+@contextmanager
+def get_db():
+    conn = sqlite3.connect(DB_FILE)
+    conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA journal_mode=WAL")
+    conn.execute("PRAGMA foreign_keys=ON")
+    try:
+        yield conn
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
+
+def init_db():
+    with get_db() as db:
+        db.executescript("""
+            CREATE TABLE IF NOT EXISTS users (
+                username      TEXT PRIMARY KEY,
+                password_hash TEXT NOT NULL,
+                role          TEXT NOT NULL DEFAULT 'manager',
+                email         TEXT NOT NULL DEFAULT ''
+            );
+            CREATE TABLE IF NOT EXISTS user_menu_data (
+                username   TEXT PRIMARY KEY REFERENCES users(username) ON DELETE CASCADE,
+                menu_json  TEXT NOT NULL DEFAULT '{}',
+                stats_json TEXT NOT NULL DEFAULT '{}'
+            );
+            CREATE TABLE IF NOT EXISTS reset_tokens (
+                token      TEXT PRIMARY KEY,
+                username   TEXT NOT NULL REFERENCES users(username) ON DELETE CASCADE,
+                expires_at TEXT NOT NULL,
+                used       INTEGER NOT NULL DEFAULT 0
+            );
+        """)
+        exists = db.execute("SELECT 1 FROM users WHERE username='admin'").fetchone()
+        if not exists:
+            db.execute(
+                "INSERT INTO users VALUES (?,?,?,?)",
+                ('admin', generate_password_hash('admin123'), 'superadmin', '')
+            )
 
 # ────────────────────────────────────────────────────────────────
 # İSTİFADƏÇİ HESABLARI  (users.json — yalnız login məlumatları)
@@ -74,15 +123,24 @@ DEFAULT_USERS = {
 }
 
 def load_users():
-    if os.path.exists(USERS_FILE):
-        with open(USERS_FILE, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    save_users(DEFAULT_USERS)
-    return DEFAULT_USERS.copy()
+    """users cədvəlindən dict qaytarır — köhnə kod uyğunluğu üçün."""
+    with get_db() as db:
+        rows = db.execute("SELECT * FROM users").fetchall()
+        return {r['username']: {'password': r['password_hash'],
+                                'role': r['role'], 'email': r['email']}
+                for r in rows}
 
 def save_users(users):
-    with open(USERS_FILE, 'w', encoding='utf-8') as f:
-        json.dump(users, f, ensure_ascii=False, indent=2)
+    """Köhnə uyğunluq üçün saxlanılıb — yeni kodda birbaşa DB funksiyaları istifadə edin."""
+    with get_db() as db:
+        for uname, info in users.items():
+            db.execute("""INSERT INTO users(username, password_hash, role, email)
+                           VALUES (?,?,?,?)
+                           ON CONFLICT(username) DO UPDATE SET
+                             password_hash=excluded.password_hash,
+                             role=excluded.role,
+                             email=excluded.email""",
+                       (uname, info['password'], info.get('role','manager'), info.get('email','')))
 
 # ────────────────────────────────────────────────────────────────
 # HƏR USERİN ÖZ DATA FAYLI  (user_data/<username>.json)
@@ -114,25 +172,40 @@ DEFAULT_MENU_DATA = {
 }
 
 def user_data_file(username):
-    """Hər userin öz data faylının yolu."""
-    safe = secure_filename(username)          # qovluq traversal-dan qoruma
+    """Köhnə miqrasiya üçün saxlanılıb."""
+    safe = secure_filename(username)
     return os.path.join(USER_DATA_DIR, f"{safe}.json")
 
 def load_user_data(username):
-    path = user_data_file(username)
-    if os.path.exists(path):
-        with open(path, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    # İlk giriş — default data ilə başla
-    import copy
-    data = copy.deepcopy(DEFAULT_MENU_DATA)
-    save_user_data(username, data)
-    return data
+    with get_db() as db:
+        row = db.execute(
+            "SELECT menu_json, stats_json FROM user_menu_data WHERE username=?", (username,)
+        ).fetchone()
+        if row:
+            data = json.loads(row['menu_json'])
+            data['stats'] = json.loads(row['stats_json']) if row['stats_json'] and row['stats_json'] != '{}' else {
+                'clicks': {}, 'opens': {'total': 0, 'dates': {}}, 'cats': {}
+            }
+            return data
+        import copy
+        data = copy.deepcopy(DEFAULT_MENU_DATA)
+        db.execute("INSERT OR IGNORE INTO user_menu_data(username, menu_json, stats_json) VALUES (?,?,?)",
+                   (username, json.dumps(data, ensure_ascii=False), '{}'))
+        return data
 
 def save_user_data(username, data):
-    path = user_data_file(username)
-    with open(path, 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+    stats = data.pop('stats', None)
+    menu_json  = json.dumps(data, ensure_ascii=False)
+    stats_json = json.dumps(stats, ensure_ascii=False) if stats else '{}'
+    if stats:
+        data['stats'] = stats
+    with get_db() as db:
+        db.execute("""INSERT INTO user_menu_data(username, menu_json, stats_json)
+                       VALUES (?,?,?)
+                       ON CONFLICT(username) DO UPDATE SET
+                         menu_json=excluded.menu_json,
+                         stats_json=excluded.stats_json""",
+                   (username, menu_json, stats_json))
 
 # ── KÖMƏKÇİ ──
 def allowed_file(filename):
@@ -350,14 +423,15 @@ def api_add_user():
         return jsonify({'error': 'Ad və şifrə tələb olunur'}), 400
     if role == 'superadmin':
         return jsonify({'error': 'Superadmin rolu əlavə edilə bilməz'}), 403
-    users = load_users()
-    if username in users:
-        return jsonify({'error': 'Bu istifadəçi artıq mövcuddur'}), 400
-    users[username] = {'password': generate_password_hash(password), 'role': role, 'email': email}
-    save_users(users)
-    # Yeni userin boş data faylını yarad
-    import copy
-    save_user_data(username, copy.deepcopy(DEFAULT_MENU_DATA))
+    with get_db() as db:
+        exists = db.execute("SELECT 1 FROM users WHERE username=?", (username,)).fetchone()
+        if exists:
+            return jsonify({'error': 'Bu istifadəçi artıq mövcuddur'}), 400
+        db.execute("INSERT INTO users VALUES (?,?,?,?)",
+                   (username, generate_password_hash(password), role, email))
+        import copy
+        db.execute("INSERT INTO user_menu_data(username, menu_json, stats_json) VALUES (?,?,?)",
+                   (username, json.dumps(copy.deepcopy(DEFAULT_MENU_DATA), ensure_ascii=False), '{}'))
     return jsonify({'ok': True})
 
 @app.route('/api/users/<username>', methods=['DELETE'])
@@ -365,13 +439,8 @@ def api_add_user():
 def api_delete_user(username):
     if username == current_user():
         return jsonify({'error': 'Özünüzü silə bilməzsiniz'}), 400
-    users = load_users()
-    users.pop(username, None)
-    save_users(users)
-    # İstəsəniz data faylını da silin:
-    path = user_data_file(username)
-    if os.path.exists(path):
-        os.remove(path)
+    with get_db() as db:
+        db.execute("DELETE FROM users WHERE username=?", (username,))
     return jsonify({'ok': True})
 
 @app.route('/api/users/<username>/role', methods=['PUT'])
@@ -379,11 +448,11 @@ def api_delete_user(username):
 def api_update_user_role(username):
     data = request.json or {}
     role = data.get('role', 'manager')
-    users = load_users()
-    if username not in users:
-        return jsonify({'error': 'İstifadəçi tapılmadı'}), 404
-    users[username]['role'] = role
-    save_users(users)
+    with get_db() as db:
+        row = db.execute("SELECT 1 FROM users WHERE username=?", (username,)).fetchone()
+        if not row:
+            return jsonify({'error': 'İstifadəçi tapılmadı'}), 404
+        db.execute("UPDATE users SET role=? WHERE username=?", (role, username))
     return jsonify({'ok': True})
 
 @app.route('/api/users/<username>/set-password', methods=['PUT'])
@@ -396,11 +465,12 @@ def api_set_user_password(username):
     password = data.get('password', '')
     if not password or len(password) < 6:
         return jsonify({'error': 'Şifrə ən az 6 simvol olmalıdır'}), 400
-    users = load_users()
-    if username not in users:
-        return jsonify({'error': 'İstifadəçi tapılmadı'}), 404
-    users[username]['password'] = generate_password_hash(password)
-    save_users(users)
+    with get_db() as db:
+        row = db.execute("SELECT 1 FROM users WHERE username=?", (username,)).fetchone()
+        if not row:
+            return jsonify({'error': 'İstifadəçi tapılmadı'}), 404
+        db.execute("UPDATE users SET password_hash=? WHERE username=?",
+                   (generate_password_hash(password), username))
     return jsonify({'ok': True})
 
 @app.route('/api/users/<username>/email', methods=['PUT'])
@@ -410,11 +480,11 @@ def api_update_user_email(username):
         return jsonify({'error': 'İcazə yoxdur'}), 403
     data = request.json or {}
     email = data.get('email', '').strip().lower()
-    users = load_users()
-    if username not in users:
-        return jsonify({'error': 'İstifadəçi tapılmadı'}), 404
-    users[username]['email'] = email
-    save_users(users)
+    with get_db() as db:
+        row = db.execute("SELECT 1 FROM users WHERE username=?", (username,)).fetchone()
+        if not row:
+            return jsonify({'error': 'İstifadəçi tapılmadı'}), 404
+        db.execute("UPDATE users SET email=? WHERE username=?", (email, username))
     return jsonify({'ok': True})
 
 @app.route('/api/users/<username>/info', methods=['GET'])
@@ -422,11 +492,11 @@ def api_update_user_email(username):
 def api_get_user_info(username):
     if username != current_user() and session.get('role') != 'superadmin':
         return jsonify({'error': 'İcazə yoxdur'}), 403
-    users = load_users()
-    user = users.get(username)
-    if not user:
+    with get_db() as db:
+        row = db.execute("SELECT role, email FROM users WHERE username=?", (username,)).fetchone()
+    if not row:
         return jsonify({'error': 'Tapılmadı'}), 404
-    return jsonify({'username': username, 'email': user.get('email', ''), 'role': user.get('role', 'manager')})
+    return jsonify({'username': username, 'email': row['email'], 'role': row['role']})
 
 # ────────────────────────────────────────────────────────────────
 # STATİSTİKA  — hər userin öz statistikası
@@ -499,15 +569,9 @@ def api_forgot_password():
         token   = secrets.token_urlsafe(32)
         expires = (datetime.now() + timedelta(hours=1)).isoformat()
 
-        reset_file = os.path.join(BASE_DIR, 'reset_tokens.json')
-        try:
-            with open(reset_file, 'r', encoding='utf-8') as rf:
-                reset_tokens = json.load(rf)
-        except Exception:
-            reset_tokens = {}
-        reset_tokens[token] = {'username': matched_user, 'expires': expires, 'used': False}
-        with open(reset_file, 'w', encoding='utf-8') as rf:
-            json.dump(reset_tokens, rf, ensure_ascii=False, indent=2)
+        with get_db() as db:
+            db.execute("INSERT OR REPLACE INTO reset_tokens(token, username, expires_at, used) VALUES (?,?,?,0)",
+                       (token, matched_user, expires))
 
         reset_link = APP_BASE_URL + '/reset-password?token=' + token
         html_body = (
@@ -539,18 +603,13 @@ def api_forgot_password():
 @app.route('/reset-password')
 def reset_password_page():
     token = request.args.get('token', '')
-    reset_file = os.path.join(BASE_DIR, 'reset_tokens.json')
-    try:
-        with open(reset_file, 'r', encoding='utf-8') as f:
-            reset_tokens = json.load(f)
-    except Exception:
-        reset_tokens = {}
-    token_data = reset_tokens.get(token)
-    if not token_data:
+    with get_db() as db:
+        row = db.execute("SELECT * FROM reset_tokens WHERE token=?", (token,)).fetchone()
+    if not row:
         return "<h2>❌ Keçərsiz link</h2><a href='/admin'>Admin Panelə qayıt</a>"
-    if token_data.get('used'):
+    if row['used']:
         return "<h2>❌ Artıq istifadə edilib</h2><a href='/admin'>Admin Panelə qayıt</a>"
-    if datetime.fromisoformat(token_data['expires']) < datetime.now():
+    if datetime.fromisoformat(row['expires_at']) < datetime.now():
         return "<h2>⏰ Linkın vaxtı bitib</h2><a href='/admin'>Admin Panelə qayıt</a>"
     return redirect(f"/admin?reset_token={token}")
 
@@ -566,33 +625,21 @@ def api_reset_password():
     if len(new_password) < 6:
         return jsonify({'error': 'Şifrə ən az 6 simvol olmalıdır'}), 400
 
-    reset_file = os.path.join(BASE_DIR, 'reset_tokens.json')
-    try:
-        with open(reset_file, 'r', encoding='utf-8') as f:
-            reset_tokens = json.load(f)
-    except Exception:
-        reset_tokens = {}
-
-    token_data = reset_tokens.get(token)
-    if not token_data:
-        return jsonify({'error': 'Keçərsiz link'}), 400
-    if token_data.get('used'):
-        return jsonify({'error': 'Bu link artıq istifadə olunub'}), 400
-    if datetime.fromisoformat(token_data['expires']) < datetime.now():
-        return jsonify({'error': 'Linkın vaxtı bitib'}), 400
-
-    username = token_data['username']
-    users = load_users()
-    if username not in users:
-        return jsonify({'error': 'İstifadəçi tapılmadı'}), 400
-
-    users[username]['password'] = generate_password_hash(new_password)
-    save_users(users)
-
-    reset_tokens[token]['used'] = True
-    with open(reset_file, 'w', encoding='utf-8') as f:
-        json.dump(reset_tokens, f, ensure_ascii=False, indent=2)
-
+    with get_db() as db:
+        row = db.execute("SELECT * FROM reset_tokens WHERE token=?", (token,)).fetchone()
+        if not row:
+            return jsonify({'error': 'Keçərsiz link'}), 400
+        if row['used']:
+            return jsonify({'error': 'Bu link artıq istifadə olunub'}), 400
+        if datetime.fromisoformat(row['expires_at']) < datetime.now():
+            return jsonify({'error': 'Linkın vaxtı bitib'}), 400
+        username = row['username']
+        user_row = db.execute("SELECT 1 FROM users WHERE username=?", (username,)).fetchone()
+        if not user_row:
+            return jsonify({'error': 'İstifadəçi tapılmadı'}), 400
+        db.execute("UPDATE users SET password_hash=? WHERE username=?",
+                   (generate_password_hash(new_password), username))
+        db.execute("UPDATE reset_tokens SET used=1 WHERE token=?", (token,))
     return jsonify({'ok': True, 'message': 'Şifrə uğurla yeniləndi'})
 
 
@@ -600,7 +647,6 @@ def api_reset_password():
 # ────────────────────────────────────────────────────────────────
 # MİQRASİYA: köhnə data.json-u hər userin öz faylına köçür
 # ────────────────────────────────────────────────────────────────
-def # ────────────────────────────────────────────────────────────────
 # RATE LİMİT XƏTA HANDLER
 # ────────────────────────────────────────────────────────────────
 @app.errorhandler(429)
@@ -610,7 +656,46 @@ def ratelimit_handler(e):
         'error': str(e.description) if e.description else 'Çox sayda sorğu. Bir az gözləyin.'
     }), 429
 
-migrate_legacy():
+def migrate_to_sqlite():
+    """users.json və user_data/*.json → ucbucaq.db SQLite miqrasiyası"""
+    if not os.path.exists(USERS_FILE):
+        return
+    print("[sqlite-migrate] Köhnə JSON faylları tapıldı, SQLite-a köçürülür...")
+    try:
+        with open(USERS_FILE, 'r', encoding='utf-8') as f:
+            old_users = json.load(f)
+    except Exception as e:
+        print(f"[sqlite-migrate] users.json oxunmadı: {e}")
+        return
+    with get_db() as db:
+        for uname, info in old_users.items():
+            db.execute("""INSERT OR IGNORE INTO users(username, password_hash, role, email)
+                           VALUES (?,?,?,?)""",
+                       (uname, info.get('password', generate_password_hash('admin123')),
+                        info.get('role', 'manager'), info.get('email', '')))
+            udata_path = user_data_file(uname)
+            if os.path.exists(udata_path):
+                with open(udata_path, 'r', encoding='utf-8') as f:
+                    udata = json.load(f)
+                stats = udata.pop('stats', {})
+                menu_json  = json.dumps(udata, ensure_ascii=False)
+                stats_json = json.dumps(stats, ensure_ascii=False)
+                if stats:
+                    udata['stats'] = stats
+            else:
+                import copy
+                menu_json  = json.dumps(copy.deepcopy(DEFAULT_MENU_DATA), ensure_ascii=False)
+                stats_json = '{}'
+            db.execute("""INSERT OR IGNORE INTO user_menu_data(username, menu_json, stats_json)
+                           VALUES (?,?,?)""",
+                       (uname, menu_json, stats_json))
+    os.rename(USERS_FILE, USERS_FILE + '.migrated')
+    print("[sqlite-migrate] Tamamlandı — users.json.migrated olaraq arxivləndi")
+
+init_db()
+migrate_to_sqlite()
+
+def migrate_legacy():
     """
     Köhnə tək fayllı data.json varsa:
       - users.json yarat
