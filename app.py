@@ -9,7 +9,14 @@ from PIL import Image
 import io
 
 app = Flask(__name__)
-app.secret_key = os.environ.get('SECRET_KEY', 'ucbucaq-restoran-secret-2025')
+_secret_key = os.environ.get('SECRET_KEY')
+if not _secret_key:
+    raise RuntimeError(
+        "SECRET_KEY mühit dəyişəni təyin edilməyib. "
+        "Zəhmət olmasa .env faylında və ya server konfiqurasiyasında SECRET_KEY təyin edin. "
+        "Nümunə: SECRET_KEY=$(python3 -c \"import secrets; print(secrets.token_hex(32))\")"
+    )
+app.secret_key = _secret_key
 
 # ── EMAIL KONFİQURASİYASI ──
 # Mühit dəyişənlərini .env faylından və ya server konfiqürasiyasından oxuyun.
@@ -655,3 +662,4 @@ migrate_legacy()
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+
