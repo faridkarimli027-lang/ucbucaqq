@@ -5,6 +5,8 @@ from datetime import datetime, timedelta
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_mail import Mail, Message
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from PIL import Image
 import io
 
@@ -41,6 +43,14 @@ app.config['MAIL_DEFAULT_SENDER'] = ('QR Menu', _mail_user)
 APP_BASE_URL = os.environ.get('APP_BASE_URL', 'https://ucbucaqq-production.up.railway.app')
 
 mail = Mail(app)
+
+# ── RATE LİMİTİNG ──
+limiter = Limiter(
+    key_func=get_remote_address,
+    app=app,
+    default_limits=[],
+    storage_uri="memory://"
+)
 
 # ── QOVLUQLAR ──
 BASE_DIR        = os.path.dirname(os.path.abspath(__file__))
@@ -208,6 +218,7 @@ def admin():
 # AUTH API
 # ────────────────────────────────────────────────────────────────
 @app.route('/api/login', methods=['POST'])
+@limiter.limit("5 per minute", error_message="Çox sayda uğursuz cəhd. 1 dəqiqə gözləyin.")
 def api_login():
     data = request.json
     username = data.get('username', '').strip()
@@ -461,6 +472,7 @@ def api_clear_stats():
 # ŞİFRƏ SIFIRLAMA
 # ────────────────────────────────────────────────────────────────
 @app.route('/api/forgot-password', methods=['POST'])
+@limiter.limit("3 per hour", error_message="Şifrə sıfırlama üçün saatda 3 cəhd hüququnuz var.")
 def api_forgot_password():
     data = request.json or {}
     username = data.get('username', '').strip()
@@ -588,7 +600,17 @@ def api_reset_password():
 # ────────────────────────────────────────────────────────────────
 # MİQRASİYA: köhnə data.json-u hər userin öz faylına köçür
 # ────────────────────────────────────────────────────────────────
-def migrate_legacy():
+def # ────────────────────────────────────────────────────────────────
+# RATE LİMİT XƏTA HANDLER
+# ────────────────────────────────────────────────────────────────
+@app.errorhandler(429)
+def ratelimit_handler(e):
+    return jsonify({
+        'ok': False,
+        'error': str(e.description) if e.description else 'Çox sayda sorğu. Bir az gözləyin.'
+    }), 429
+
+migrate_legacy():
     """
     Köhnə tək fayllı data.json varsa:
       - users.json yarat
@@ -662,4 +684,5 @@ migrate_legacy()
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+
 
