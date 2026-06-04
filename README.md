@@ -10,27 +10,36 @@ https://python.org/downloads (Windows üçün)
 pip install -r requirements.txt
 ```
 
-### 3. Serveri işə salın
+### 3. Mühit dəyişənlərini təyin edin
+`.env` faylı yaradın:
+```bash
+SECRET_KEY=$(python3 -c "import secrets; print(secrets.token_hex(32))")
+MAIL_USERNAME=your@gmail.com
+MAIL_PASSWORD=your_app_password
+APP_BASE_URL=http://localhost:5000
+```
+
+### 4. Serveri işə salın
 ```bash
 python app.py
 ```
 
-### 4. Brauzerdə açın
+### 5. Brauzerdə açın
 - Admin panel: http://localhost:5000/admin
 - Menyu:       http://localhost:5000/menu
 
 ## Giriş məlumatları
-- İstifadəçi: `admin`
-- Şifrə: `admin123`
 
-> ⚠️ İlk girişdən sonra şifrənizi dəyişin!
+İlk giriş üçün default istifadəçi adı `admin`-dir.  
+**Şifrəni ilk girişdən dərhal dəyişin** — admin paneldə Parametrlər bölməsindən.
+
+> ⚠️ Default şifrəni README-də saxlamaq təhlükəlidir. Şifrəni server administratorundan alın.
 
 ## Fayl strukturu
 ```
 ucbucaq/
   app.py              ← Python Flask server
   requirements.txt    ← Lazımi kitabxanalar
-  data.json           ← Menyu məlumatları (hazır doldurulub)
   templates/
     admin.html        ← Admin panel
     menu.html         ← Müştəri menyusu
@@ -56,4 +65,6 @@ mv admin.html menu.html templates/
 1. GitHub-a yükləyin
 2. render.com-da "New Web Service"
 3. Repository seçin, `python app.py` start command
-4. Deploy edin
+4. Environment Variables bölməsindən `SECRET_KEY`, `MAIL_USERNAME`, `MAIL_PASSWORD` əlavə edin
+5. Deploy edin
+
